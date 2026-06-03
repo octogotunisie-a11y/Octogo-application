@@ -1,0 +1,50 @@
+[{
+        "id": "personal-eveil",
+        "title": "Éveil Intérieur",
+        "category": "PERSONNEL",
+        "price": "Sur devis",
+        "description": "Un parcours initiatique pour découvrir votre véritable potentiel et aligner vos aspirations profondes.",
+        "type": "coaching"
+    },
+    {
+        "id": "personal-alignement",
+        "title": "Alignement Profond",
+        "category": "PERSONNEL",
+
+        "price": "Sur devis",
+        "description": "Une transformation progressive pour ancrer des changements durables dans votre vie quotidienne.",
+        "type": "coaching"
+    },
+    {
+        "id": "personal-transformation",
+        "title": "Transformation 360°",
+        "category": "PERSONNEL",
+        "price": "Sur devis",
+        "description": "Un accompagnement complet pour une métamorphose profonde de tous les aspects de votre vie.",
+        "type": "coaching"
+    },
+    {
+        "id": "professional-performance",
+        "title": "Performance Essentielle",
+        "category": "PROFESSIONNEL",
+        "price": "Sur devis",
+        "description": "Optimisez votre productivité et développez des habitudes de travail basées sur les neurosciences.",
+        "type": "coaching"
+    },
+    {
+        "id": "professional-impact",
+        "title": "Impact Professionnel",
+        "category": "PROFESSIONNEL",
+        "price": "Sur devis",
+        "description": "Développez une présence et une influence professionnelle qui font la différence.",
+        "type": "coaching"
+    },
+    {
+        "id": "professional-excellence",
+        "title": "Excellence Stratégique",
+        "category": "PROFESSIONNEL",
+        "price": "Sur devis",
+        "description": "Élaborez une vision stratégique à long terme et positionnez-vous comme expert dans votre domaine.",
+        "type": "coaching"
+    }
+]

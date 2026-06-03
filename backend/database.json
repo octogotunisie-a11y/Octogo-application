@@ -1,0 +1,43 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@octogo.com",
+      "password": "admin123",
+      "name": "Administrateur",
+      "role": "admin",
+      "company": "Octogo",
+      "phone": "+21628262829"
+    },
+    {
+      "id": 2,
+      "email": "client@test.com",
+      "password": "client123",
+      "name": "Test Client",
+      "role": "client",
+      "company": "Entreprise Test",
+      "phone": "+21612345678"
+    }
+  ],
+  "formations": [
+    {
+      "id": 1,
+      "title": "Neurovente & Management : Vendre au cerveau des clients",
+      "category": "VENTES & MANAGEMENT",
+      "duration": "3 JOURS",
+      "price": "€690",
+      "description": "Former les managers à vendre au cerveau du client grâce aux neurosciences.",
+      "image": "/images/formation/neurovente-management.jpg",
+      "pdf": "/pdf/formation/neurovente-management.pdf",
+      "rating": 4.8,
+      "participants": 89,
+      "features": [
+        "Neurosciences appliquées à la vente",
+        "Compréhension des biais cognitifs"
+      ],
+      "color": "#EC4899"
+    }
+  ],
+  "devis": [],
+  "testScores": []
+}

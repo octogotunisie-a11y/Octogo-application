@@ -1,0 +1,2007 @@
+[
+  {
+    "id": 1769593270589,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T09:41:10.589Z",
+    "details": {
+      "email": "amalch206@gmail.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769593294201,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T09:41:34.201Z",
+    "details": {
+      "email": "amalch206@gmail.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769593300186,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T09:41:40.186Z",
+    "details": {
+      "email": "admin@octogo.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769593329103,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T09:42:09.103Z",
+    "details": {
+      "email": "amalch206@gmail.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769593343062,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T09:42:23.062Z",
+    "details": {
+      "email": "amalch206@gmail.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769593385288,
+    "userId": 3,
+    "type": "devis_request",
+    "timestamp": "2026-01-28T09:43:05.288Z",
+    "details": {
+      "devisId": 4,
+      "parcoursId": "2",
+      "parcoursTitle": "CAPTE",
+      "entreprise": "scsqc",
+      "participants": 1,
+      "duree": 5,
+      "uniteDuree": "jours",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769595558723,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T10:19:18.723Z",
+    "details": {
+      "email": "admin@octogo.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769595578519,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-01-28T10:19:38.519Z",
+    "details": {
+      "devisId": 1,
+      "entreprise": "scsqc",
+      "montant": 1650
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769595659564,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T10:20:59.564Z",
+    "details": {
+      "email": "admin@octogo.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769595663804,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T10:21:03.804Z",
+    "details": {
+      "email": "admin@octogo.com",
+      "method": "email"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769596213368,
+    "userId": 1,
+    "type": "devis_upload",
+    "timestamp": "2026-01-28T10:30:13.368Z",
+    "details": {
+      "devisId": 3,
+      "fileName": "devis 02 biat.pdf",
+      "fileSize": 93695,
+      "clientId": 3,
+      "clientName": "Chkiwa AMAL"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769597872617,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T10:57:52.617Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769597883307,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T10:58:03.307Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769597891057,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T10:58:11.057Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769597970718,
+    "userId": 3,
+    "type": "devis_request",
+    "timestamp": "2026-01-28T10:59:30.718Z",
+    "details": {
+      "devisId": 5,
+      "parcoursId": "6",
+      "parcoursTitle": "NEUROVENTE",
+      "entreprise": "scsqc",
+      "matriculeFiscale": "123456789jj",
+      "participants": 20,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769598000353,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T11:00:00.353Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769598043353,
+    "userId": 1,
+    "type": "devis_upload",
+    "timestamp": "2026-01-28T11:00:43.353Z",
+    "details": {
+      "devisId": 5,
+      "fileName": "devis 02 biat.pdf",
+      "fileSize": 93695
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769598080924,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T11:01:20.924Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769598360729,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T11:06:00.729Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769602161969,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T12:09:21.969Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769602244001,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T12:10:44.001Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769602340771,
+    "userId": 4,
+    "type": "login",
+    "timestamp": "2026-01-28T12:12:20.771Z",
+    "details": {
+      "email": "justf6115@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769602348906,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-28T12:12:28.906Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769604842765,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T12:54:02.765Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769615713586,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-28T15:55:13.586Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769678896057,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T09:28:16.057Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769678900104,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T09:28:20.104Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769678941799,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-29T09:29:01.799Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769678965708,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-29T09:29:25.708Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769679027960,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T09:30:27.960Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769688296217,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T12:04:56.217Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769688696983,
+    "userId": 3,
+    "type": "devis_request",
+    "timestamp": "2026-01-29T12:11:36.983Z",
+    "details": {
+      "devisId": 6,
+      "serviceType": "coaching",
+      "serviceId": "personal-transformation",
+      "serviceTitle": "Transformation 360°",
+      "entreprise": "scsqc",
+      "participants": 5,
+      "duree": 5,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769688732076,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-29T12:12:12.076Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769689426807,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T12:23:46.807Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769690520728,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-29T12:42:00.728Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769765954000,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-30T09:39:14.000Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769766531985,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-30T09:48:51.985Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769767391140,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-30T10:03:11.140Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769767671439,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-30T10:07:51.439Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769767706721,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-01-30T10:08:26.721Z",
+    "details": {
+      "devisId": 3,
+      "clientName": "Chkiwa AMAL",
+      "entreprise": "iytvi"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769768635644,
+    "userId": 1,
+    "type": "devis_upload",
+    "timestamp": "2026-01-30T10:23:55.644Z",
+    "details": {
+      "devisId": 4,
+      "fileName": "facture 35 movenpick emergent leaders.pdf",
+      "fileSize": 86033
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769769817192,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-01-30T10:43:37.192Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1769769877288,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-01-30T10:44:37.288Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770024031304,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T09:20:31.304Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770024218739,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T09:23:38.739Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770024699123,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T09:31:39.123Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770024801252,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T09:33:21.252Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770025198246,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T09:39:58.246Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770026775794,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T10:06:15.794Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770029154583,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T10:45:54.583Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770029872912,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T10:57:52.912Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770030343381,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T11:05:43.381Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770030496028,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T11:08:16.028Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039046623,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T13:30:46.623Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039613344,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T13:40:13.344Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039639237,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-02T13:40:39.237Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039719801,
+    "userId": 3,
+    "type": "devis_request",
+    "timestamp": "2026-02-02T13:41:59.801Z",
+    "details": {
+      "devisId": 7,
+      "serviceType": "formation",
+      "serviceId": "formation-neurosciences-appliquees",
+      "serviceTitle": "Neurosciences Appliquées",
+      "entreprise": "scsqc",
+      "participants": 15,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039761858,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-02T13:42:41.858Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770039880657,
+    "userId": 1,
+    "type": "devis_upload",
+    "timestamp": "2026-02-02T13:44:40.657Z",
+    "details": {
+      "devisId": 7,
+      "fileName": "Sans titre - 2ss.pdf",
+      "fileSize": 531463
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770042053755,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-02-02T14:20:53.755Z",
+    "details": {
+      "devisId": 4,
+      "clientName": "Chkiwa AMAL",
+      "entreprise": "scsqc"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770114606464,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-03T10:30:06.464Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770114810839,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-03T10:33:30.839Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115197324,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-03T10:39:57.324Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115223970,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-03T10:40:23.970Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "en attente",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115258541,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-03T10:40:58.541Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115264876,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-03T10:41:04.876Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115264903,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-03T10:41:04.903Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "500",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115298541,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-03T10:41:38.541Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770115346495,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-03T10:42:26.495Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770116729711,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-03T11:05:29.711Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770116786058,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-03T11:06:26.058Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770128871279,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-03T14:27:51.279Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770196662293,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-04T09:17:42.293Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770198198082,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T09:43:18.082Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770198215383,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T09:43:35.383Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770198230414,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-04T09:43:50.414Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770198846947,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T09:54:06.947Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770199656890,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T10:07:36.890Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770200561598,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T10:22:41.598Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770202677876,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T10:57:57.876Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770202813210,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T11:00:13.210Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770203994637,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T11:19:54.637Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770204245107,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T11:24:05.107Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770204850653,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-04T11:34:10.653Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770282365122,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T09:06:05.122Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770282409112,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T09:06:49.112Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770282460699,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T09:07:40.699Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770284726097,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T09:45:26.097Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770285675389,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T10:01:15.389Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770287431428,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T10:30:31.428Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770287458285,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T10:30:58.285Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770287498528,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-05T10:31:38.528Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770288906678,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T10:55:06.678Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770288939817,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T10:55:39.817Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770289883135,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:11:23.135Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770289904565,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:11:44.565Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770289968112,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:12:48.112Z",
+    "details": {
+      "devisId": 6,
+      "oldStatus": "validé"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770290068437,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-05T11:14:28.437Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770290352712,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:19:12.712Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770291125168,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:32:05.168Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770291162523,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T11:32:42.523Z",
+    "details": {
+      "devisId": 6,
+      "oldStatus": "validé"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770291206349,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-02-05T11:33:26.349Z",
+    "details": {
+      "devisId": 6,
+      "clientName": "Chkiwa AMAL",
+      "entreprise": "scsqc"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770292497406,
+    "userId": 4,
+    "type": "login",
+    "timestamp": "2026-02-05T11:54:57.406Z",
+    "details": {
+      "email": "justf6115@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770292960545,
+    "userId": 4,
+    "type": "devis_request",
+    "timestamp": "2026-02-05T12:02:40.545Z",
+    "details": {
+      "devisId": 8,
+      "serviceType": "formation",
+      "serviceId": "formation-neurosecurite",
+      "serviceTitle": "NeuroSécurité",
+      "entreprise": "adzone",
+      "participants": 50,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770292991558,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T12:03:11.558Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770293099456,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T12:04:59.456Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294254388,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T12:24:14.388Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294305324,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-05T12:25:05.324Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294331454,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-02-05T12:25:31.454Z",
+    "details": {
+      "devisId": 8,
+      "clientName": "amiraaaa",
+      "entreprise": "adzone"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294438001,
+    "userId": 4,
+    "type": "devis_request",
+    "timestamp": "2026-02-05T12:27:18.001Z",
+    "details": {
+      "devisId": 8,
+      "serviceType": "coaching",
+      "serviceId": "personal-transformation",
+      "serviceTitle": "Transformation 360°",
+      "entreprise": "adzone",
+      "participants": 20,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294530160,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T12:28:50.160Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770294578658,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T12:29:38.658Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296573535,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:02:53.535Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "en attente",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296599371,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:19.371Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296613480,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:33.480Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296620559,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:40.559Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296620583,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:40.583Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296620607,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:40.607Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296624350,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:44.350Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296624374,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:44.374Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296624405,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:44.405Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296631835,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:03:51.835Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296665272,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:04:25.272Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770296676770,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:04:36.770Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770297616254,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:20:16.254Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770297635817,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:20:35.817Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299876085,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:57:56.085Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299896019,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:58:16.019Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299918202,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:58:38.202Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299929295,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:58:49.295Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299955248,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:59:15.248Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299959106,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:59:19.106Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299959130,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:59:19.130Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770299959168,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T13:59:19.168Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770301222445,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T14:20:22.445Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "validé",
+      "newStatus": "en attente",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770301241131,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T14:20:41.131Z",
+    "details": {
+      "devisId": 5,
+      "oldStatus": "en attente",
+      "newStatus": "en attente",
+      "montantFinal": "",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770301504595,
+    "userId": 1,
+    "type": "devis_delete",
+    "timestamp": "2026-02-05T14:25:04.595Z",
+    "details": {
+      "devisId": 5,
+      "clientName": "Chkiwa AMAL",
+      "entreprise": "scsqc"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770302154851,
+    "userId": 1,
+    "type": "devis_update",
+    "timestamp": "2026-02-05T14:35:54.851Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "500",
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770303863123,
+    "userId": 1,
+    "type": "devis_update_complete",
+    "timestamp": "2026-02-05T15:04:23.123Z",
+    "details": {
+      "devisId": 8,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "",
+      "devise": "TND",
+      "hasFile": true
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770369420638,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-06T09:17:00.638Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770628914806,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-09T09:21:54.806Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770629019151,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-09T09:23:39.151Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770630158279,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-09T09:42:38.279Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770630188983,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-09T09:43:08.983Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770632313607,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-09T10:18:33.607Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770634016766,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-09T10:46:56.766Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770634032004,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-02-09T10:47:12.004Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770634080803,
+    "userId": 2,
+    "type": "devis_request",
+    "timestamp": "2026-02-09T10:48:00.803Z",
+    "details": {
+      "devisId": 9,
+      "serviceType": "coaching",
+      "serviceId": "personal-alignement",
+      "serviceTitle": "Alignement Profond",
+      "entreprise": "Test Company",
+      "participants": 18,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770634126064,
+    "userId": 1,
+    "type": "devis_pdf_upload",
+    "timestamp": "2026-02-09T10:48:46.064Z",
+    "details": {
+      "devisId": 9,
+      "fileName": "facture 02 rbg.pdf",
+      "fileSize": 94328,
+      "newStatus": "validé"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770636568647,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-09T11:29:28.647Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770650065583,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-09T15:14:25.583Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770650113069,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-09T15:15:13.069Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770723129502,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-10T11:32:09.502Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770723360385,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-10T11:36:00.385Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770723537763,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-10T11:38:57.763Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770807356705,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-11T10:55:56.705Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770808477256,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-11T11:14:37.256Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770815697572,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-11T13:14:57.572Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770887787514,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-12T09:16:27.514Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770894669477,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-12T11:11:09.477Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770894842378,
+    "userId": 3,
+    "type": "devis_request",
+    "timestamp": "2026-02-12T11:14:02.378Z",
+    "details": {
+      "devisId": 10,
+      "serviceType": "formation",
+      "serviceId": "formation-neuroeducation",
+      "serviceTitle": "NeuroÉducation",
+      "entreprise": "scsqc",
+      "participants": 20,
+      "duree": 1,
+      "devise": "TND"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770894896907,
+    "userId": 1,
+    "type": "devis_pdf_upload",
+    "timestamp": "2026-02-12T11:14:56.907Z",
+    "details": {
+      "devisId": 10,
+      "fileName": "facture 03 conference RBG.pdf",
+      "fileSize": 92380,
+      "newStatus": "validé"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770898078788,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-12T12:07:58.788Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770974297345,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-13T09:18:17.345Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770974634336,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-13T09:23:54.336Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1770976862696,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-13T10:01:02.696Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771231320481,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-16T08:42:00.481Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771232086570,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-16T08:54:46.570Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771232395155,
+    "userId": 3,
+    "type": "profile_update",
+    "timestamp": "2026-02-16T08:59:55.155Z",
+    "details": {
+      "updatedFields": {
+        "name": "Chkiwa AMAL",
+        "phone": "26450657",
+        "company": "adinot"
+      }
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771232403428,
+    "userId": 3,
+    "type": "profile_update",
+    "timestamp": "2026-02-16T09:00:03.428Z",
+    "details": {
+      "updatedFields": {
+        "name": "Chkiwa AMAL",
+        "phone": "26450657",
+        "company": "adinot"
+      }
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771232410331,
+    "userId": 3,
+    "type": "profile_update",
+    "timestamp": "2026-02-16T09:00:10.331Z",
+    "details": {
+      "updatedFields": {
+        "name": "Chkiwa AMAL",
+        "phone": "26450657",
+        "company": "adinot"
+      }
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771233746200,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-16T09:22:26.200Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771234987047,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-02-16T09:43:07.047Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771246934940,
+    "userId": 1,
+    "type": "devis_update_complete",
+    "timestamp": "2026-02-16T13:02:14.940Z",
+    "details": {
+      "devisId": 7,
+      "oldStatus": "validé",
+      "newStatus": "validé",
+      "montantFinal": "500",
+      "devise": "TND",
+      "hasFile": false
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771247254771,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-16T13:07:34.771Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1771496648702,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-19T10:24:08.702Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1772098230219,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-02-26T09:30:30.219Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  }
+]

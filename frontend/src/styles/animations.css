@@ -1,0 +1,741 @@
+/* ===== ANIMATIONS PROFESSIONNELLES OCTOGO ===== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-15px) rotate(3deg);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes glow {
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 30px rgba(236, 72, 153, 0.2), 0 0 40px rgba(249, 115, 22, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 50px rgba(236, 72, 153, 0.4), 0 0 70px rgba(249, 115, 22, 0.2);
+    }
+}
+
+
+/* ===== ANIMATIONS NEUROSCIENCES OCTOGO ===== */
+
+
+/* Flottement neurologique */
+
+@keyframes neuroFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-12px) rotate(2deg);
+    }
+    75% {
+        transform: translateY(-6px) rotate(-1deg);
+    }
+}
+
+
+/* Pulsation cérébrale */
+
+@keyframes brainPulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+        filter: brightness(1.2);
+    }
+}
+
+
+/* Effet synapse (connexions neuronales) */
+
+@keyframes synapseGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.4), 0 0 20px rgba(236, 72, 153, 0.3), 0 0 30px rgba(249, 115, 22, 0.2);
+        border-color: rgba(139, 92, 246, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(236, 72, 153, 0.4), 0 0 60px rgba(249, 115, 22, 0.3);
+        border-color: rgba(236, 72, 153, 0.5);
+    }
+}
+
+
+/* Onde cérébrale */
+
+@keyframes brainWave {
+    0% {
+        background-position: 0% 50%;
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(5px);
+    }
+    50% {
+        background-position: 100% 50%;
+        transform: translateX(0);
+    }
+    75% {
+        transform: translateX(-5px);
+    }
+    100% {
+        background-position: 0% 50%;
+        transform: translateX(0);
+    }
+}
+
+
+/* Rotation neuronale */
+
+@keyframes neuronSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Effet de particules */
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(var(--tx, 0)) scale(0);
+        opacity: 0;
+    }
+}
+
+
+/* Scan cérébral */
+
+@keyframes brainScan {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+
+/* Clignotement neuronal */
+
+@keyframes neuronBlink {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+
+/* Vibration subtile */
+
+@keyframes neuroVibrate {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20%,
+    60% {
+        transform: translateX(-2px);
+    }
+    40%,
+    80% {
+        transform: translateX(2px);
+    }
+}
+
+
+/* Gradient animé */
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+/* ===== CLASSES D'ANIMATION DE BASE ===== */
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-slide-left {
+    animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-right {
+    animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-glow {
+    animation: glow 3s ease-in-out infinite;
+}
+
+
+/* ===== CLASSES D'ANIMATION NEUROSCIENCES ===== */
+
+.animate-neuro-float {
+    animation: neuroFloat 6s ease-in-out infinite;
+}
+
+.animate-brain-pulse {
+    animation: brainPulse 3s ease-in-out infinite;
+}
+
+.animate-synapse-glow {
+    animation: synapseGlow 4s ease-in-out infinite;
+}
+
+.animate-brain-wave {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.5), rgba(236, 72, 153, 0.5), rgba(249, 115, 22, 0.5), rgba(139, 92, 246, 0.5));
+    background-size: 300% 100%;
+    animation: brainWave 6s ease-in-out infinite;
+}
+
+.animate-neuron-spin {
+    animation: neuronSpin 20s linear infinite;
+}
+
+.animate-particle-float {
+    animation: particleFloat 2s ease-out forwards;
+}
+
+.animate-brain-scan {
+    background: linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.3) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: brainScan 3s linear infinite;
+}
+
+.animate-neuron-blink {
+    animation: neuronBlink 1.5s ease-in-out infinite;
+}
+
+.animate-neuro-vibrate {
+    animation: neuroVibrate 0.3s ease-in-out;
+}
+
+.animate-gradient-flow {
+    background: linear-gradient(270deg, #8B5CF6, #EC4899, #F97316, #8B5CF6);
+    background-size: 400% 400%;
+    animation: gradientFlow 8s ease infinite;
+}
+
+
+/* ===== BOUTONS NEUROSCIENCES ===== */
+
+.btn-neuro {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    color: white;
+    border: none;
+    padding: 16px 36px;
+    border-radius: 9999px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-neuro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.8s ease;
+}
+
+.btn-neuro:hover::before {
+    left: 100%;
+}
+
+.btn-neuro:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3);
+    animation: synapseGlow 2s ease-in-out infinite;
+}
+
+.btn-neuro:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.btn-neuro .btn-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.btn-neuro:hover .btn-icon {
+    transform: scale(1.2) rotate(10deg);
+    animation: neuronBlink 1s infinite;
+}
+
+
+/* ===== CARDS NEUROSCIENCES ===== */
+
+.neuro-card {
+    position: relative;
+    overflow: hidden;
+    background: white;
+    border-radius: 24px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
+}
+
+.neuro-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    border-radius: 26px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.neuro-card:hover::before {
+    opacity: 1;
+    animation: brainWave 3s ease infinite;
+}
+
+.neuro-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+}
+
+.neuro-card .card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.neuro-card:hover .card-icon {
+    animation: brainPulse 2s infinite;
+    transform: scale(1.1);
+}
+
+
+/* ===== EFFETS DE NAVIGATION NEURO ===== */
+
+.nav-link.neuro-active {
+    position: relative;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(249, 115, 22, 0.1) 100%);
+}
+
+.nav-link.neuro-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    border-radius: 2px;
+    animation: brainPulse 2s infinite;
+}
+
+
+/* ===== SCROLL INDICATOR NEURO ===== */
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    z-index: 9999;
+    transition: width 0.3s ease;
+}
+
+.back-to-top {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    transform: translateY(-5px) scale(1.1);
+    animation: brainPulse 1s ease-in-out infinite;
+}
+
+
+/* ===== LOADER NEUROSCIENCE ===== */
+
+.neuro-loader {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient( from 0deg, #8B5CF6, #EC4899, #F97316, #8B5CF6);
+    mask: radial-gradient(farthest-side, transparent calc(100% - 8px), white 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), white 0);
+    animation: neuronSpin 1.5s linear infinite;
+}
+
+
+/* ===== FORMULAIRE NEURO ===== */
+
+.form-neuro .form-input:focus,
+.form-neuro .form-textarea:focus {
+    border-color: transparent;
+    background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%) border-box;
+    border: 2px solid transparent;
+    animation: synapseGlow 3s ease-in-out infinite;
+}
+
+
+/* ===== EFFETS DE TEXTE NEURO ===== */
+
+.neuro-text-gradient {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientFlow 8s ease infinite;
+}
+
+.neuro-text-shadow {
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 0 20px rgba(236, 72, 153, 0.2), 0 0 30px rgba(249, 115, 22, 0.1);
+}
+
+
+/* ===== PARTICULES NEURO ===== */
+
+.neuro-particle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat 1.5s ease-out forwards;
+}
+
+
+/* ===== EFFETS DE SURVOL NEURO ===== */
+
+.neuro-hover-effect {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.neuro-hover-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.neuro-hover-effect:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+.neuro-hover-effect:hover {
+    animation: neuroVibrate 0.3s ease-in-out;
+}
+
+
+/* ===== ANIMATION AU SCROLL ===== */
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ===== EFFETS SPÉCIAUX POUR SECTIONS ===== */
+
+.hero-neuro-bg {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-neuro-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+    animation: neuroFloat 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+
+/* ===== RESPONSIVE ANIMATIONS ===== */
+
+@media (max-width: 768px) {
+    .btn-neuro {
+        padding: 14px 28px;
+        font-size: 0.9rem;
+    }
+    .neuro-card:hover {
+        transform: translateY(-5px);
+    }
+    .animate-neuro-float,
+    .animate-brain-pulse,
+    .animate-synapse-glow {
+        animation-duration: calc(var(--duration, 1s) * 1.5);
+    }
+}
+
+
+/* ===== CLASSES UTILITAIRES ===== */
+
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}
+
+.delay-300 {
+    animation-delay: 300ms;
+}
+
+.delay-400 {
+    animation-delay: 400ms;
+}
+
+.delay-500 {
+    animation-delay: 500ms;
+}
+
+.duration-500 {
+    animation-duration: 500ms;
+}
+
+.duration-1000 {
+    animation-duration: 1000ms;
+}
+
+.duration-1500 {
+    animation-duration: 1500ms;
+}
+
+.duration-2000 {
+    animation-duration: 2000ms;
+}
+
+.duration-3000 {
+    animation-duration: 3000ms;
+}
+
+.iteration-infinite {
+    animation-iteration-count: infinite;
+}
+
+.iteration-2 {
+    animation-iteration-count: 2;
+}
+
+.iteration-3 {
+    animation-iteration-count: 3;
+}
+
+
+/* ===== EFFETS DE CLIC NEURO ===== */
+
+.neuro-click-effect {
+    animation: neuronBlink 0.3s ease;
+}
+
+
+/* ===== BORDURES ANIMÉES ===== */
+
+.neuro-border {
+    border: 2px solid transparent;
+    background: linear-gradient(var(--octogo-white), var(--octogo-white)) padding-box, linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%) border-box;
+    animation: gradientFlow 4s linear infinite;
+}
+
+
+/* ===== EFFETS D'OMBRE NEURO ===== */
+
+.neuro-shadow {
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15), 0 5px 10px rgba(236, 72, 153, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+.neuro-shadow:hover {
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.25), 0 10px 20px rgba(236, 72, 153, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+
+/* ===== EFFETS DE FOCUS NEURO ===== */
+
+.neuro-focus:focus {
+    outline: none;
+    animation: neuroVibrate 0.3s ease;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1), 0 0 0 8px rgba(236, 72, 153, 0.05);
+}

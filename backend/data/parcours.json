@@ -1,0 +1,64 @@
+[{
+        "id": 1,
+        "title": "ÉVEIL",
+        "subtitle": "NeuroLeadership & Performance Collective",
+        "category": "LEADERSHIP",
+        "price": "Sur devis",
+        "description": "Développez un leadership conscient basé sur les neurosciences pour optimiser la performance collective.",
+        "type": "parcours"
+    },
+    {
+        "id": 2,
+        "title": "CAPTE",
+        "subtitle": "Le cerveau au cœur de la relation client",
+        "category": "VENTE",
+        "price": "Sur devis",
+        "description": "Maîtrisez les techniques de vente basées sur la compréhension du cerveau du client.",
+        "type": "parcours"
+    },
+    {
+        "id": 3,
+        "title": "RESET",
+        "subtitle": "Neuromanagement & Performance durable",
+        "category": "MANAGEMENT",
+        "price": "Sur devis",
+        "description": "Adoptez un management durable fondé sur les neurosciences cognitives et sociales.",
+        "type": "parcours"
+    },
+    {
+        "id": 4,
+        "title": "TRANS-FORMATION",
+        "subtitle": "Leadership transformationnel et intelligence émotionnelle",
+        "category": "TRANSFORMATION",
+        "price": "Sur devis",
+        "description": "Leadership transformationnel et intelligence émotionnelle pour une performance optimale.",
+        "type": "parcours"
+    },
+    {
+        "id": 5,
+        "title": "VOL D'AIGLE",
+        "subtitle": "Comprendre les tensions géopolitiques et économiques",
+        "category": "STRATÉGIE",
+        "price": "Sur devis",
+        "description": "Comprenez les tensions géopolitiques et économiques pour un leadership éclairé.",
+        "type": "parcours"
+    },
+    {
+        "id": 6,
+        "title": "NEUROVENTE",
+        "subtitle": "Vendre au cerveau pour toucher le cœur",
+        "category": "VENTE",
+        "price": "Sur devis",
+        "description": "Vendre au cerveau pour toucher le cœur et optimiser vos performances commerciales.",
+        "type": "parcours"
+    },
+    {
+        "id": 7,
+        "title": "NEUROMARKETING",
+        "subtitle": "Le cerveau au service de la stratégie",
+        "category": "MARKETING",
+        "price": "Sur devis",
+        "description": "Comprendre comment le cerveau prend ses décisions pour créer des messages et offres qui influencent avec éthique.",
+        "type": "parcours"
+    }
+]

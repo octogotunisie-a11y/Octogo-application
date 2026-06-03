@@ -1,0 +1,65 @@
+[{
+        "id": "formation-neurosciences",
+        "title": "Formation Neurosciences Appliquées",
+        "category": "NEUROSCIENCES",
+        "price": "Sur devis",
+        "description": "Formation approfondie sur les applications pratiques des neurosciences en entreprise.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-neurosecurite",
+        "title": "NeuroSécurité",
+        "category": "SÉCURITÉ",
+        "price": "Sur devis",
+        "description": "Destinée aux équipes de sécurité, basée sur les neurosciences du stress et de la cohésion.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-neuroeducation",
+        "title": "NeuroÉducation",
+        "category": "LEADERSHIP",
+        "price": "Sur devis",
+        "description": "La NeuroÉducation explore la neuroplasticité chez l'adulte et la neuroergonomie.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-parole-leader",
+        "title": "La parole d'un leader",
+        "category": "COMMUNICATION",
+        "price": "Sur devis",
+        "description": "Apprendre à communiquer avec influence et engagement.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-neurosciences-appliquees",
+        "title": "Neurosciences Appliquées",
+        "category": "NEUROSCIENCES",
+        "price": "Sur devis",
+        "description": "Un ensemble de parcours innovants fondés sur les neurosciences appliquées.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-mindset-gagnant",
+        "title": "Mindset de gagnant",
+        "category": "DÉVELOPPEMENT PERSONNEL",
+        "price": "Sur devis",
+        "description": "Un parcours immersif au cœur du cerveau humain pour développer les power skills de demain.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-neuroleadership",
+        "title": "NeuroLeadership",
+        "category": "LEADERSHIP",
+        "price": "Sur devis",
+        "description": "Former les managers à comprendre le cerveau de leurs équipes.",
+        "type": "formation"
+    },
+    {
+        "id": "formation-leadership-emotionnel",
+        "title": "Leadership Émotionnel",
+        "category": "LEADERSHIP",
+        "price": "Sur devis",
+        "description": "Développer un leadership aligné sur les valeurs et l'intelligence émotionnelle.",
+        "type": "formation"
+    }
+]

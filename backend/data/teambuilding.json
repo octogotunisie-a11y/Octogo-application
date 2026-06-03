@@ -1,0 +1,41 @@
+[{
+        "id": "tb-voyage-alchimique",
+        "title": "Le Voyage Alchimique",
+        "category": "TRANSFORMATION",
+        "price": "Sur devis",
+        "description": "Expérience de transformation humaine et collective pour transcender les poids de l'ego",
+        "type": "teambuilding"
+    },
+    {
+        "id": "tb-neurosynergie",
+        "title": "NEUROSYNERGIE",
+        "category": "NEUROSCIENCES",
+        "price": "Sur devis",
+        "description": "Basé sur les neurosciences sociales pour explorer les mécanismes cérébraux de cohésion",
+        "type": "teambuilding"
+    },
+    {
+        "id": "tb-full-energy",
+        "title": "FULL ENERGY",
+        "category": "ÉNERGIE",
+        "price": "Sur devis",
+        "description": "Journée rythmée par des défis sportifs favorisant cohésion et esprit d'équipe",
+        "type": "teambuilding"
+    },
+    {
+        "id": "tb-heart-synergie",
+        "title": "Heart Synergie - Future Leaders",
+        "category": "LEADERSHIP",
+        "price": "Sur devis",
+        "description": "Programme exclusif pour renforcer un leadership humain et inspirant",
+        "type": "teambuilding"
+    },
+    {
+        "id": "tb-emergent-leaders",
+        "title": "Heart Synergie - Emergent Leaders",
+        "category": "DÉVELOPPEMENT",
+        "price": "Sur devis",
+        "description": "Parcours immersif pour renforcer cohésion et révéler le potentiel collectif",
+        "type": "teambuilding"
+    }
+]

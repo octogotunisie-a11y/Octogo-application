@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Admin Octogo",
+    "email": "admin@octogo.com",
+    "password": "admin123",
+    "phone": "+216 28 262 829",
+    "company": "Octogo Formation & Conseil",
+    "role": "admin",
+    "brainPoints": 1000,
+    "avatar": "https://ui-avatars.com/api/?name=Admin+Octogo&background=8B5CF6&color=fff",
+    "createdAt": "2024-01-01T10:00:00.000Z",
+    "updatedAt": "2024-01-01T10:00:00.000Z",
+    "lastLogin": "2026-02-16T09:42:59.383Z",
+    "loginCount": 103
+  },
+  {
+    "id": 2,
+    "name": "Client Test",
+    "email": "client@test.com",
+    "password": "client123",
+    "phone": "26450657",
+    "company": "Test Company",
+    "role": "client",
+    "brainPoints": 100,
+    "avatar": "https://ui-avatars.com/api/?name=Client+Test&background=8B5CF6&color=fff",
+    "createdAt": "2024-01-01T10:00:00.000Z",
+    "updatedAt": "2024-01-01T10:00:00.000Z",
+    "lastLogin": "2026-02-09T10:47:07.243Z",
+    "loginCount": 1
+  },
+  {
+    "id": 3,
+    "name": "Chkiwa AMAL",
+    "email": "amalch206@gmail.com",
+    "password": "password123",
+    "phone": "26450657",
+    "company": "adinot",
+    "role": "client",
+    "brainPoints": 100,
+    "avatar": "https://ui-avatars.com/api/?name=Chkiwa%20AMAL&background=8B5CF6&color=fff",
+    "createdAt": "2026-01-15T13:02:54.427Z",
+    "updatedAt": "2026-01-15T13:02:54.427Z",
+    "lastLogin": "2026-02-26T09:30:30.200Z",
+    "loginCount": 107
+  },
+  {
+    "id": 4,
+    "name": "amiraaaa",
+    "email": "justf6115@gmail.com",
+    "password": "justf123",
+    "phone": "54785158",
+    "company": "adzone",
+    "role": "client",
+    "brainPoints": 100,
+    "avatar": "https://ui-avatars.com/api/?name=amiraaaa&background=8B5CF6&color=fff",
+    "createdAt": "2026-01-15T13:18:38.946Z",
+    "updatedAt": "2026-01-15T13:18:38.946Z",
+    "lastLogin": "2026-02-05T11:54:57.397Z",
+    "loginCount": 2
+  }
+]
