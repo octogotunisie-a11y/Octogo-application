@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const programmeRoutes = require('./Routes/programmeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -1617,6 +1618,10 @@ app.get('/api/devis/service/:serviceType', authenticateToken, (req, res) => {
 app.get('/api/test', (req, res) => {
     res.json({ success: true, message: 'Backend OK', timestamp: new Date().toISOString() });
 });
+
+// ==================== GÉNÉRATION DE PROGRAMME ====================
+// Génération automatique, formateurs & disponibilités, synchronisation agenda.
+app.use('/api/programmes', programmeRoutes);
 
 // Route 404
 app.use((req, res) => {

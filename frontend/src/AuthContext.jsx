@@ -10,45 +10,61 @@ export const useAuth = () => {
   return context;
 };
 
+// URLs RELATIVES : passent par le proxy Vite (/api -> http://localhost:5000).
+// Évite le piège CORS/origine (localhost vs 127.0.0.1) qui faisait échouer le login.
+const API = '/api';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Vérifier l'authentification au démarrage
   useEffect(() => {
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkAuth = () => {
+  // Vérifie l'authentification au démarrage ET valide le token côté serveur.
+  const checkAuth = async () => {
     try {
-      console.log('🔍 Vérification de l\'authentification...');
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
-      
+
       if (!token || !savedUser) {
-        console.log('❌ Pas de token ou utilisateur enregistré');
         setLoading(false);
         return;
       }
-      
-      console.log('✅ Token trouvé');
-      
+
+      // Affichage optimiste immédiat (évite un écran vide).
+      try { setUser(JSON.parse(savedUser)); } catch { /* ignoré */ }
+
+      // Validation réelle : le token est-il toujours valide ?
       try {
-        const user = JSON.parse(savedUser);
-        setUser(user);
-        console.log('✅ Utilisateur restauré:', user.name);
+        const resp = await fetch(`${API}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          const fresh = data.user || data; // tolère plusieurs formes de réponse
+          if (fresh && fresh.email) {
+            setUser(fresh);
+            localStorage.setItem('user', JSON.stringify(fresh));
+          }
+        } else if (resp.status === 401 || resp.status === 403) {
+          // Token expiré ou invalide -> session nettoyée.
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+        }
+        // Autres statuts (500, réseau) : on garde l'affichage optimiste.
       } catch (e) {
-        console.error('Erreur parsing user:', e);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // Serveur injoignable : on conserve la session locale (mode dégradé).
+        console.warn('Validation token impossible (serveur ?):', e.message);
       }
-      
     } catch (error) {
-      console.error('🔥 Erreur vérification auth:', error);
+      console.error('Erreur vérification auth:', error);
     } finally {
       setLoading(false);
-      console.log('✅ Initialisation terminée');
     }
   };
 
@@ -56,53 +72,26 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      
-      console.log('🔑 Tentative de connexion pour:', email);
-      
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+
+      const response = await fetch(`${API}/auth/login`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({ email, password })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-      
-      console.log('📡 Réponse serveur:', response.status);
-      
+
       const data = await response.json();
-      console.log('📊 Données reçues:', data);
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur de connexion');
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Identifiants incorrects');
       }
-      
-      if (data.success) {
-        console.log('✅ Connexion réussie!');
-        
-        // Stocker le token et l'utilisateur
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
-        
-        console.log('👤 Utilisateur stocké:', data.user);
-        
-        return { 
-          success: true, 
-          user: data.user,
-          token: data.token 
-        };
-      } else {
-        throw new Error(data.message || 'Échec de la connexion');
-      }
-      
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+      return { success: true, user: data.user, token: data.token };
     } catch (error) {
-      console.error('🔥 Erreur login:', error.message);
       setError(error.message);
-      
-      return { 
-        success: false, 
-        message: error.message || 'Erreur de connexion' 
-      };
+      return { success: false, message: error.message || 'Erreur de connexion' };
     } finally {
       setLoading(false);
     }
@@ -112,53 +101,32 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       setLoading(true);
-      console.log('📝 Tentative d\'inscription:', userData.email);
-      
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+
+      const response = await fetch(`${API}/auth/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
       });
-      
+
       const data = await response.json();
-      console.log('📊 Réponse register:', data);
-      
-      if (data.success && data.token) {
-        // Sauvegarder le token et l'utilisateur
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
-        
-        console.log('✅ Inscription réussie:', data.user.name);
-        
-        return { 
-          success: true, 
-          user: data.user,
-          token: data.token 
-        };
-      } else {
-        setError(data.message || 'Erreur d\'inscription');
-        return { 
-          success: false, 
-          message: data.message || 'Erreur d\'inscription' 
-        };
+
+      if (!response.ok || !data.success || !data.token) {
+        throw new Error(data.message || 'Erreur d\'inscription');
       }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+      return { success: true, user: data.user, token: data.token };
     } catch (error) {
-      console.error('🔥 Erreur register:', error);
-      setError('Erreur lors de l\'inscription');
-      return { 
-        success: false, 
-        message: 'Erreur lors de l\'inscription' 
-      };
+      setError(error.message);
+      return { success: false, message: error.message || 'Erreur lors de l\'inscription' };
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
-    console.log('🚪 Déconnexion');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
@@ -179,14 +147,10 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
-    clearError: () => setError(null)
+    clearError: () => setError(null),
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContext;

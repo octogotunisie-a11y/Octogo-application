@@ -16,7 +16,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardClient from './pages/DashboardClient';
 import DashboardAdmin from './pages/DashboardAdmin';
-import Chatbot from './pages/chatbot.jsx'; // Import du chatbot
+import Chatbot from './pages/chatbot.jsx';
+import GenerationProgramme from './pages/GenerationProgramme';
 
 // Composant pour les routes protégées client uniquement
 const ClientRoute = ({ children }) => {
@@ -250,6 +251,7 @@ function AppContent() {
           <Route path="/formations" element={<Formations />} />
           <Route path="/parcours" element={<Parcours />} />
           <Route path="/team-building" element={<TeamBuilding />} />
+          <Route path="/generation-programme" element={<GenerationProgramme />} />
           <Route path="/contact" element={<Contact />} />
           
           {/* Routes d'authentification */}

@@ -1,551 +1,299 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext.jsx'
-import { Menu, X, User, LogOut, Home, BookOpen, Users, FileText, Mail, Target } from 'lucide-react'
+import {
+  Menu, X, User, LogOut, Home, BookOpen, Users, FileText, Mail, Target, Sparkles, ChevronDown
+} from 'lucide-react'
+
+const COLORS = {
+  primary: '#7C3AED',
+  secondary: '#EC4899',
+  dark: '#1F2937',
+  text: '#374151',
+  muted: '#6B7280',
+  light: '#F9FAFB',
+  border: '#E5E7EB',
+}
+
+// Liens de navigation. `highlight` = mis en avant comme bouton d'action.
+const NAV_ITEMS = [
+  { path: '/', label: 'Accueil', icon: Home },
+  { path: '/formations', label: 'Formations', icon: BookOpen },
+  { path: '/parcours', label: 'Parcours', icon: Target },
+  { path: '/team-building', label: 'Team Building', icon: Users },
+  { path: '/coaching', label: 'Coaching', icon: Users },
+  { path: '/articles', label: 'Articles', icon: FileText },
+  { path: '/clients', label: 'Clients', icon: Users },
+  { path: '/contact', label: 'Contact', icon: Mail },
+  { path: '/generation-programme', label: 'Génération de Programme', shortLabel: 'Générateur', icon: Sparkles, highlight: true },
+]
 
 const Navbar = () => {
   const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
-  const [isMobile, setIsMobile] = useState(false)
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1280)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    const onResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Menu items avec icônes
-  const navItems = [
-    { path: '/', label: 'Accueil', icon: <Home size={20} /> },
-    { path: '/formations', label: 'Formations', icon: <BookOpen size={20} /> },
-    { path: '/parcours', label: 'Parcours', icon: <Target size={20} /> },
-    { path: '/team-building', label: 'Team Building', icon: <Users size={20} /> },
-    { path: '/coaching', label: 'Coaching', icon: <Users size={20} /> },
-    { path: '/articles', label: 'Articles', icon: <FileText size={20} /> },
-    { path: '/clients', label: 'Clients', icon: <Users size={20} /> },
-    { path: '/contact', label: 'Contact', icon: <Mail size={20} /> }
-  ]
+  // Deux paliers : mobile (<992, menu burger) et compact (<1200, labels courts).
+  const isMobile = width < 992
+  const isCompact = width < 1200
 
-  const colors = {
-    primary: '#7C3AED',
-    secondary: '#EC4899',
-    dark: '#1F2937',
-    light: '#F9FAFB',
-    border: '#E5E7EB'
-  }
-
-  // Styles simples
-  const styles = {
-    nav: {
-      position: 'fixed',
-      top: 0,
-      width: '100%',
-      height: '70px',
-      background: '#FFFFFF',
-      borderBottom: `1px solid ${colors.border}`,
-      zIndex: 1000,
-      boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
-    },
-    container: {
-      width: '100%',
-      height: '100%',
-      padding: isMobile ? '0 16px' : '0 24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      maxWidth: '1400px',
-      margin: '0 auto'
-    },
-    logo: {
-      display: 'flex',
-      alignItems: 'center',
-      textDecoration: 'none',
-      height: '100%'
-    },
-    logoImage: {
-      height: isMobile ? '45px' : '55px',
-      width: 'auto',
-      objectFit: 'contain',
-      transition: 'transform 0.3s ease'
-    },
-    // Menu desktop simple
-    desktopMenu: {
-      display: 'flex',
-      gap: '6px',
-      alignItems: 'center',
-      marginLeft: '40px'
-    },
-    desktopLink: {
-      padding: '10px 18px',
-      textDecoration: 'none',
-      color: colors.dark,
-      fontSize: '15px',
-      fontWeight: '500',
-      borderRadius: '8px',
-      transition: 'all 0.2s ease',
-      position: 'relative'
-    },
-    // Menu mobile
-    mobileMenuButton: {
-      background: 'transparent',
-      border: 'none',
-      padding: '10px',
-      borderRadius: '8px',
-      color: colors.primary,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      minWidth: '44px',
-      minHeight: '44px'
-    },
-    mobileMenu: {
-      position: 'fixed',
-      top: '70px',
-      left: 0,
-      right: 0,
-      background: '#FFFFFF',
-      zIndex: 999,
-      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-      maxHeight: 'calc(100vh - 70px)',
-      overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch',
-      paddingBottom: '20px'
-    },
-    mobileMenuItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      padding: '16px 24px',
-      textDecoration: 'none',
-      color: colors.dark,
-      fontSize: '16px',
-      fontWeight: '500',
-      borderBottom: `1px solid ${colors.border}`,
-      transition: 'all 0.2s ease',
-      minHeight: '44px'
-    },
-    mobileMenuIcon: {
-      width: '24px',
-      color: colors.primary
-    },
-    // Boutons d'authentification
-    authButtons: {
-      display: 'flex',
-      gap: '10px',
-      alignItems: 'center'
-    },
-    loginButton: {
-      padding: '10px 20px',
-      background: 'transparent',
-      border: `1px solid ${colors.primary}`,
-      color: colors.primary,
-      borderRadius: '8px',
-      fontSize: '14px',
-      fontWeight: '600',
-      textDecoration: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minWidth: '44px',
-      minHeight: '44px',
-      transition: 'all 0.3s ease'
-    },
-    registerButton: {
-      padding: '10px 20px',
-      background: colors.primary,
-      border: 'none',
-      color: 'white',
-      borderRadius: '8px',
-      fontSize: '14px',
-      fontWeight: '600',
-      textDecoration: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minWidth: '44px',
-      minHeight: '44px',
-      transition: 'all 0.3s ease'
-    },
-    // User menu
-    userMenu: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '15px'
-    },
-    userAvatar: {
-      width: '38px',
-      height: '38px',
-      borderRadius: '50%',
-      background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white',
-      fontWeight: '600',
-      fontSize: '15px'
-    },
-    userName: {
-      fontSize: '14px',
-      fontWeight: '600',
-      color: colors.dark
-    },
-    dashboardButton: {
-      padding: '10px 20px',
-      background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-      color: 'white',
-      borderRadius: '8px',
-      fontSize: '14px',
-      fontWeight: '600',
-      textDecoration: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      border: 'none',
-      cursor: 'pointer',
-      minWidth: '44px',
-      minHeight: '44px',
-      transition: 'all 0.3s ease'
-    },
-    logoutButton: {
-      padding: '10px 20px',
-      background: 'transparent',
-      border: `1px solid #EF4444`,
-      color: '#EF4444',
-      borderRadius: '8px',
-      fontSize: '14px',
-      fontWeight: '600',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      cursor: 'pointer',
-      minWidth: '44px',
-      minHeight: '44px',
-      transition: 'all 0.3s ease'
-    },
-    // User menu mobile
-    userMobileMenu: {
-      padding: '24px',
-      borderTop: `1px solid ${colors.border}`
-    },
-    userMobileItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      padding: '14px 18px',
-      background: colors.light,
-      borderRadius: '8px',
-      marginBottom: '10px',
-      textDecoration: 'none',
-      color: colors.dark,
-      fontSize: '16px',
-      minHeight: '44px'
-    },
-    activeIndicator: {
-      position: 'absolute',
-      bottom: '-8px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '6px',
-      height: '6px',
-      borderRadius: '50%',
-      background: colors.primary,
-      opacity: 0
-    }
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate('/')
-    setIsMenuOpen(false)
-  }
-
+  const closeMenu = () => { setIsMenuOpen(false); setUserMenuOpen(false) }
+  const handleLogout = () => { logout(); navigate('/'); closeMenu() }
   const getInitials = (name) => {
     if (!name) return 'US'
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2)
+    return name.split(' ').map((p) => p[0]).join('').toUpperCase().substring(0, 2)
   }
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
+  // ---- styles cohérents ----
+  const S = {
+    nav: {
+      position: 'fixed', top: 0, left: 0, width: '100%', height: 70, background: '#fff',
+      borderBottom: `1px solid ${COLORS.border}`, zIndex: 1000, boxShadow: '0 1px 12px rgba(17,24,39,0.06)',
+    },
+    container: {
+      height: '100%', maxWidth: 1400, margin: '0 auto', padding: isMobile ? '0 16px' : '0 28px',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+    },
+    logo: { display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 },
+    logoImg: { height: isMobile ? 42 : 50, width: 'auto', objectFit: 'contain', display: 'block' },
+    desktopNav: {
+      display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'center',
+      flexWrap: 'nowrap', overflow: 'visible',
+    },
+    link: {
+      display: 'inline-flex', alignItems: 'center', gap: 6, padding: isCompact ? '8px 10px' : '8px 13px',
+      fontSize: isCompact ? 13.5 : 14.5, fontWeight: 500, lineHeight: 1, color: COLORS.text,
+      textDecoration: 'none', borderRadius: 8, whiteSpace: 'nowrap', transition: 'color .18s, background .18s',
+    },
+    cta: {
+      display: 'inline-flex', alignItems: 'center', gap: 6, padding: isCompact ? '8px 12px' : '9px 16px',
+      fontSize: isCompact ? 13.5 : 14.5, fontWeight: 600, lineHeight: 1, color: '#fff',
+      textDecoration: 'none', borderRadius: 9, whiteSpace: 'nowrap',
+      background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`,
+      boxShadow: '0 4px 12px rgba(124,58,237,0.25)', marginLeft: 4,
+    },
+    right: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 },
+    btnOutline: {
+      padding: '9px 16px', background: 'transparent', border: `1px solid ${COLORS.primary}`, color: COLORS.primary,
+      borderRadius: 9, fontSize: 14, fontWeight: 600, textDecoration: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+    },
+    btnSolid: {
+      padding: '9px 16px', background: COLORS.primary, border: 'none', color: '#fff',
+      borderRadius: 9, fontSize: 14, fontWeight: 600, textDecoration: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+    },
+    avatar: {
+      width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+      background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14,
+    },
+    burger: {
+      background: 'transparent', border: 'none', padding: 8, borderRadius: 8, color: COLORS.primary,
+      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44,
+    },
+    // dropdown utilisateur (desktop)
+    userWrap: { position: 'relative' },
+    userBtn: {
+      display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px 6px 6px', borderRadius: 999,
+      border: `1px solid ${COLORS.border}`, background: '#fff', cursor: 'pointer',
+    },
+    userDropdown: {
+      position: 'absolute', top: 'calc(100% + 10px)', right: 0, minWidth: 220, background: '#fff',
+      border: `1px solid ${COLORS.border}`, borderRadius: 12, boxShadow: '0 12px 30px rgba(17,24,39,0.12)',
+      padding: 8, zIndex: 1100,
+    },
+    dropItem: {
+      display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8,
+      textDecoration: 'none', color: COLORS.text, fontSize: 14, fontWeight: 500, cursor: 'pointer',
+      width: '100%', border: 'none', background: 'transparent', textAlign: 'left',
+    },
+    // menu mobile
+    mobilePanel: {
+      position: 'fixed', top: 70, left: 0, right: 0, background: '#fff', zIndex: 999,
+      boxShadow: '0 12px 30px rgba(17,24,39,0.12)', maxHeight: 'calc(100vh - 70px)', overflowY: 'auto',
+      padding: '10px 0 24px', borderTop: `1px solid ${COLORS.border}`,
+    },
+    mobileItem: {
+      display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', textDecoration: 'none',
+      color: COLORS.text, fontSize: 15.5, fontWeight: 500,
+    },
   }
 
-  const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
+  const linkStyle = ({ isActive }) => ({
+    ...S.link,
+    color: isActive ? COLORS.primary : COLORS.text,
+    background: isActive ? `${COLORS.primary}0F` : 'transparent',
+  })
+
+  const renderLogo = () => (
+    <NavLink to="/" style={S.logo} onClick={closeMenu} aria-label="OCTOGO — Accueil">
+      <img
+        src="/src/images/1.png" alt="OCTOGO" style={S.logoImg}
+        onError={(e) => {
+          e.target.onerror = null
+          e.target.style.display = 'none'
+          const f = document.createElement('div')
+          f.style.cssText = `height:${isMobile ? 42 : 50}px;width:${isMobile ? 42 : 50}px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:${isMobile ? 20 : 24}px;background:linear-gradient(135deg,${COLORS.primary},${COLORS.secondary});`
+          f.textContent = 'O'
+          e.target.parentElement.appendChild(f)
+        }}
+      />
+    </NavLink>
+  )
 
   return (
     <>
-      <nav style={styles.nav}>
-        <div style={styles.container}>
-          {/* Logo - Image seule, plus grande */}
-          <NavLink to="/" style={styles.logo} onClick={closeMenu}>
-            <img 
-              src="/src/images/1.png" 
-              alt="OCTOGO Logo" 
-              style={styles.logoImage}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.style.display = 'none';
-                const fallback = document.createElement('div');
-                fallback.style.cssText = `
-                  height: ${isMobile ? '45px' : '55px'};
-                  width: ${isMobile ? '45px' : '55px'};
-                  background: linear-gradient(135deg, ${colors.primary}, ${colors.secondary});
-                  border-radius: 12px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                  font-weight: bold;
-                  font-size: ${isMobile ? '20px' : '24px'};
-                `;
-                fallback.textContent = 'O';
-                e.target.parentElement.appendChild(fallback);
-              }}
-            />
-          </NavLink>
+      <nav style={S.nav}>
+        <div style={S.container}>
+          {renderLogo()}
 
-          {/* Desktop Menu */}
+          {/* ---------- NAVIGATION DESKTOP ---------- */}
           {!isMobile && (
-            <div style={styles.desktopMenu}>
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  style={({ isActive }) => ({
-                    ...styles.desktopLink,
-                    color: isActive ? colors.primary : colors.dark,
-                    background: isActive ? `${colors.primary}10` : 'transparent'
-                  })}
-                  className={({ isActive }) => isActive ? 'active-nav-item' : ''}
-                >
-                  {item.label}
-                  {({ isActive }) => isActive && (
-                    <div style={{...styles.activeIndicator, opacity: 1}}></div>
-                  )}
-                </NavLink>
-              ))}
+            <div style={S.desktopNav}>
+              {NAV_ITEMS.filter((i) => !i.highlight).map((item) => {
+                const Icone = item.icon
+                return (
+                  <NavLink key={item.path} to={item.path} style={linkStyle}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = `${COLORS.primary}0A` }}
+                    onMouseLeave={(e) => {
+                      const active = e.currentTarget.getAttribute('aria-current') === 'page'
+                      e.currentTarget.style.background = active ? `${COLORS.primary}0F` : 'transparent'
+                    }}>
+                    {!isCompact && <Icone size={16} />}
+                    {item.label}
+                  </NavLink>
+                )
+              })}
+              {/* Outil phare mis en avant */}
+              {NAV_ITEMS.filter((i) => i.highlight).map((item) => {
+                const Icone = item.icon
+                return (
+                  <NavLink key={item.path} to={item.path} style={S.cta}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 18px rgba(124,58,237,0.35)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124,58,237,0.25)' }}>
+                    <Icone size={16} />
+                    {isCompact ? (item.shortLabel || item.label) : item.label}
+                  </NavLink>
+                )
+              })}
             </div>
           )}
 
-          {/* Right side - Auth buttons or User menu */}
-          <div style={styles.authButtons}>
+          {/* ---------- ZONE DROITE ---------- */}
+          <div style={S.right}>
             {isAuthenticated ? (
-              <div style={styles.userMenu}>
-                {!isMobile && (
-                  <>
-                    <div style={styles.userAvatar}>
-                      {getInitials(user?.name)}
-                    </div>
-                    <span style={styles.userName}>{user?.name?.split(' ')[0]}</span>
-                    <NavLink to="/dashboard">
-                      <button 
-                        style={styles.dashboardButton}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.3)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                      >
-                        <User size={16} />
-                        Dashboard
+              !isMobile ? (
+                <div style={S.userWrap}>
+                  <button style={S.userBtn} onClick={() => setUserMenuOpen((v) => !v)} aria-haspopup="menu" aria-expanded={userMenuOpen}>
+                    <div style={S.avatar}>{getInitials((user||{}).name)}</div>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.dark, maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {((user||{}).name||'').split(' ')[0]}
+                    </span>
+                    <ChevronDown size={16} color={COLORS.muted} />
+                  </button>
+                  {userMenuOpen && (
+                    <div style={S.userDropdown} role="menu">
+                      <div style={{ padding: '8px 12px 10px', borderBottom: `1px solid ${COLORS.border}`, marginBottom: 6 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.dark }}>{(user||{}).name}</div>
+                        <div style={{ fontSize: 12.5, color: COLORS.muted, overflow: 'hidden', textOverflow: 'ellipsis' }}>{(user||{}).email}</div>
+                      </div>
+                      <NavLink to="/dashboard" style={S.dropItem} onClick={closeMenu}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = COLORS.light }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}>
+                        <User size={18} /> Mon Dashboard
+                      </NavLink>
+                      <button style={{ ...S.dropItem, color: '#DC2626' }} onClick={handleLogout}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = '#FEF2F2' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}>
+                        <LogOut size={18} /> Déconnexion
                       </button>
-                    </NavLink>
-                    <button 
-                      onClick={handleLogout} 
-                      style={styles.logoutButton}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#FEF2F2';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                      }}
-                    >
-                      <LogOut size={16} />
-                      Déconnexion
-                    </button>
-                  </>
-                )}
-                
-                {/* Mobile menu button for authenticated users */}
-                {isMobile && (
-                  <button 
-                    style={styles.mobileMenuButton}
-                    onClick={toggleMenu}
-                    aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-                  >
-                    {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-                  </button>
-                )}
-              </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button style={S.burger} onClick={() => setIsMenuOpen((v) => !v)} aria-label="Menu">
+                  {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+                </button>
+              )
             ) : (
-              <>
-                {!isMobile ? (
-                  <>
-                    <NavLink 
-                      to="/login" 
-                      style={styles.loginButton}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = colors.primary;
-                        e.currentTarget.style.color = 'white';
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = colors.primary;
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      Connexion
-                    </NavLink>
-                    <NavLink 
-                      to="/register" 
-                      style={styles.registerButton}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = colors.secondary;
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(236, 72, 153, 0.3)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = colors.primary;
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      Inscription
-                    </NavLink>
-                  </>
-                ) : (
-                  <button 
-                    style={styles.mobileMenuButton}
-                    onClick={toggleMenu}
-                    aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-                  >
-                    {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-                  </button>
-                )}
-              </>
+              !isMobile ? (
+                <>
+                  <NavLink to="/login" style={S.btnOutline}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = COLORS.primary; e.currentTarget.style.color = '#fff' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = COLORS.primary }}>
+                    Connexion
+                  </NavLink>
+                  <NavLink to="/register" style={S.btnSolid}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = COLORS.secondary }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = COLORS.primary }}>
+                    Inscription
+                  </NavLink>
+                </>
+              ) : (
+                <button style={S.burger} onClick={() => setIsMenuOpen((v) => !v)} aria-label="Menu">
+                  {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+                </button>
+              )
             )}
           </div>
         </div>
 
-        {/* Mobile Menu Dropdown */}
+        {/* ---------- MENU MOBILE ---------- */}
         {isMobile && isMenuOpen && (
-          <div style={styles.mobileMenu}>
-            {/* Navigation links */}
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                style={({ isActive }) => ({
-                  ...styles.mobileMenuItem,
-                  background: isActive ? `${colors.primary}10` : 'transparent',
-                  color: isActive ? colors.primary : colors.dark
-                })}
-                onClick={closeMenu}
-              >
-                <div style={styles.mobileMenuIcon}>
-                  {item.icon}
-                </div>
-                {item.label}
-              </NavLink>
-            ))}
+          <div style={S.mobilePanel}>
+            {NAV_ITEMS.map((item) => {
+              const Icone = item.icon
+              return (
+                <NavLink key={item.path} to={item.path} onClick={closeMenu}
+                  style={({ isActive }) => ({
+                    ...S.mobileItem,
+                    color: item.highlight ? COLORS.primary : isActive ? COLORS.primary : COLORS.text,
+                    background: isActive ? `${COLORS.primary}0F` : 'transparent',
+                    fontWeight: item.highlight ? 700 : 500,
+                  })}>
+                  <Icone size={20} color={COLORS.primary} />
+                  {item.label}
+                </NavLink>
+              )
+            })}
 
-            {/* Authentication section in mobile menu */}
-            {isAuthenticated ? (
-              <div style={styles.userMobileMenu}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  marginBottom: '20px',
-                  padding: '16px',
-                  background: colors.light,
-                  borderRadius: '12px'
-                }}>
-                  <div style={styles.userAvatar}>
-                    {getInitials(user?.name)}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: '600', color: colors.dark, fontSize: '16px' }}>
-                      {user?.name}
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#6B7280' }}>
-                      {user?.email}
+            <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: 8, padding: '16px 20px 0' }}>
+              {isAuthenticated ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: COLORS.light, borderRadius: 12, marginBottom: 12 }}>
+                    <div style={S.avatar}>{getInitials((user||{}).name)}</div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontWeight: 700, color: COLORS.dark, fontSize: 15 }}>{(user||{}).name}</div>
+                      <div style={{ fontSize: 13, color: COLORS.muted, overflow: 'hidden', textOverflow: 'ellipsis' }}>{(user||{}).email}</div>
                     </div>
                   </div>
+                  <NavLink to="/dashboard" style={{ ...S.btnSolid, display: 'block', textAlign: 'center', marginBottom: 10 }} onClick={closeMenu}>
+                    Mon Dashboard
+                  </NavLink>
+                  <button onClick={handleLogout} style={{ ...S.btnOutline, width: '100%', border: '1px solid #EF4444', color: '#DC2626' }}>
+                    Déconnexion
+                  </button>
+                </>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <NavLink to="/login" style={{ ...S.btnOutline, textAlign: 'center' }} onClick={closeMenu}>Connexion</NavLink>
+                  <NavLink to="/register" style={{ ...S.btnSolid, textAlign: 'center' }} onClick={closeMenu}>Inscription</NavLink>
                 </div>
-
-                <NavLink 
-                  to="/dashboard" 
-                  style={styles.userMobileItem}
-                  onClick={closeMenu}
-                >
-                  <User size={22} />
-                  Mon Dashboard
-                </NavLink>
-
-                <button 
-                  onClick={handleLogout}
-                  style={{
-                    ...styles.userMobileItem,
-                    background: '#FEF2F2',
-                    color: '#DC2626',
-                    border: 'none',
-                    width: '100%',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <LogOut size={22} />
-                  Déconnexion
-                </button>
-              </div>
-            ) : (
-              <div style={{
-                padding: '24px',
-                borderTop: `1px solid ${colors.border}`,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px'
-              }}>
-                <NavLink 
-                  to="/login" 
-                  style={styles.loginButton}
-                  onClick={closeMenu}
-                >
-                  Connexion
-                </NavLink>
-                <NavLink 
-                  to="/register" 
-                  style={styles.registerButton}
-                  onClick={closeMenu}
-                >
-                  Inscription
-                </NavLink>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </nav>
 
-      {/* Espace pour éviter que le contenu ne soit caché sous la navbar */}
-      <div style={{
-        height: '70px',
-        width: '100%'
-      }} />
+      {/* Spacer pour compenser la navbar fixe */}
+      <div style={{ height: 70, width: '100%' }} />
     </>
   )
 }
