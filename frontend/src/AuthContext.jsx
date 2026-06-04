@@ -10,9 +10,32 @@ export const useAuth = () => {
   return context;
 };
 
-// URLs RELATIVES : passent par le proxy Vite (/api -> http://localhost:5000).
-// Évite le piège CORS/origine (localhost vs 127.0.0.1) qui faisait échouer le login.
+// URLs RELATIVES via le proxy Vite (/api -> http://localhost:5000).
+// Évite tout problème CORS/origine (localhost vs 127.0.0.1, port 5174, etc.).
 const API = '/api';
+const TIMEOUT_MS = 12000;
+const log = (...a) => console.log('%c[AUTH]', 'color:#7C3AED;font-weight:bold', ...a);
+
+// fetch avec délai d'expiration : une requête qui ne répond pas n'immobilise plus l'app.
+async function apiFetch(path, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const resp = await fetch(`${API}${path}`, { ...options, signal: controller.signal });
+    return resp;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Traduit une erreur technique en message clair pour l'utilisateur.
+function messageErreur(e) {
+  if (e.name === 'AbortError') return 'Le serveur met trop de temps à répondre. Réessayez.';
+  if (e.message && /Failed to fetch|NetworkError|ERR_/.test(e.message)) {
+    return 'Serveur injoignable. Vérifiez que le backend est démarré (npm run dev).';
+  }
+  return e.message || 'Une erreur est survenue.';
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -24,109 +47,125 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Vérifie l'authentification au démarrage ET valide le token côté serveur.
+  // Au démarrage : restaure la session ET valide le token côté serveur.
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
 
       if (!token || !savedUser) {
+        log('Aucune session enregistrée.');
         setLoading(false);
         return;
       }
 
-      // Affichage optimiste immédiat (évite un écran vide).
-      try { setUser(JSON.parse(savedUser)); } catch { /* ignoré */ }
+      try { setUser(JSON.parse(savedUser)); log('Session restaurée (optimiste).'); } catch (e) { /* ignoré */ }
 
-      // Validation réelle : le token est-il toujours valide ?
       try {
-        const resp = await fetch(`${API}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const resp = await apiFetch('/users/me', { headers: { Authorization: 'Bearer ' + token } });
         if (resp.ok) {
           const data = await resp.json();
-          const fresh = data.user || data; // tolère plusieurs formes de réponse
+          const fresh = data.user || data;
           if (fresh && fresh.email) {
             setUser(fresh);
             localStorage.setItem('user', JSON.stringify(fresh));
+            log('Token valide, utilisateur rafraîchi:', fresh.email, '| rôle:', fresh.role);
           }
         } else if (resp.status === 401 || resp.status === 403) {
-          // Token expiré ou invalide -> session nettoyée.
+          log('Token expiré/invalide -> déconnexion.');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setUser(null);
+        } else {
+          log('Validation token : statut', resp.status, '- session locale conservée.');
         }
-        // Autres statuts (500, réseau) : on garde l'affichage optimiste.
       } catch (e) {
-        // Serveur injoignable : on conserve la session locale (mode dégradé).
-        console.warn('Validation token impossible (serveur ?):', e.message);
+        console.warn('[AUTH] Validation token impossible:', e.message, '- session locale conservée.');
       }
     } catch (error) {
-      console.error('Erreur vérification auth:', error);
+      console.error('[AUTH] Erreur checkAuth:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const login = async (email, password) => {
+    setError(null);
+    setLoading(true);
+    log('Connexion:', email);
     try {
-      setError(null);
-      setLoading(true);
-
-      const response = await fetch(`${API}/auth/login`, {
+      const response = await apiFetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: (email || '').trim().toLowerCase(), password }),
       });
 
-      const data = await response.json();
+      let data = {};
+      try { data = await response.json(); } catch (e) { /* réponse non-JSON */ }
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Identifiants incorrects');
+        const msg = data.message || (response.status === 401 ? 'Email ou mot de passe incorrect.' : 'Erreur serveur (' + response.status + ').');
+        log('Échec connexion:', msg);
+        setError(msg);
+        return { success: false, message: msg };
       }
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);
+      log('Connexion réussie:', data.user.email, '| rôle:', data.user.role);
       return { success: true, user: data.user, token: data.token };
-    } catch (error) {
-      setError(error.message);
-      return { success: false, message: error.message || 'Erreur de connexion' };
+    } catch (e) {
+      const msg = messageErreur(e);
+      console.error('[AUTH] Erreur réseau login:', e.message);
+      setError(msg);
+      return { success: false, message: msg };
     } finally {
       setLoading(false);
     }
   };
 
   const register = async (userData) => {
+    setError(null);
+    setLoading(true);
+    log('Inscription:', userData && userData.email);
     try {
-      setError(null);
-      setLoading(true);
+      const payload = Object.assign({}, userData);
+      if (payload.email) payload.email = payload.email.trim().toLowerCase();
 
-      const response = await fetch(`${API}/auth/register`, {
+      const response = await apiFetch('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      let data = {};
+      try { data = await response.json(); } catch (e) { /* réponse non-JSON */ }
 
       if (!response.ok || !data.success || !data.token) {
-        throw new Error(data.message || 'Erreur d\'inscription');
+        const msg = data.message || ('Erreur d\'inscription (' + response.status + ').');
+        log('Échec inscription:', msg);
+        setError(msg);
+        return { success: false, message: msg };
       }
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);
+      log('Inscription réussie:', data.user.email);
       return { success: true, user: data.user, token: data.token };
-    } catch (error) {
-      setError(error.message);
-      return { success: false, message: error.message || 'Erreur lors de l\'inscription' };
+    } catch (e) {
+      const msg = messageErreur(e);
+      console.error('[AUTH] Erreur réseau register:', e.message);
+      setError(msg);
+      return { success: false, message: msg };
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
+    log('Déconnexion.');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);

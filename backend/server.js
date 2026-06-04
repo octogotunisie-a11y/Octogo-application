@@ -4,15 +4,24 @@ const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const programmeRoutes = require('./Routes/programmeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ==================== CONFIG ====================
+// CORS — en développement, on autorise toute origine locale (n'importe quel port)
+// ainsi que les requêtes sans origine (curl, applications mobiles). Cela évite les
+// échecs intermittents quand Vite démarre sur 5174/5175 ou via 127.0.0.1.
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
-    credentials: true
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true); // curl, Postman, mobile, même origine
+        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) return callback(null, true);
+        // En production, restreindre ici à votre domaine. En dev, on reste permissif.
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -48,25 +57,50 @@ const formationFile = path.join(dataDir, 'formation.json');
 const teambuildingFile = path.join(dataDir, 'teambuilding.json');
 
 // ==================== HELPERS ====================
+// Lecture robuste : si le fichier est corrompu (écriture interrompue), on tente
+// une récupération depuis la sauvegarde .bak avant de renvoyer un tableau vide.
 const readJSON = (filename) => {
+    const filePath = path.join(dataDir, filename);
+    const lire = (p) => {
+        const data = fs.readFileSync(p, 'utf8');
+        return data && data.trim() ? JSON.parse(data) : [];
+    };
     try {
-        const filePath = path.join(dataDir, filename);
         if (!fs.existsSync(filePath)) {
             fs.writeFileSync(filePath, JSON.stringify([]));
             return [];
         }
-        const data = fs.readFileSync(filePath, 'utf8');
-        return data ? JSON.parse(data) : [];
+        return lire(filePath);
     } catch (e) {
-        console.error(`❌ Erreur lecture ${filename}:`, e.message);
+        console.error(`❌ Lecture ${filename} corrompue:`, e.message);
+        // Tentative de récupération depuis la sauvegarde
+        try {
+            const bak = filePath + '.bak';
+            if (fs.existsSync(bak)) {
+                const recovered = lire(bak);
+                fs.writeFileSync(filePath, JSON.stringify(recovered, null, 2));
+                console.warn(`↩ ${filename} restauré depuis la sauvegarde .bak (${recovered.length} entrées)`);
+                return recovered;
+            }
+        } catch (e2) {
+            console.error(`❌ Échec récupération .bak pour ${filename}:`, e2.message);
+        }
         return [];
     }
 };
 
+// Écriture ATOMIQUE : on écrit dans un fichier temporaire, on sauvegarde l'ancien
+// (.bak), puis on renomme. Le renommage est atomique → jamais de fichier à moitié
+// écrit, donc plus de lecture « cassée » pendant une écriture concurrente.
 const writeJSON = (filename, data) => {
     try {
         const filePath = path.join(dataDir, filename);
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+        const tmpPath = filePath + '.tmp';
+        fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2));
+        if (fs.existsSync(filePath)) {
+            try { fs.copyFileSync(filePath, filePath + '.bak'); } catch (e) { /* sauvegarde best-effort */ }
+        }
+        fs.renameSync(tmpPath, filePath); // remplacement atomique
         return true;
     } catch (e) {
         console.error(`❌ Erreur écriture ${filename}:`, e.message);
@@ -1620,8 +1654,15 @@ app.get('/api/test', (req, res) => {
 });
 
 // ==================== GÉNÉRATION DE PROGRAMME ====================
-// Génération automatique, formateurs & disponibilités, synchronisation agenda.
-app.use('/api/programmes', programmeRoutes);
+// Chargement PROTÉGÉ : si un fichier du module manque, le serveur démarre quand
+// même et l'authentification reste fonctionnelle.
+try {
+    const programmeRoutes = require('./Routes/programmeRoutes');
+    app.use('/api/programmes', programmeRoutes);
+    console.log('✅ Module Génération de Programme chargé');
+} catch (e) {
+    console.error('⚠ Module Génération de Programme NON chargé:', e.message);
+}
 
 // Route 404
 app.use((req, res) => {

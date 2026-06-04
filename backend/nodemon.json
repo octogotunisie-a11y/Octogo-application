@@ -1,0 +1,13 @@
+{
+  "watch": ["server.js", "Routes/", "programmeEngine.js", "googleAgendaSync.js"],
+  "ext": "js,cjs,mjs",
+  "ignore": [
+    "data/",
+    "data/*",
+    "uploads/",
+    "uploads/*",
+    "*.json",
+    "node_modules/"
+  ],
+  "delay": "300"
+}
