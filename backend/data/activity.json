@@ -2183,5 +2183,195 @@
       "email": "admin@octogo.com"
     },
     "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780579881262,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-04T13:31:21.262Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780582342286,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-04T14:12:22.286Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780582575977,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-04T14:16:15.977Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780582676250,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-04T14:17:56.250Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780582743732,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-04T14:19:03.732Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780582777029,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-04T14:19:37.029Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780584218795,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-04T14:43:38.795Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780655055933,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:24:15.933Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780655130224,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-05T10:25:30.224Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780655183230,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:26:23.230Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780655252437,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:27:32.437Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780655616146,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:33:36.146Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780656949983,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:55:49.983Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780657029210,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T10:57:09.210Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780657077631,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-05T10:57:57.631Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780665621175,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T13:20:21.175Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780665692117,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T13:21:32.117Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780666849430,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T13:40:49.430Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1780667614929,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-06-05T13:53:34.929Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
   }
 ]

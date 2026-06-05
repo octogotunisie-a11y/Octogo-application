@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useAuth } from '../AuthContext.jsx'
 import {
   Menu, X, User, LogOut, Home, BookOpen, Users, FileText, Mail, Target, Sparkles, ChevronDown
@@ -29,7 +29,6 @@ const NAV_ITEMS = [
 ]
 
 const Navbar = () => {
-  const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
   const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1280)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -46,7 +45,10 @@ const Navbar = () => {
   const isCompact = width < 1200
 
   const closeMenu = () => { setIsMenuOpen(false); setUserMenuOpen(false) }
-  const handleLogout = () => { logout(); navigate('/'); closeMenu() }
+  // Déconnexion : on vide la session PUIS on recharge complètement l'app
+  // (window.location) pour repartir d'un état propre — évite tout état résiduel
+  // qui empêchait le dashboard de se rouvrir après une reconnexion.
+  const handleLogout = () => { logout(); window.location.href = '/'; }
   const getInitials = (name) => {
     if (!name) return 'US'
     return name.split(' ').map((p) => p[0]).join('').toUpperCase().substring(0, 2)

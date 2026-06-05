@@ -78,13 +78,11 @@ const Login = () => {
     console.log('Résultat login:', result);
     
     if (result.success) {
-      // IMPORTANT: Utiliser navigate pour la redirection
+      // Rechargement complet pour repartir d'un état propre à chaque connexion.
       if (result.user.role === 'admin') {
-        console.log('🛠️ Redirection vers dashboard admin');
-        navigate('/admin/dashboard');
+        window.location.href = '/admin/dashboard';
       } else {
-        console.log('👤 Redirection vers dashboard client');
-        navigate('/dashboard');
+        window.location.href = '/dashboard';
       }
     } else {
       setErrors({ 

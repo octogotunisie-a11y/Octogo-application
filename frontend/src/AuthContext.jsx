@@ -10,9 +10,12 @@ export const useAuth = () => {
   return context;
 };
 
-// URLs RELATIVES via le proxy Vite (/api -> http://localhost:5000).
-// Évite tout problème CORS/origine (localhost vs 127.0.0.1, port 5174, etc.).
-const API = '/api';
+// APPEL DIRECT du backend (on contourne le proxy Vite, qui provoque des ECONNRESET
+// avec Node récent à cause de la réutilisation des connexions keep-alive).
+// On utilise le même hôte que la page courante + port 5000 : fonctionne aussi bien
+// en local (localhost:5173 -> localhost:5000) qu'en réseau (--host : IP -> IP:5000).
+// Le CORS du backend est permissif, donc l'appel direct est autorisé.
+const API = `${window.location.protocol}//${window.location.hostname}:5000/api`;
 const TIMEOUT_MS = 12000;
 const log = (...a) => console.log('%c[AUTH]', 'color:#7C3AED;font-weight:bold', ...a);
 
