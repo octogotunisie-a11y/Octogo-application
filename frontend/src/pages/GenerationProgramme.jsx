@@ -2,14 +2,21 @@
 // -----------------------------------------------------------------------------
 // Page « Génération de Programme » — OCTOGO
 // Assistant multi-étapes : saisie -> génération -> aperçu -> export Word / PDF.
+//
+// MODIFICATIONS (conformité aux règles métier) :
+//   • Le client NE SAISIT PLUS le tarif : le prix est calculé automatiquement
+//     par le backend selon la grille tarifaire définie par l'administrateur.
+//   • Les formateurs ne sont plus saisis en texte libre : le vivier provient du
+//     backend (/api/catalogue/public/formateurs) et le système affecte
+//     automatiquement un formateur qualifié et disponible à chaque action.
 // -----------------------------------------------------------------------------
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import {
   Building2, Users, Target, Wallet,
   Sparkles, Plus, Trash2, ChevronRight, ChevronLeft, FileText, FileDown,
-  CheckCircle2, AlertTriangle, RotateCcw, Lock, UserPlus,
+  CheckCircle2, AlertTriangle, RotateCcw, Lock, UserPlus, BadgeCheck,
 } from 'lucide-react';
 import {
   createEmptyState, genererProgrammeAnnuel, uid, MOIS_FRANCAIS,
@@ -86,6 +93,14 @@ const btnSmall = {
   borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer',
 };
 
+// Encadré d'information réutilisable (note « prix automatique », etc.).
+const Info = ({ children }) => (
+  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', background: `${C.primary}08`, border: `1px solid ${C.primary}25`, borderRadius: 10, marginBottom: 16 }}>
+    <Lock size={16} color={C.primary} style={{ flexShrink: 0, marginTop: 2 }} />
+    <span style={{ fontSize: 13, color: C.dark, lineHeight: 1.5 }}>{children}</span>
+  </div>
+);
+
 // --- composant principal -----------------------------------------------------
 export default function GenerationProgramme() {
   const { isAuthenticated, user } = useAuth();
@@ -94,7 +109,18 @@ export default function GenerationProgramme() {
   const [resultat, setResultat] = useState(null);
   const [enCours, setEnCours] = useState(false);
 
+  // Vivier de formateurs géré par l'administrateur (backend).
+  const [formateursBackend, setFormateursBackend] = useState([]);
+
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  // Chargement du vivier de formateurs depuis le backend (lecture seule).
+  useEffect(() => {
+    fetch('/api/catalogue/public/formateurs')
+      .then((r) => r.json())
+      .then((d) => setFormateursBackend(d.formateurs || []))
+      .catch(() => { /* backend indisponible : on n'affiche simplement pas le vivier */ });
+  }, []);
 
   // helpers d'édition immuable
   const setEntreprise = (k, v) => setState((s) => ({ ...s, entreprise: { ...s.entreprise, [k]: v } }));
@@ -112,7 +138,8 @@ export default function GenerationProgramme() {
   const lancerGeneration = async () => {
     setEnCours(true);
     try {
-      // 1) Génération dynamique côté backend (données + disponibilités réelles).
+      // 1) Génération dynamique côté backend (données + disponibilités + tarifs réels).
+      //    Le prix est calculé par le serveur selon la grille tarifaire de l'admin.
       const token = localStorage.getItem('token');
       const resp = await fetch('/api/programmes/generer', {
         method: 'POST',
@@ -287,12 +314,17 @@ export default function GenerationProgramme() {
             </Card>
 
             <Card>
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
-                <Field label="Budget annuel de formation" hint="(DT — Dinar Tunisien — HT — Hors Taxes)" type="number"
-                  value={state.budget.montantAnnuel} onChange={(v) => setBudget('montantAnnuel', v)} placeholder="Ex. : 60000" />
-                <Field label="Tarif jour-formateur appliqué" hint="(DT HT / jour)" type="number"
-                  value={state.budget.tarifJour} onChange={(v) => setBudget('tarifJour', v)} placeholder="1200" />
-              </div>
+              {/* Le budget annuel reste saisi : c'est l'enveloppe DISPONIBLE du client,
+                  utilisée pour comparer au coût estimé (dans le budget / dépassement).
+                  Le TARIF, lui, n'est plus saisi : il vient du backend. */}
+              <Field label="Budget annuel de formation disponible" hint="(DT — Dinar Tunisien — HT — Hors Taxes)" type="number"
+                value={state.budget.montantAnnuel} onChange={(v) => setBudget('montantAnnuel', v)} placeholder="Ex. : 60000" />
+
+              <Info>
+                Le <strong>tarif jour-formateur</strong> n'est pas saisi ici. Le prix de chaque action et le coût total sont
+                <strong> calculés automatiquement</strong> selon la grille tarifaire définie par l'administrateur dans le backend.
+              </Info>
+
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
                 <div style={{ marginBottom: 16 }}>
                   <Label>Année de l'agenda annuel</Label>
@@ -331,27 +363,29 @@ export default function GenerationProgramme() {
               </button>
             </Card>
 
+            {/* Vivier de formateurs : géré dans le backend (lecture seule).
+                Le client ne saisit plus de formateurs ; le système affecte
+                automatiquement, pour chaque action, un formateur qualifié et
+                disponible à la date prévue. */}
             <Card>
-              <Label hint="(qualifiés, spécialisés et autorisés CNFCPP)">Formateurs</Label>
-              {state.formateurs.map((f) => (
-                <div key={f.id} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 2fr auto auto', gap: 10, marginBottom: 10, alignItems: 'center' }}>
-                  <input style={inputStyle} placeholder="Nom du formateur" value={f.nom}
-                    onChange={(e) => updateItem('formateurs', f.id, 'nom', e.target.value)} />
-                  <input style={inputStyle} placeholder="Spécialité" value={f.specialite}
-                    onChange={(e) => updateItem('formateurs', f.id, 'specialite', e.target.value)} />
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: C.muted }}>
-                    <input type="checkbox" checked={f.agrementCNFCPP}
-                      onChange={(e) => updateItem('formateurs', f.id, 'agrementCNFCPP', e.target.checked)} /> CNFCPP
-                  </label>
-                  {state.formateurs.length > 1 && (
-                    <button style={{ background: 'none', border: 'none', color: C.danger, cursor: 'pointer' }}
-                      onClick={() => removeItem('formateurs', f.id)}><Trash2 size={18} /></button>
-                  )}
+              <Label hint="(gérés par l'administrateur — affectation automatique)">Vivier de formateurs disponibles</Label>
+              <div style={{ fontSize: 13, color: C.muted, marginBottom: 14, lineHeight: 1.5 }}>
+                Vous n'avez aucun formateur à saisir. À la génération, le système affecte à chaque action un formateur
+                <strong> qualifié pour la catégorie</strong> et <strong>disponible à la période prévue</strong>, parmi le vivier ci-dessous.
+              </div>
+              {formateursBackend.length === 0 ? (
+                <div style={{ fontSize: 13, color: C.muted }}>Vivier indisponible (serveur non joignable). Les formateurs seront proposés à la génération.</div>
+              ) : (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {formateursBackend.map((f) => (
+                    <span key={f.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, padding: '7px 12px', borderRadius: 999, background: C.light, border: `1px solid ${C.border}`, color: C.dark }}>
+                      <strong>{f.nom}</strong>
+                      {f.specialite ? <span style={{ color: C.muted }}>· {f.specialite}</span> : null}
+                      {f.agrementCNFCPP ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: C.ok, fontWeight: 600 }}><BadgeCheck size={13} /> CNFCPP</span> : null}
+                    </span>
+                  ))}
                 </div>
-              ))}
-              <button style={btnSmall} onClick={() => addItem('formateurs', () => ({ id: uid('fmt'), nom: '', specialite: '', agrementCNFCPP: true }))}>
-                <Plus size={16} /> Ajouter un formateur
-              </button>
+              )}
             </Card>
           </>
         );
@@ -364,13 +398,18 @@ export default function GenerationProgramme() {
                 <div style={{ textAlign: 'center', padding: '20px 10px' }}>
                   <Sparkles size={42} color={C.primary} style={{ marginBottom: 12 }} />
                   <h3 style={{ margin: '0 0 8px', color: C.dark }}>Prêt à générer le programme annuel</h3>
-                  <p style={{ color: C.muted, fontSize: 14, maxWidth: 480, margin: '0 auto 20px' }}>
+                  <p style={{ color: C.muted, fontSize: 14, maxWidth: 480, margin: '0 auto 8px' }}>
                     Le moteur OCTOGO va apparier vos objectifs et compétences à nos programmes,
                     construire le plan par corps de métier, le calendrier, l'estimation budgétaire et les KPI (Indicateur Clé de Performance).
                   </p>
-                  <button style={{ ...btnPrimary, opacity: enCours ? 0.7 : 1 }} onClick={lancerGeneration} disabled={enCours}>
-                    <Sparkles size={18} /> {enCours ? 'Génération en cours…' : 'Générer le programme'}
-                  </button>
+                  <p style={{ color: C.muted, fontSize: 13, maxWidth: 480, margin: '0 auto 20px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Lock size={14} color={C.primary} /> Le prix est calculé automatiquement selon les tarifs de l'administrateur.
+                  </p>
+                  <div>
+                    <button style={{ ...btnPrimary, opacity: enCours ? 0.7 : 1 }} onClick={lancerGeneration} disabled={enCours}>
+                      <Sparkles size={18} /> {enCours ? 'Génération en cours…' : 'Générer le programme'}
+                    </button>
+                  </div>
                 </div>
               </Card>
             )}
@@ -395,7 +434,7 @@ export default function GenerationProgramme() {
         </h1>
         <p style={{ color: C.muted, fontSize: 15, marginTop: 8 }}>
           Construisez automatiquement un programme annuel de formation exportable (Word / PDF — Portable Document Format),
-          prêt pour la direction et les dossiers TFP (Taxe de Formation Professionnelle) / CNFCPP.
+          prêt pour la direction et les dossiers TFP (Taxe de Formation Professionnelle) / CNFCPP. Le prix est calculé automatiquement selon les tarifs de l'administrateur.
         </p>
       </div>
 
