@@ -1,0 +1,31 @@
+{
+  "devise": "DT",
+  "tauxTVA": 19,
+  "tarifJourParDefaut": 1200,
+  "tailleGroupeParDefaut": 12,
+  "majorationsModalite": {
+    "Présentiel": 1,
+    "Hybride": 1.1,
+    "Distanciel": 0.85,
+    "Présentiel multi-groupes": 1
+  },
+  "remisesVolume": [
+    {
+      "seuilJoursFormateur": 10,
+      "remisePct": 5,
+      "libelle": "Remise volume — à partir de 10 jours-formateur"
+    },
+    {
+      "seuilJoursFormateur": 20,
+      "remisePct": 10,
+      "libelle": "Remise volume — à partir de 20 jours-formateur"
+    },
+    {
+      "seuilJoursFormateur": 40,
+      "remisePct": 15,
+      "libelle": "Remise volume — à partir de 40 jours-formateur"
+    }
+  ],
+  "majorationCNFCPP": 0,
+  "miseAJour": "2026-06-29"
+}

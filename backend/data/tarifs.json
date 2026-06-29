@@ -1,0 +1,58 @@
+{
+  "devise": "DT",
+  "tauxTVA": 19,
+  "tarifJourParDefaut": 1200,
+  "tailleGroupeParDefaut": 12,
+  "majorationsModalite": {
+    "Présentiel": 1,
+    "Hybride": 1.1,
+    "Distanciel": 0.85,
+    "Présentiel multi-groupes": 1
+  },
+  "remisesVolume": [
+    {
+      "seuilJoursFormateur": 10,
+      "remisePct": 5,
+      "libelle": "Remise volume — à partir de 10 jours-formateur"
+    },
+    {
+      "seuilJoursFormateur": 20,
+      "remisePct": 10,
+      "libelle": "Remise volume — à partir de 20 jours-formateur"
+    },
+    {
+      "seuilJoursFormateur": 40,
+      "remisePct": 15,
+      "libelle": "Remise volume — à partir de 40 jours-formateur"
+    }
+  ],
+  "majorationCNFCPP": 0,
+  "tarifsParFormation": {
+    "form_neurosciences": {
+      "modeTarification": "JOUR",
+      "tarifJour": 1300,
+      "forfait": null
+    },
+    "form_audit": {
+      "modeTarification": "JOUR",
+      "tarifJour": null,
+      "forfait": null
+    },
+    "form_gestion_stress": {
+      "modeTarification": "JOUR",
+      "tarifJour": null,
+      "forfait": null
+    },
+    "form_leadership": {
+      "modeTarification": "JOUR",
+      "tarifJour": null,
+      "forfait": null
+    },
+    "form_communication": {
+      "modeTarification": "FORFAIT",
+      "tarifJour": null,
+      "forfait": 2200
+    }
+  },
+  "miseAJour": "2026-06-29"
+}

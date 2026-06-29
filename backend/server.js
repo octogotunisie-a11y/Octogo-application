@@ -1664,6 +1664,17 @@ try {
     console.error('⚠ Module Génération de Programme NON chargé:', e.message);
 }
 
+// ==================== CATALOGUE & GÉNÉRATION PAR SÉLECTION ====================
+// Administration des données (formateurs, formations, créneaux, tarifs) +
+// génération client par sélection avec calcul de prix 100% serveur.
+try {
+    const catalogueRoutes = require('./Routes/catalogueRoutes');
+    app.use('/api/catalogue', catalogueRoutes);
+    console.log('✅ Module Catalogue & Tarification chargé');
+} catch (e) {
+    console.error('⚠ Module Catalogue & Tarification NON chargé:', e.message);
+}
+
 // Route 404
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route non trouvée' });

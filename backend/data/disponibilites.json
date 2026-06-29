@@ -1,0 +1,61 @@
+[
+  {
+    "id": "disp_001",
+    "dateDebut": "2026-03-10",
+    "dateFin": "2026-03-12",
+    "formateurIds": [
+      "fmt_fredj"
+    ],
+    "lieu": "Sousse",
+    "statut": "disponible"
+  },
+  {
+    "id": "disp_002",
+    "dateDebut": "2026-04-14",
+    "dateFin": "2026-04-15",
+    "formateurIds": [
+      "fmt_ahmed",
+      "fmt_fredj"
+    ],
+    "lieu": "Tunis",
+    "statut": "disponible"
+  },
+  {
+    "id": "disp_003",
+    "dateDebut": "2026-05-19",
+    "dateFin": "2026-05-20",
+    "formateurIds": [
+      "fmt_salwa"
+    ],
+    "lieu": "Sousse",
+    "statut": "disponible"
+  },
+  {
+    "id": "disp_004",
+    "dateDebut": "2026-06-09",
+    "dateFin": "2026-06-11",
+    "formateurIds": [
+      "fmt_nizar"
+    ],
+    "lieu": "Sfax",
+    "statut": "disponible"
+  },
+  {
+    "id": "disp_005",
+    "dateDebut": "2026-07-07",
+    "dateFin": "2026-07-08",
+    "formateurIds": [],
+    "lieu": "Sousse",
+    "statut": "disponible"
+  },
+  {
+    "id": "disp_mqz1qa8w_skbly",
+    "dateDebut": "2026-09-01",
+    "dateFin": "2026-09-02",
+    "formateurIds": [
+      "fmt_salwa"
+    ],
+    "lieu": "Tunis",
+    "statut": "disponible"
+  }
+]

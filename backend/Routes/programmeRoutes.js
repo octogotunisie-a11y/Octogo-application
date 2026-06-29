@@ -40,12 +40,20 @@ const decoder = (req) => {
     if (!h || !h.startsWith('Bearer ')) return null;
     try { return jwt.verify(h.slice(7), JWT_SECRET); } catch { return null; }
 };
-const optionalAuth = (req, _res, next) => { req.user = decoder(req);
-    next(); };
-const requireAuth = (req, res, next) => { req.user = decoder(req); if (!req.user) return res.status(401).json({ success: false, message: 'Authentification requise.' });
-    next(); };
-const requireAdmin = (req, res, next) => { req.user = decoder(req); if (!req.user || req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Accès réservé à l\u2019administrateur.' });
-    next(); };
+const optionalAuth = (req, _res, next) => {
+    req.user = decoder(req);
+    next();
+};
+const requireAuth = (req, res, next) => {
+    req.user = decoder(req);
+    if (!req.user) return res.status(401).json({ success: false, message: 'Authentification requise.' });
+    next();
+};
+const requireAdmin = (req, res, next) => {
+    req.user = decoder(req);
+    if (!req.user || req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Accès réservé à l\u2019administrateur.' });
+    next();
+};
 
 // =============================================================================
 // POST /api/programmes/generer   (auth optionnelle)
@@ -57,7 +65,9 @@ router.post('/generer', optionalAuth, async(req, res) => {
         const state = req.body || {};
         // Disponibilités en temps réel : fusion des créneaux Google Agenda (iCal).
         const formateurs = await enrichirFormateursAvecAgenda(readJSON(FORMATEURS, []));
-        const resultat = genererProgrammeAnnuel(state, formateurs);
+        // Tarifs définis par l'administrateur — le prix ne vient jamais du client.
+        const params = readJSON('parametresGeneration.json', {});
+        const resultat = genererProgrammeAnnuel(state, formateurs, params);
 
         const enregistrement = {
             id: `prog_${Date.now()}`,
@@ -165,8 +175,7 @@ router.post('/sync-agenda', requireAdmin, (req, res) => {
     const i = formateurs.findIndex((f) => f.id === formateurId);
     if (i === -1) return res.status(404).json({ success: false, message: 'Formateur introuvable.' });
     formateurs[i].indisponibilites = remplacer ?
-        indisponibilites :
-        [...(formateurs[i].indisponibilites || []), ...indisponibilites];
+        indisponibilites : [...(formateurs[i].indisponibilites || []), ...indisponibilites];
     writeJSON(FORMATEURS, formateurs);
     res.json({ success: true, formateur: formateurs[i] });
 });

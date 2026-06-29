@@ -1,508 +1,451 @@
-[
-  {
-    "id": "prog_1780489330319",
-    "userId": null,
-    "userEmail": null,
-    "entreprise": "Entreprise",
-    "annee": 2026,
-    "createdAt": "2026-06-03T12:22:10.319Z",
-    "etatSaisi": {
-      "entreprise": {
-        "nom": "",
-        "domaineActivite": "",
-        "caracteristiques": "",
-        "effectifGlobal": "",
-        "strategieGlobale": "",
-        "strategieRH": ""
-      },
-      "corpsMetiers": [
-        {
-          "id": "cm_mpy1da56_6",
-          "intitule": "",
-          "effectif": "",
-          "missions": "",
-          "priorite": "Normale"
-        }
-      ],
-      "objectifsPedagogiques": [
-        {
-          "id": "obj_mpy1da56_7",
-          "libelle": ""
-        }
-      ],
-      "competencesCibles": [
-        {
-          "id": "comp_mpy1da56_8",
-          "libelle": ""
-        }
-      ],
-      "kpis": [
-        {
-          "id": "kpi_mpy1da56_9",
-          "libelle": "",
-          "cible": ""
-        }
-      ],
-      "resultatsAttendus": "",
-      "cadreTFP": {
-        "dossierTFP": false,
-        "detailsTFP": ""
-      },
-      "budget": {
-        "montantAnnuel": "",
-        "tarifJour": 1200,
-        "devise": "DT"
-      },
-      "agenda": {
-        "annee": 2026,
-        "moisDemarrage": 1
-      },
-      "cabinets": [
-        {
-          "id": "cab_mpy1da56_a",
-          "nom": "",
-          "type": "local",
-          "specialite": ""
-        }
-      ],
-      "formateurs": [
-        {
-          "id": "fmt_mpy1da56_b",
-          "nom": "",
-          "specialite": "",
-          "agrementCNFCPP": true
-        }
-      ]
-    },
-    "resultat": {
-      "meta": {
+[{
+        "id": "prog_1780489330319",
+        "userId": null,
+        "userEmail": null,
         "entreprise": "Entreprise",
-        "domaineActivite": "",
         "annee": 2026,
-        "moisDemarrage": "Janvier",
-        "caracteristiques": "",
-        "strategieGlobale": "",
-        "strategieRH": "",
-        "dossierTFP": false,
-        "detailsTFP": "",
-        "dateGeneration": "03 juin 2026",
-        "nbActions": 1,
-        "joursTotal": 2,
-        "effectifTotal": 0
-      },
-      "programmeAnnuel": [
-        {
-          "id": "act_mpy1djse_1",
-          "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-          "programmeSource": "NEURO-SOCLE",
-          "categorie": "SOCLE",
-          "corpsMetier": "Population globale",
-          "effectif": 0,
-          "nbGroupes": 1,
-          "objectifLie": "Développement des compétences clés",
-          "competences": [],
-          "dureeJours": 2,
-          "mois": 1,
-          "moisLibelle": "Janvier",
-          "trimestre": 1,
-          "modalite": "Présentiel / Hybride",
-          "coutEstime": 2400,
-          "coutLibelle": "2 400 DT HT"
-        }
-      ],
-      "planParMetier": [
-        {
-          "corpsMetier": "Population globale",
-          "effectif": 0,
-          "priorite": "Normale",
-          "missions": "",
-          "actions": [
-            {
-              "id": "act_mpy1djse_1",
-              "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-              "programmeSource": "NEURO-SOCLE",
-              "categorie": "SOCLE",
-              "corpsMetier": "Population globale",
-              "effectif": 0,
-              "nbGroupes": 1,
-              "objectifLie": "Développement des compétences clés",
-              "competences": [],
-              "dureeJours": 2,
-              "mois": 1,
-              "moisLibelle": "Janvier",
-              "trimestre": 1,
-              "modalite": "Présentiel / Hybride",
-              "coutEstime": 2400,
-              "coutLibelle": "2 400 DT HT"
-            }
-          ],
-          "joursTotal": 2,
-          "coutTotal": 2400
-        }
-      ],
-      "calendrier": {
-        "T1": [
-          {
-            "id": "act_mpy1djse_1",
-            "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-            "programmeSource": "NEURO-SOCLE",
-            "categorie": "SOCLE",
-            "corpsMetier": "Population globale",
-            "effectif": 0,
-            "nbGroupes": 1,
-            "objectifLie": "Développement des compétences clés",
-            "competences": [],
-            "dureeJours": 2,
-            "mois": 1,
-            "moisLibelle": "Janvier",
-            "trimestre": 1,
-            "modalite": "Présentiel / Hybride",
-            "coutEstime": 2400,
-            "coutLibelle": "2 400 DT HT"
-          }
-        ],
-        "T2": [],
-        "T3": [],
-        "T4": []
-      },
-      "budget": {
-        "devise": "DT",
-        "tarifJour": 1200,
-        "coutTotalEstime": 2400,
-        "coutTotalLibelle": "2 400 DT HT",
-        "budgetDisponible": 0,
-        "ecart": null,
-        "statut": "NON_RENSEIGNÉ",
-        "repartitionParMetier": [
-          {
-            "corpsMetier": "Population globale",
-            "cout": 2400
-          }
-        ],
-        "repartitionParTrimestre": [
-          {
-            "trimestre": "T1",
-            "cout": 2400,
-            "nbActions": 1
-          },
-          {
-            "trimestre": "T2",
-            "cout": 0,
-            "nbActions": 0
-          },
-          {
-            "trimestre": "T3",
-            "cout": 0,
-            "nbActions": 0
-          },
-          {
-            "trimestre": "T4",
-            "cout": 0,
-            "nbActions": 0
-          }
-        ]
-      },
-      "kpis": [
-        {
-          "libelle": "Taux de réalisation du plan de formation",
-          "cible": "≥ 90 %",
-          "modeMesure": "Actions réalisées / actions planifiées"
+        "createdAt": "2026-06-03T12:22:10.319Z",
+        "etatSaisi": {
+            "entreprise": {
+                "nom": "",
+                "domaineActivite": "",
+                "caracteristiques": "",
+                "effectifGlobal": "",
+                "strategieGlobale": "",
+                "strategieRH": ""
+            },
+            "corpsMetiers": [{
+                "id": "cm_mpy1da56_6",
+                "intitule": "",
+                "effectif": "",
+                "missions": "",
+                "priorite": "Normale"
+            }],
+            "objectifsPedagogiques": [{
+                "id": "obj_mpy1da56_7",
+                "libelle": ""
+            }],
+            "competencesCibles": [{
+                "id": "comp_mpy1da56_8",
+                "libelle": ""
+            }],
+            "kpis": [{
+                "id": "kpi_mpy1da56_9",
+                "libelle": "",
+                "cible": ""
+            }],
+            "resultatsAttendus": "",
+            "cadreTFP": {
+                "dossierTFP": false,
+                "detailsTFP": ""
+            },
+            "budget": {
+                "montantAnnuel": "",
+                "tarifJour": 1200,
+                "devise": "DT"
+            },
+            "agenda": {
+                "annee": 2026,
+                "moisDemarrage": 1
+            },
+            "cabinets": [{
+                "id": "cab_mpy1da56_a",
+                "nom": "",
+                "type": "local",
+                "specialite": ""
+            }],
+            "formateurs": [{
+                "id": "fmt_mpy1da56_b",
+                "nom": "",
+                "specialite": "",
+                "agrementCNFCPP": true
+            }]
         },
-        {
-          "libelle": "Taux de satisfaction des participants",
-          "cible": "≥ 4,2 / 5",
-          "modeMesure": "Questionnaire à chaud"
-        },
-        {
-          "libelle": "Transfert sur le terrain à 90 jours",
-          "cible": "≥ 70 %",
-          "modeMesure": "Grille d’auto-observation + entretien manager"
+        "resultat": {
+            "meta": {
+                "entreprise": "Entreprise",
+                "domaineActivite": "",
+                "annee": 2026,
+                "moisDemarrage": "Janvier",
+                "caracteristiques": "",
+                "strategieGlobale": "",
+                "strategieRH": "",
+                "dossierTFP": false,
+                "detailsTFP": "",
+                "dateGeneration": "03 juin 2026",
+                "nbActions": 1,
+                "joursTotal": 2,
+                "effectifTotal": 0
+            },
+            "programmeAnnuel": [{
+                "id": "act_mpy1djse_1",
+                "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                "programmeSource": "NEURO-SOCLE",
+                "categorie": "SOCLE",
+                "corpsMetier": "Population globale",
+                "effectif": 0,
+                "nbGroupes": 1,
+                "objectifLie": "Développement des compétences clés",
+                "competences": [],
+                "dureeJours": 2,
+                "mois": 1,
+                "moisLibelle": "Janvier",
+                "trimestre": 1,
+                "modalite": "Présentiel / Hybride",
+                "coutEstime": 2400,
+                "coutLibelle": "2 400 DT HT"
+            }],
+            "planParMetier": [{
+                "corpsMetier": "Population globale",
+                "effectif": 0,
+                "priorite": "Normale",
+                "missions": "",
+                "actions": [{
+                    "id": "act_mpy1djse_1",
+                    "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                    "programmeSource": "NEURO-SOCLE",
+                    "categorie": "SOCLE",
+                    "corpsMetier": "Population globale",
+                    "effectif": 0,
+                    "nbGroupes": 1,
+                    "objectifLie": "Développement des compétences clés",
+                    "competences": [],
+                    "dureeJours": 2,
+                    "mois": 1,
+                    "moisLibelle": "Janvier",
+                    "trimestre": 1,
+                    "modalite": "Présentiel / Hybride",
+                    "coutEstime": 2400,
+                    "coutLibelle": "2 400 DT HT"
+                }],
+                "joursTotal": 2,
+                "coutTotal": 2400
+            }],
+            "calendrier": {
+                "T1": [{
+                    "id": "act_mpy1djse_1",
+                    "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                    "programmeSource": "NEURO-SOCLE",
+                    "categorie": "SOCLE",
+                    "corpsMetier": "Population globale",
+                    "effectif": 0,
+                    "nbGroupes": 1,
+                    "objectifLie": "Développement des compétences clés",
+                    "competences": [],
+                    "dureeJours": 2,
+                    "mois": 1,
+                    "moisLibelle": "Janvier",
+                    "trimestre": 1,
+                    "modalite": "Présentiel / Hybride",
+                    "coutEstime": 2400,
+                    "coutLibelle": "2 400 DT HT"
+                }],
+                "T2": [],
+                "T3": [],
+                "T4": []
+            },
+            "budget": {
+                "devise": "DT",
+                "tarifJour": 1200,
+                "coutTotalEstime": 2400,
+                "coutTotalLibelle": "2 400 DT HT",
+                "budgetDisponible": 0,
+                "ecart": null,
+                "statut": "NON_RENSEIGNÉ",
+                "repartitionParMetier": [{
+                    "corpsMetier": "Population globale",
+                    "cout": 2400
+                }],
+                "repartitionParTrimestre": [{
+                        "trimestre": "T1",
+                        "cout": 2400,
+                        "nbActions": 1
+                    },
+                    {
+                        "trimestre": "T2",
+                        "cout": 0,
+                        "nbActions": 0
+                    },
+                    {
+                        "trimestre": "T3",
+                        "cout": 0,
+                        "nbActions": 0
+                    },
+                    {
+                        "trimestre": "T4",
+                        "cout": 0,
+                        "nbActions": 0
+                    }
+                ]
+            },
+            "kpis": [{
+                    "libelle": "Taux de réalisation du plan de formation",
+                    "cible": "≥ 90 %",
+                    "modeMesure": "Actions réalisées / actions planifiées"
+                },
+                {
+                    "libelle": "Taux de satisfaction des participants",
+                    "cible": "≥ 4,2 / 5",
+                    "modeMesure": "Questionnaire à chaud"
+                },
+                {
+                    "libelle": "Transfert sur le terrain à 90 jours",
+                    "cible": "≥ 70 %",
+                    "modeMesure": "Grille d’auto-observation + entretien manager"
+                }
+            ],
+            "impactCompetences": [{
+                "competence": "Développement des compétences clés",
+                "niveauVise": "Maîtrise opérationnelle",
+                "actionsAssociees": [
+                    "Socle Neuro-Cognitif sur-mesure"
+                ]
+            }],
+            "recommandations": {
+                "cabinets": [],
+                "formateursParAction": [{
+                    "actionId": "act_mpy1djse_1",
+                    "action": "Socle Neuro-Cognitif sur-mesure",
+                    "categorie": "SOCLE",
+                    "mois": "Janvier",
+                    "formateursDisponibles": [],
+                    "formateursIndisponibles": [],
+                    "alerte": "Aucun formateur SOCLE disponible en Janvier 2026."
+                }],
+                "categoriesRequises": [
+                    "SOCLE"
+                ],
+                "besoinsNonCouverts": [
+                    "SOCLE"
+                ],
+                "note": "Catégories sans formateur disponible : SOCLE. Décaler la période ou élargir le vivier (CNFCPP)."
+            },
+            "resultatsAttendus": "Montée en compétence de 0 collaborateurs sur 1 corps de métier."
         }
-      ],
-      "impactCompetences": [
-        {
-          "competence": "Développement des compétences clés",
-          "niveauVise": "Maîtrise opérationnelle",
-          "actionsAssociees": [
-            "Socle Neuro-Cognitif sur-mesure"
-          ]
-        }
-      ],
-      "recommandations": {
-        "cabinets": [],
-        "formateursParAction": [
-          {
-            "actionId": "act_mpy1djse_1",
-            "action": "Socle Neuro-Cognitif sur-mesure",
-            "categorie": "SOCLE",
-            "mois": "Janvier",
-            "formateursDisponibles": [],
-            "formateursIndisponibles": [],
-            "alerte": "Aucun formateur SOCLE disponible en Janvier 2026."
-          }
-        ],
-        "categoriesRequises": [
-          "SOCLE"
-        ],
-        "besoinsNonCouverts": [
-          "SOCLE"
-        ],
-        "note": "Catégories sans formateur disponible : SOCLE. Décaler la période ou élargir le vivier (CNFCPP)."
-      },
-      "resultatsAttendus": "Montée en compétence de 0 collaborateurs sur 1 corps de métier."
-    }
-  },
-  {
-    "id": "prog_1780565124342",
-    "userId": 3,
-    "userEmail": "amalch206@gmail.com",
-    "entreprise": "Entreprise",
-    "annee": 2026,
-    "createdAt": "2026-06-04T09:25:24.342Z",
-    "etatSaisi": {
-      "entreprise": {
-        "nom": "",
-        "domaineActivite": "",
-        "caracteristiques": "",
-        "effectifGlobal": "",
-        "strategieGlobale": "",
-        "strategieRH": ""
-      },
-      "corpsMetiers": [
-        {
-          "id": "cm_mpzaeip1_2u",
-          "intitule": "",
-          "effectif": "",
-          "missions": "",
-          "priorite": "Basse"
-        }
-      ],
-      "objectifsPedagogiques": [
-        {
-          "id": "obj_mpzaeip1_2v",
-          "libelle": ""
-        }
-      ],
-      "competencesCibles": [
-        {
-          "id": "comp_mpzaeip1_2w",
-          "libelle": ""
-        }
-      ],
-      "kpis": [
-        {
-          "id": "kpi_mpzaeip1_2x",
-          "libelle": "",
-          "cible": ""
-        }
-      ],
-      "resultatsAttendus": "",
-      "cadreTFP": {
-        "dossierTFP": false,
-        "detailsTFP": ""
-      },
-      "budget": {
-        "montantAnnuel": "",
-        "tarifJour": 1200,
-        "devise": "DT"
-      },
-      "agenda": {
-        "annee": 2026,
-        "moisDemarrage": 1
-      },
-      "cabinets": [
-        {
-          "id": "cab_mpzaeip1_2y",
-          "nom": "",
-          "type": "local",
-          "specialite": ""
-        }
-      ],
-      "formateurs": [
-        {
-          "id": "fmt_mpzaeip1_2z",
-          "nom": "",
-          "specialite": "",
-          "agrementCNFCPP": true
-        }
-      ]
     },
-    "resultat": {
-      "meta": {
+    {
+        "id": "prog_1780565124342",
+        "userId": 3,
+        "userEmail": "amalch206@gmail.com",
         "entreprise": "Entreprise",
-        "domaineActivite": "",
         "annee": 2026,
-        "moisDemarrage": "Janvier",
-        "caracteristiques": "",
-        "strategieGlobale": "",
-        "strategieRH": "",
-        "dossierTFP": false,
-        "detailsTFP": "",
-        "dateGeneration": "04 juin 2026",
-        "nbActions": 1,
-        "joursTotal": 2,
-        "effectifTotal": 0
-      },
-      "programmeAnnuel": [
-        {
-          "id": "act_mpzai2ub_1",
-          "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-          "programmeSource": "NEURO-SOCLE",
-          "categorie": "SOCLE",
-          "corpsMetier": "Population globale",
-          "effectif": 0,
-          "nbGroupes": 1,
-          "objectifLie": "Développement des compétences clés",
-          "competences": [],
-          "dureeJours": 2,
-          "mois": 1,
-          "moisLibelle": "Janvier",
-          "trimestre": 1,
-          "modalite": "Présentiel / Hybride",
-          "coutEstime": 2400,
-          "coutLibelle": "2 400 DT HT"
-        }
-      ],
-      "planParMetier": [
-        {
-          "corpsMetier": "Population globale",
-          "effectif": 0,
-          "priorite": "Normale",
-          "missions": "",
-          "actions": [
-            {
-              "id": "act_mpzai2ub_1",
-              "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-              "programmeSource": "NEURO-SOCLE",
-              "categorie": "SOCLE",
-              "corpsMetier": "Population globale",
-              "effectif": 0,
-              "nbGroupes": 1,
-              "objectifLie": "Développement des compétences clés",
-              "competences": [],
-              "dureeJours": 2,
-              "mois": 1,
-              "moisLibelle": "Janvier",
-              "trimestre": 1,
-              "modalite": "Présentiel / Hybride",
-              "coutEstime": 2400,
-              "coutLibelle": "2 400 DT HT"
-            }
-          ],
-          "joursTotal": 2,
-          "coutTotal": 2400
-        }
-      ],
-      "calendrier": {
-        "T1": [
-          {
-            "id": "act_mpzai2ub_1",
-            "intituleAction": "Socle Neuro-Cognitif sur-mesure",
-            "programmeSource": "NEURO-SOCLE",
-            "categorie": "SOCLE",
-            "corpsMetier": "Population globale",
-            "effectif": 0,
-            "nbGroupes": 1,
-            "objectifLie": "Développement des compétences clés",
-            "competences": [],
-            "dureeJours": 2,
-            "mois": 1,
-            "moisLibelle": "Janvier",
-            "trimestre": 1,
-            "modalite": "Présentiel / Hybride",
-            "coutEstime": 2400,
-            "coutLibelle": "2 400 DT HT"
-          }
-        ],
-        "T2": [],
-        "T3": [],
-        "T4": []
-      },
-      "budget": {
-        "devise": "DT",
-        "tarifJour": 1200,
-        "coutTotalEstime": 2400,
-        "coutTotalLibelle": "2 400 DT HT",
-        "budgetDisponible": 0,
-        "ecart": null,
-        "statut": "NON_RENSEIGNÉ",
-        "repartitionParMetier": [
-          {
-            "corpsMetier": "Population globale",
-            "cout": 2400
-          }
-        ],
-        "repartitionParTrimestre": [
-          {
-            "trimestre": "T1",
-            "cout": 2400,
-            "nbActions": 1
-          },
-          {
-            "trimestre": "T2",
-            "cout": 0,
-            "nbActions": 0
-          },
-          {
-            "trimestre": "T3",
-            "cout": 0,
-            "nbActions": 0
-          },
-          {
-            "trimestre": "T4",
-            "cout": 0,
-            "nbActions": 0
-          }
-        ]
-      },
-      "kpis": [
-        {
-          "libelle": "Taux de réalisation du plan de formation",
-          "cible": "≥ 90 %",
-          "modeMesure": "Actions réalisées / actions planifiées"
+        "createdAt": "2026-06-04T09:25:24.342Z",
+        "etatSaisi": {
+            "entreprise": {
+                "nom": "",
+                "domaineActivite": "",
+                "caracteristiques": "",
+                "effectifGlobal": "",
+                "strategieGlobale": "",
+                "strategieRH": ""
+            },
+            "corpsMetiers": [{
+                "id": "cm_mpzaeip1_2u",
+                "intitule": "",
+                "effectif": "",
+                "missions": "",
+                "priorite": "Basse"
+            }],
+            "objectifsPedagogiques": [{
+                "id": "obj_mpzaeip1_2v",
+                "libelle": ""
+            }],
+            "competencesCibles": [{
+                "id": "comp_mpzaeip1_2w",
+                "libelle": ""
+            }],
+            "kpis": [{
+                "id": "kpi_mpzaeip1_2x",
+                "libelle": "",
+                "cible": ""
+            }],
+            "resultatsAttendus": "",
+            "cadreTFP": {
+                "dossierTFP": false,
+                "detailsTFP": ""
+            },
+            "budget": {
+                "montantAnnuel": "",
+                "tarifJour": 1200,
+                "devise": "DT"
+            },
+            "agenda": {
+                "annee": 2026,
+                "moisDemarrage": 1
+            },
+            "cabinets": [{
+                "id": "cab_mpzaeip1_2y",
+                "nom": "",
+                "type": "local",
+                "specialite": ""
+            }],
+            "formateurs": [{
+                "id": "fmt_mpzaeip1_2z",
+                "nom": "",
+                "specialite": "",
+                "agrementCNFCPP": true
+            }]
         },
-        {
-          "libelle": "Taux de satisfaction des participants",
-          "cible": "≥ 4,2 / 5",
-          "modeMesure": "Questionnaire à chaud"
-        },
-        {
-          "libelle": "Transfert sur le terrain à 90 jours",
-          "cible": "≥ 70 %",
-          "modeMesure": "Grille d’auto-observation + entretien manager"
+        "resultat": {
+            "meta": {
+                "entreprise": "Entreprise",
+                "domaineActivite": "",
+                "annee": 2026,
+                "moisDemarrage": "Janvier",
+                "caracteristiques": "",
+                "strategieGlobale": "",
+                "strategieRH": "",
+                "dossierTFP": false,
+                "detailsTFP": "",
+                "dateGeneration": "04 juin 2026",
+                "nbActions": 1,
+                "joursTotal": 2,
+                "effectifTotal": 0
+            },
+            "programmeAnnuel": [{
+                "id": "act_mpzai2ub_1",
+                "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                "programmeSource": "NEURO-SOCLE",
+                "categorie": "SOCLE",
+                "corpsMetier": "Population globale",
+                "effectif": 0,
+                "nbGroupes": 1,
+                "objectifLie": "Développement des compétences clés",
+                "competences": [],
+                "dureeJours": 2,
+                "mois": 1,
+                "moisLibelle": "Janvier",
+                "trimestre": 1,
+                "modalite": "Présentiel / Hybride",
+                "coutEstime": 2400,
+                "coutLibelle": "2 400 DT HT"
+            }],
+            "planParMetier": [{
+                "corpsMetier": "Population globale",
+                "effectif": 0,
+                "priorite": "Normale",
+                "missions": "",
+                "actions": [{
+                    "id": "act_mpzai2ub_1",
+                    "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                    "programmeSource": "NEURO-SOCLE",
+                    "categorie": "SOCLE",
+                    "corpsMetier": "Population globale",
+                    "effectif": 0,
+                    "nbGroupes": 1,
+                    "objectifLie": "Développement des compétences clés",
+                    "competences": [],
+                    "dureeJours": 2,
+                    "mois": 1,
+                    "moisLibelle": "Janvier",
+                    "trimestre": 1,
+                    "modalite": "Présentiel / Hybride",
+                    "coutEstime": 2400,
+                    "coutLibelle": "2 400 DT HT"
+                }],
+                "joursTotal": 2,
+                "coutTotal": 2400
+            }],
+            "calendrier": {
+                "T1": [{
+                    "id": "act_mpzai2ub_1",
+                    "intituleAction": "Socle Neuro-Cognitif sur-mesure",
+                    "programmeSource": "NEURO-SOCLE",
+                    "categorie": "SOCLE",
+                    "corpsMetier": "Population globale",
+                    "effectif": 0,
+                    "nbGroupes": 1,
+                    "objectifLie": "Développement des compétences clés",
+                    "competences": [],
+                    "dureeJours": 2,
+                    "mois": 1,
+                    "moisLibelle": "Janvier",
+                    "trimestre": 1,
+                    "modalite": "Présentiel / Hybride",
+                    "coutEstime": 2400,
+                    "coutLibelle": "2 400 DT HT"
+                }],
+                "T2": [],
+                "T3": [],
+                "T4": []
+            },
+            "budget": {
+                "devise": "DT",
+                "tarifJour": 1200,
+                "coutTotalEstime": 2400,
+                "coutTotalLibelle": "2 400 DT HT",
+                "budgetDisponible": 0,
+                "ecart": null,
+                "statut": "NON_RENSEIGNÉ",
+                "repartitionParMetier": [{
+                    "corpsMetier": "Population globale",
+                    "cout": 2400
+                }],
+                "repartitionParTrimestre": [{
+                        "trimestre": "T1",
+                        "cout": 2400,
+                        "nbActions": 1
+                    },
+                    {
+                        "trimestre": "T2",
+                        "cout": 0,
+                        "nbActions": 0
+                    },
+                    {
+                        "trimestre": "T3",
+                        "cout": 0,
+                        "nbActions": 0
+                    },
+                    {
+                        "trimestre": "T4",
+                        "cout": 0,
+                        "nbActions": 0
+                    }
+                ]
+            },
+            "kpis": [{
+                    "libelle": "Taux de réalisation du plan de formation",
+                    "cible": "≥ 90 %",
+                    "modeMesure": "Actions réalisées / actions planifiées"
+                },
+                {
+                    "libelle": "Taux de satisfaction des participants",
+                    "cible": "≥ 4,2 / 5",
+                    "modeMesure": "Questionnaire à chaud"
+                },
+                {
+                    "libelle": "Transfert sur le terrain à 90 jours",
+                    "cible": "≥ 70 %",
+                    "modeMesure": "Grille d’auto-observation + entretien manager"
+                }
+            ],
+            "impactCompetences": [{
+                "competence": "Développement des compétences clés",
+                "niveauVise": "Maîtrise opérationnelle",
+                "actionsAssociees": [
+                    "Socle Neuro-Cognitif sur-mesure"
+                ]
+            }],
+            "recommandations": {
+                "cabinets": [],
+                "formateursParAction": [{
+                    "actionId": "act_mpzai2ub_1",
+                    "action": "Socle Neuro-Cognitif sur-mesure",
+                    "categorie": "SOCLE",
+                    "mois": "Janvier",
+                    "formateursDisponibles": [],
+                    "formateursIndisponibles": [],
+                    "alerte": "Aucun formateur SOCLE disponible en Janvier 2026."
+                }],
+                "categoriesRequises": [
+                    "SOCLE"
+                ],
+                "besoinsNonCouverts": [
+                    "SOCLE"
+                ],
+                "note": "Catégories sans formateur disponible : SOCLE. Décaler la période ou élargir le vivier (CNFCPP)."
+            },
+            "resultatsAttendus": "Montée en compétence de 0 collaborateurs sur 1 corps de métier."
         }
-      ],
-      "impactCompetences": [
-        {
-          "competence": "Développement des compétences clés",
-          "niveauVise": "Maîtrise opérationnelle",
-          "actionsAssociees": [
-            "Socle Neuro-Cognitif sur-mesure"
-          ]
-        }
-      ],
-      "recommandations": {
-        "cabinets": [],
-        "formateursParAction": [
-          {
-            "actionId": "act_mpzai2ub_1",
-            "action": "Socle Neuro-Cognitif sur-mesure",
-            "categorie": "SOCLE",
-            "mois": "Janvier",
-            "formateursDisponibles": [],
-            "formateursIndisponibles": [],
-            "alerte": "Aucun formateur SOCLE disponible en Janvier 2026."
-          }
-        ],
-        "categoriesRequises": [
-          "SOCLE"
-        ],
-        "besoinsNonCouverts": [
-          "SOCLE"
-        ],
-        "note": "Catégories sans formateur disponible : SOCLE. Décaler la période ou élargir le vivier (CNFCPP)."
-      },
-      "resultatsAttendus": "Montée en compétence de 0 collaborateurs sur 1 corps de métier."
     }
-  }
 ]

@@ -1,50 +1,49 @@
 [{
         "id": "fmt_fredj",
         "nom": "Fredj Bouslama",
-        "specialites": ["NeuroLeadership", "Neuromanagement", "Cohérence adaptative"],
-        "categories": ["LEADERSHIP", "MANAGEMENT", "TRANSFORMATION", "STRATÉGIE"],
-        "agrementCNFCPP": true,
+        "specialite": "Expert en neurosciences appliquées & leadership",
+        "categories": [
+            "NEUROSCIENCES",
+            "LEADERSHIP",
+            "GESTION DU STRESS"
+        ],
         "tarifJour": 1200,
-        "bio": "Fondateur OCTOGO, neuropraticien, créateur de l'École de la Cohérence Adaptative.",
-        "icalUrl": "",
-        "indisponibilites": [
-            { "debut": "2026-08-01", "fin": "2026-08-31" }
-        ],
-        "joursReserves": []
-    },
-    {
-        "id": "fmt_relation_client",
-        "nom": "Formateur Relation Client",
-        "specialites": ["CAPTE", "Expérience client", "Service client"],
-        "categories": ["RELATION CLIENT"],
         "agrementCNFCPP": true,
-        "tarifJour": 950,
-        "bio": "Spécialiste de la relation client appliquée aux neurosciences.",
-        "indisponibilites": [],
-        "joursReserves": []
+        "actif": true
     },
     {
-        "id": "fmt_vente",
-        "nom": "Formateur Neurovente",
-        "specialites": ["NEUROVENTE", "Négociation", "Prospection"],
-        "categories": ["VENTE", "RELATION CLIENT"],
-        "agrementCNFCPP": true,
-        "tarifJour": 1000,
-        "bio": "Formateur vente et négociation.",
-        "indisponibilites": [
-            { "debut": "2026-02-01", "fin": "2026-02-28" }
+        "id": "fmt_ahmed",
+        "nom": "Ahmed Bousada",
+        "specialite": "Expert en neurosciences",
+        "categories": [
+            "NEUROSCIENCES",
+            "GESTION DU STRESS"
         ],
-        "joursReserves": []
-    },
-    {
-        "id": "fmt_marketing",
-        "nom": "Formateur Neuromarketing",
-        "specialites": ["NEUROMARKETING", "Communication", "Marque"],
-        "categories": ["MARKETING"],
-        "agrementCNFCPP": false,
         "tarifJour": 1100,
-        "bio": "Formateur marketing et communication d'impact.",
-        "indisponibilites": [],
-        "joursReserves": []
+        "agrementCNFCPP": true,
+        "actif": true
+    },
+    {
+        "id": "fmt_salwa",
+        "nom": "Salwa Karoui",
+        "specialite": "Auditrice senior",
+        "categories": [
+            "AUDIT"
+        ],
+        "tarifJour": 1000,
+        "agrementCNFCPP": true,
+        "actif": true
+    },
+    {
+        "id": "fmt_nizar",
+        "nom": "Nizar Hammami",
+        "specialite": "Expert en communication & prise de parole",
+        "categories": [
+            "COMMUNICATION",
+            "LEADERSHIP"
+        ],
+        "tarifJour": 950,
+        "agrementCNFCPP": false,
+        "actif": true
     }
 ]
