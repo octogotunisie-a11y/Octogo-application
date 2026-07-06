@@ -1,0 +1,56 @@
+[
+  {
+    "id": "sim_f1",
+    "nom": "Dr. Amine Zaghdoudi",
+    "specialite": "Neurosciences appliquées & performance cognitive",
+    "competences": ["Neuroplasticité", "Sciences cognitives", "Prise de décision"],
+    "anneesExperience": 12,
+    "cv": "CV_Amine_Zaghdoudi.pdf",
+    "domainesFormation": ["neurosciences", "gestion-stress"]
+  },
+  {
+    "id": "sim_f2",
+    "nom": "Sarra Ben Youssef",
+    "specialite": "Leadership & intelligence émotionnelle",
+    "competences": ["Leadership situationnel", "Intelligence émotionnelle", "Prise de parole"],
+    "anneesExperience": 9,
+    "cv": "CV_Sarra_BenYoussef.pdf",
+    "domainesFormation": ["leadership", "communication", "management"]
+  },
+  {
+    "id": "sim_f3",
+    "nom": "Karim Ltaief",
+    "specialite": "Management & intelligence collective",
+    "competences": ["Facilitation d'équipe", "Gestion de conflits", "Design d'atelier"],
+    "anneesExperience": 15,
+    "cv": "CV_Karim_Ltaief.pdf",
+    "domainesFormation": ["management", "intelligence-collective", "soft-skills"]
+  },
+  {
+    "id": "sim_f4",
+    "nom": "Nour Chaabane",
+    "specialite": "Techniques de vente & relation client",
+    "competences": ["Négociation", "Neurovente", "Techniques de closing"],
+    "anneesExperience": 7,
+    "cv": "CV_Nour_Chaabane.pdf",
+    "domainesFormation": ["vente", "communication"]
+  },
+  {
+    "id": "sim_f5",
+    "nom": "Yassine Frini",
+    "specialite": "Audit & conformité organisationnelle",
+    "competences": ["Audit interne", "Cartographie des risques", "Normes qualité"],
+    "anneesExperience": 11,
+    "cv": "CV_Yassine_Frini.pdf",
+    "domainesFormation": ["audit"]
+  },
+  {
+    "id": "sim_f6",
+    "nom": "Lina Mejri",
+    "specialite": "Coaching individuel & accompagnement du changement",
+    "competences": ["Coaching ICF", "Analyse transactionnelle", "Gestion du changement"],
+    "anneesExperience": 10,
+    "cv": "CV_Lina_Mejri.pdf",
+    "domainesFormation": ["coaching", "gestion-stress", "soft-skills"]
+  }
+]

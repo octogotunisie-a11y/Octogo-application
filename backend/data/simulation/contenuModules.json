@@ -1,0 +1,57 @@
+{
+  "neurosciences": [
+    "Fondamentaux des neurosciences appliquées",
+    "Cerveau, émotions & prise de décision",
+    "Neuroplasticité et apprentissage",
+    "Application au contexte professionnel"
+  ],
+  "gestion-stress": [
+    "Comprendre les mécanismes du stress",
+    "Outils de régulation émotionnelle",
+    "Plan d'action individuel"
+  ],
+  "leadership": [
+    "Fondamentaux du leadership neuro-adaptatif",
+    "Communication d'influence",
+    "Gestion des équipes sous tension",
+    "Plan de développement personnel"
+  ],
+  "communication": [
+    "Les bases de la communication interpersonnelle",
+    "Écoute active et reformulation",
+    "Communication en situation difficile"
+  ],
+  "intelligence-collective": [
+    "Principes de l'intelligence collective",
+    "Facilitation et dynamique de groupe",
+    "Co-construction de solutions",
+    "Ancrage des pratiques collaboratives"
+  ],
+  "soft-skills": [
+    "Diagnostic des compétences comportementales",
+    "Adaptabilité et résolution de problèmes",
+    "Mise en pratique en situation professionnelle"
+  ],
+  "vente": [
+    "Comprendre le cerveau du client",
+    "Techniques de découverte et d'argumentation",
+    "Traitement des objections et closing",
+    "Plan d'action commercial"
+  ],
+  "management": [
+    "Posture managériale et neurosciences",
+    "Pilotage de la performance d'équipe",
+    "Gestion des situations délicates",
+    "Plan de progrès managérial"
+  ],
+  "audit": [
+    "Méthodologie d'audit et cadre normatif",
+    "Cartographie des risques",
+    "Restitution et plan d'action"
+  ],
+  "coaching": [
+    "Posture et cadre du coaching",
+    "Outils d'accompagnement individuel",
+    "Construction du plan de progrès"
+  ]
+}

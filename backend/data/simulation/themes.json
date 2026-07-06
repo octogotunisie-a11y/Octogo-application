@@ -1,0 +1,12 @@
+[
+  { "key": "neurosciences", "label": "Neurosciences" },
+  { "key": "gestion-stress", "label": "Gestion du stress" },
+  { "key": "leadership", "label": "Leadership" },
+  { "key": "communication", "label": "Communication" },
+  { "key": "intelligence-collective", "label": "Intelligence collective" },
+  { "key": "soft-skills", "label": "Soft Skills" },
+  { "key": "vente", "label": "Vente" },
+  { "key": "management", "label": "Management" },
+  { "key": "audit", "label": "Audit" },
+  { "key": "coaching", "label": "Coaching" }
+]

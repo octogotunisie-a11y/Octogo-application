@@ -1,61 +1,109 @@
-[
-  {
-    "id": "disp_001",
-    "dateDebut": "2026-03-10",
-    "dateFin": "2026-03-12",
-    "formateurIds": [
-      "fmt_fredj"
-    ],
-    "lieu": "Sousse",
-    "statut": "disponible"
-  },
-  {
-    "id": "disp_002",
-    "dateDebut": "2026-04-14",
-    "dateFin": "2026-04-15",
-    "formateurIds": [
-      "fmt_ahmed",
-      "fmt_fredj"
-    ],
-    "lieu": "Tunis",
-    "statut": "disponible"
-  },
-  {
-    "id": "disp_003",
-    "dateDebut": "2026-05-19",
-    "dateFin": "2026-05-20",
-    "formateurIds": [
-      "fmt_salwa"
-    ],
-    "lieu": "Sousse",
-    "statut": "disponible"
-  },
-  {
-    "id": "disp_004",
-    "dateDebut": "2026-06-09",
-    "dateFin": "2026-06-11",
-    "formateurIds": [
-      "fmt_nizar"
-    ],
-    "lieu": "Sfax",
-    "statut": "disponible"
-  },
-  {
-    "id": "disp_005",
-    "dateDebut": "2026-07-07",
-    "dateFin": "2026-07-08",
-    "formateurIds": [],
-    "lieu": "Sousse",
-    "statut": "disponible"
-  },
-  {
-    "id": "disp_mqz1qa8w_skbly",
-    "dateDebut": "2026-09-01",
-    "dateFin": "2026-09-02",
-    "formateurIds": [
-      "fmt_salwa"
-    ],
-    "lieu": "Tunis",
-    "statut": "disponible"
-  }
+[{
+        "id": "disp_001",
+        "dateDebut": "2026-07-13",
+        "dateFin": "2026-07-15",
+        "formateurIds": ["fmt_fredj"],
+        "formationId": "form_neurosciences",
+        "lieu": "Sousse",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_002",
+        "dateDebut": "2026-07-20",
+        "dateFin": "2026-07-21",
+        "formateurIds": ["fmt_fredj"],
+        "formationId": "",
+        "lieu": "Tunis",
+        "statut": "reserve"
+    },
+    {
+        "id": "disp_003",
+        "dateDebut": "2026-08-03",
+        "dateFin": "2026-08-05",
+        "formateurIds": ["fmt_fredj", "fmt_ahmed"],
+        "formationId": "form_gestion_stress",
+        "lieu": "Hammamet",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_004",
+        "dateDebut": "2026-08-17",
+        "dateFin": "2026-08-18",
+        "formateurIds": ["fmt_ahmed"],
+        "formationId": "",
+        "lieu": "Sfax",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_005",
+        "dateDebut": "2026-08-24",
+        "dateFin": "2026-08-26",
+        "formateurIds": ["fmt_ahmed"],
+        "formationId": "form_neurosciences",
+        "lieu": "Sousse",
+        "statut": "reserve"
+    },
+    {
+        "id": "disp_006",
+        "dateDebut": "2026-09-07",
+        "dateFin": "2026-09-08",
+        "formateurIds": ["fmt_salwa"],
+        "formationId": "form_audit",
+        "lieu": "Tunis",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_007",
+        "dateDebut": "2026-09-14",
+        "dateFin": "2026-09-15",
+        "formateurIds": ["fmt_salwa"],
+        "formationId": "form_audit",
+        "lieu": "Tunis",
+        "statut": "reserve"
+    },
+    {
+        "id": "disp_008",
+        "dateDebut": "2026-09-21",
+        "dateFin": "2026-09-22",
+        "formateurIds": ["fmt_nizar"],
+        "formationId": "form_communication",
+        "lieu": "Sfax",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_009",
+        "dateDebut": "2026-10-05",
+        "dateFin": "2026-10-07",
+        "formateurIds": ["fmt_fredj"],
+        "formationId": "form_leadership",
+        "lieu": "Sousse",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_010",
+        "dateDebut": "2026-10-12",
+        "dateFin": "2026-10-13",
+        "formateurIds": ["fmt_nizar"],
+        "formationId": "",
+        "lieu": "Tunis",
+        "statut": "reserve"
+    },
+    {
+        "id": "disp_011",
+        "dateDebut": "2026-10-19",
+        "dateFin": "2026-10-21",
+        "formateurIds": ["fmt_fredj", "fmt_ahmed"],
+        "formationId": "form_neurosciences",
+        "lieu": "Hammamet",
+        "statut": "disponible"
+    },
+    {
+        "id": "disp_012",
+        "dateDebut": "2026-11-09",
+        "dateFin": "2026-11-10",
+        "formateurIds": ["fmt_nizar"],
+        "formationId": "form_communication",
+        "lieu": "Sousse",
+        "statut": "disponible"
+    }
 ]

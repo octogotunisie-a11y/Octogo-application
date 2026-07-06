@@ -12,10 +12,14 @@ export const useAuth = () => {
 
 // APPEL DIRECT du backend (on contourne le proxy Vite, qui provoque des ECONNRESET
 // avec Node récent à cause de la réutilisation des connexions keep-alive).
-// On utilise le même hôte que la page courante + port 5000 : fonctionne aussi bien
-// en local (localhost:5173 -> localhost:5000) qu'en réseau (--host : IP -> IP:5000).
-// Le CORS du backend est permissif, donc l'appel direct est autorisé.
-const API = `${window.location.protocol}//${window.location.hostname}:5000/api`;
+// IMPORTANT : on force 127.0.0.1 (IPv4) en local. Sur Node 17+/Windows, « localhost »
+// se résout d'abord en IPv6 (::1) ; si le backend n'écoute pas en IPv6, la requête
+// reste suspendue puis expire (« Le serveur met trop de temps à répondre »). Utiliser
+// 127.0.0.1 évite ce blocage. En accès réseau (IP), on conserve l'hôte de la page.
+const HOST = (window.location.hostname === 'localhost' || window.location.hostname === '::1' || window.location.hostname === '')
+  ? '127.0.0.1'
+  : window.location.hostname;
+const API = `${window.location.protocol}//${HOST}:5000/api`;
 const TIMEOUT_MS = 12000;
 const log = (...a) => console.log('%c[AUTH]', 'color:#7C3AED;font-weight:bold', ...a);
 
@@ -94,7 +98,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     setError(null);
-    setLoading(true);
     log('Connexion:', email);
     try {
       const response = await apiFetch('/auth/login', {
@@ -123,14 +126,11 @@ export const AuthProvider = ({ children }) => {
       console.error('[AUTH] Erreur réseau login:', e.message);
       setError(msg);
       return { success: false, message: msg };
-    } finally {
-      setLoading(false);
     }
   };
 
   const register = async (userData) => {
     setError(null);
-    setLoading(true);
     log('Inscription:', userData && userData.email);
     try {
       const payload = Object.assign({}, userData);
@@ -162,8 +162,6 @@ export const AuthProvider = ({ children }) => {
       console.error('[AUTH] Erreur réseau register:', e.message);
       setError(msg);
       return { success: false, message: msg };
-    } finally {
-      setLoading(false);
     }
   };
 

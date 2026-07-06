@@ -162,7 +162,7 @@ const DashboardAdmin = () => {
             setLoading(true);
             const token = localStorage.getItem('token');
             
-            const usersResponse = await fetch('http://localhost:5000/api/users', {
+            const usersResponse = await fetch('http://127.0.0.1:5000/api/users', {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ const DashboardAdmin = () => {
                 });
             }
 
-            const devisResponse = await fetch('http://localhost:5000/api/devis', {
+            const devisResponse = await fetch('http://127.0.0.1:5000/api/devis', {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ const DashboardAdmin = () => {
                 calculateDevisStats(devisData.devis || []);
             }
 
-            const activitiesResponse = await fetch('http://localhost:5000/api/admin/activities', {
+            const activitiesResponse = await fetch('http://127.0.0.1:5000/api/admin/activities', {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -296,7 +296,7 @@ const DashboardAdmin = () => {
             const formData = new FormData();
             formData.append('pdf', uploadFile);
 
-            const response = await fetch(`http://localhost:5000/api/devis/${devisId}/upload-pdf`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${devisId}/upload-pdf`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -339,7 +339,7 @@ const DashboardAdmin = () => {
             }
             
             setUploading(true);
-            const response = await fetch(`http://localhost:5000/api/devis/${selectedDevis.id}/update`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${selectedDevis.id}/update`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -372,7 +372,7 @@ const DashboardAdmin = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/devis/${devisId}`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${devisId}`, {
                 method: 'DELETE',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -3024,7 +3024,7 @@ const DashboardAdmin = () => {
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
                                                     type="button"
-                                                    onClick={() => window.open(`http://localhost:5000${selectedDevis.fichierPdf}`, '_blank')}
+                                                    onClick={() => window.open(`http://127.0.0.1:5000${selectedDevis.fichierPdf}`, '_blank')}
                                                     style={{
                                                         padding: '0.5rem 1rem',
                                                         background: colors.primary,

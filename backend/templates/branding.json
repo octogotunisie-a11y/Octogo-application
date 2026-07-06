@@ -1,0 +1,10 @@
+{
+  "entreprise": "OCTOGO Formation & Conseil",
+  "sousTitre": "École de la Cohérence Adaptative (ÉCA)",
+  "couleurPrimaire": "#7C3AED",
+  "couleurSecondaire": "#EC4899",
+  "couleurTexte": "#1F2937",
+  "pied": "OCTOGO Formation & Conseil — Sousse, Tunisie",
+  "logo": null,
+  "_commentaire": "logo: chemin vers un fichier PNG/JPG (ex: 'logo.png' placé dans ce même dossier backend/templates/). Laisser null tant qu'aucun logo n'est fourni. Modifiez les couleurs/textes ici — aucune valeur de branding n'est codée en dur dans documentGenerator.js."
+}

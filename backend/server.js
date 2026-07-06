@@ -193,11 +193,8 @@ const authenticateToken = (req, res, next) => {
         req.user = jwt.verify(token, JWT_SECRET);
         next();
     } catch (error) {
-        console.error('❌ Erreur token:', error.message);
-        return res.status(401).json({
-            success: false,
-            message: 'Token invalide'
-        });
+        console.error('❌ Erreur token:', error.message); // ← c'est ce log que tu vois
+        return res.status(401).json({ success: false, message: 'Token invalide' });
     }
 };
 
@@ -570,7 +567,8 @@ app.post('/api/auth/login', (req, res) => {
     }
 
     const users = readJSON('users.json');
-    const user = users.find(u => u.email === email);
+    const emailNorm = String(email).trim().toLowerCase();
+    const user = users.find(u => String(u.email).trim().toLowerCase() === emailNorm);
 
     if (!user || user.password !== password) {
         return res.status(401).json({ success: false, message: 'Identifiants incorrects' });
@@ -608,14 +606,15 @@ app.post('/api/auth/register', (req, res) => {
 
     const users = readJSON('users.json');
 
-    if (users.some(u => u.email === email)) {
+    const emailNorm = String(email).trim().toLowerCase();
+    if (users.some(u => String(u.email).trim().toLowerCase() === emailNorm)) {
         return res.status(400).json({ success: false, message: 'Email déjà utilisé' });
     }
 
     const newUser = {
         id: Date.now(),
         name,
-        email,
+        email: emailNorm,
         password,
         phone: phone || '',
         company: company || '',
@@ -675,6 +674,26 @@ app.get('/api/users', authenticateToken, (req, res) => {
 });
 
 // Get user by ID
+// Get current user profile
+// IMPORTANT : cette route DOIT être déclarée AVANT '/api/users/:id', sinon Express
+// fait correspondre '/api/users/me' au paramètre :id (id = "me") → 404. Ce masquage
+// cassait la validation du token au rechargement et renvoyait l'utilisateur au login.
+app.get('/api/users/me', authenticateToken, (req, res) => {
+    try {
+        const users = readJSON('users.json');
+        const user = users.find(u => u.id === req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+        }
+
+        const { password, ...safeUser } = user;
+        res.json({ success: true, user: safeUser });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
+    }
+});
+
 app.get('/api/users/:id', authenticateToken, (req, res) => {
     try {
         const userId = parseInt(req.params.id);
@@ -687,23 +706,6 @@ app.get('/api/users/:id', authenticateToken, (req, res) => {
 
         if (req.user.role !== 'admin' && req.user.id !== userId) {
             return res.status(403).json({ success: false, message: 'Accès non autorisé' });
-        }
-
-        const { password, ...safeUser } = user;
-        res.json({ success: true, user: safeUser });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erreur serveur' });
-    }
-});
-
-// Get current user profile
-app.get('/api/users/me', authenticateToken, (req, res) => {
-    try {
-        const users = readJSON('users.json');
-        const user = users.find(u => u.id === req.user.id);
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
         }
 
         const { password, ...safeUser } = user;
@@ -1653,15 +1655,15 @@ app.get('/api/test', (req, res) => {
     res.json({ success: true, message: 'Backend OK', timestamp: new Date().toISOString() });
 });
 
-// ==================== GÉNÉRATION DE PROGRAMME ====================
+// ==================== GÉNÉRATION DE PROGRAMME (ancien module — annuel) ====================
 // Chargement PROTÉGÉ : si un fichier du module manque, le serveur démarre quand
 // même et l'authentification reste fonctionnelle.
 try {
     const programmeRoutes = require('./Routes/programmeRoutes');
     app.use('/api/programmes', programmeRoutes);
-    console.log('✅ Module Génération de Programme chargé');
+    console.log('✅ Module Génération de Programme (annuel) chargé');
 } catch (e) {
-    console.error('⚠ Module Génération de Programme NON chargé:', e.message);
+    console.error('⚠ Module Génération de Programme (annuel) NON chargé:', e.message);
 }
 
 // ==================== CATALOGUE & GÉNÉRATION PAR SÉLECTION ====================
@@ -1673,6 +1675,21 @@ try {
     console.log('✅ Module Catalogue & Tarification chargé');
 } catch (e) {
     console.error('⚠ Module Catalogue & Tarification NON chargé:', e.message);
+}
+
+// ==================== GÉNÉRATION DE PROGRAMME — ASSISTANT IA (simulation locale) ====================
+// Nouveau module (page GenerationProgramme.jsx refaite) : thème -> génération
+// automatique (simulation) de programme, formateur, agenda, devis, facture,
+// présence, évaluations, KPI, étude d'impact. AUCUNE IA pour l'instant — tout
+// est simulé via backend/simulationEngine.js + backend/data/simulation/*.json.
+// Fournit aussi la génération PDF réelle (backend/documentGenerator.js, requiert
+// `npm install pdfkit`) et le téléchargement des CV de démonstration.
+try {
+    const generationRoutes = require('./Routes/generationRoutes');
+    app.use('/api/generation', generationRoutes);
+    console.log('✅ Module Génération de Programme — Assistant IA (simulation) chargé');
+} catch (e) {
+    console.error('⚠ Module Génération de Programme — Assistant IA NON chargé:', e.message);
 }
 
 // Route 404
@@ -1716,5 +1733,18 @@ app.listen(PORT, () => {
     console.log('│   ├── PUT  /api/users/me');
     console.log('│   ├── PUT  /api/users/me/password');
     console.log('│   └── POST /api/users/check-email');
+    console.log('├── GÉNÉRATION IA (simulation)');
+    console.log('│   ├── GET    /api/generation/themes');
+    console.log('│   ├── POST   /api/generation/requests');
+    console.log('│   ├── GET    /api/generation/requests');
+    console.log('│   ├── GET    /api/generation/requests/:id');
+    console.log('│   ├── PUT    /api/generation/requests/:id');
+    console.log('│   ├── DELETE /api/generation/requests/:id');
+    console.log('│   ├── POST   /api/generation/requests/:id/upload');
+    console.log('│   ├── POST   /api/generation/requests/:id/modules/:key/generate');
+    console.log('│   ├── PUT    /api/generation/requests/:id/modules/:key');
+    console.log('│   ├── PUT    /api/generation/requests/:id/modules/:key/valider');
+    console.log('│   ├── GET    /api/generation/requests/:id/modules/:key/download');
+    console.log('│   └── GET    /api/generation/cv/:formateurId');
     console.log('└── UPLOAD: /uploads/devis/');
 });

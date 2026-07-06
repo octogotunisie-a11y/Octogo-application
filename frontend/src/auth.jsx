@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             console.log('🔐 Tentative de connexion:', email);
             
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             console.log('📝 Tentative d\'inscription:', userData.email);
             
-            const response = await fetch('http://localhost:5000/api/auth/register', {
+            const response = await fetch('http://127.0.0.1:5000/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

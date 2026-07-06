@@ -181,13 +181,13 @@ const DashboardClient = () => {
             }
 
             const [profileResponse, devisResponse] = await Promise.all([
-                fetch('http://localhost:5000/api/users/me', {
+                fetch('http://127.0.0.1:5000/api/users/me', {
                     headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 }),
-                fetch('http://localhost:5000/api/devis/mes-devis', {
+                fetch('http://127.0.0.1:5000/api/devis/mes-devis', {
                     headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -233,7 +233,7 @@ const DashboardClient = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/devis/${selectedDevis.id}/comments`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${selectedDevis.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ const DashboardClient = () => {
                 setNewComment('');
                 
                 // Rafraîchir les données du devis pour voir le nouveau message
-                const devisResponse = await fetch(`http://localhost:5000/api/devis/${selectedDevis.id}`, {
+                const devisResponse = await fetch(`http://127.0.0.1:5000/api/devis/${selectedDevis.id}`, {
                     headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ const DashboardClient = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/devis/${selectedDevis.id}/comments`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${selectedDevis.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -313,7 +313,7 @@ const DashboardClient = () => {
                 setReplyingTo(null);
                 
                 // Rafraîchir les données du devis
-                const devisResponse = await fetch(`http://localhost:5000/api/devis/${selectedDevis.id}`, {
+                const devisResponse = await fetch(`http://127.0.0.1:5000/api/devis/${selectedDevis.id}`, {
                     headers: { 
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -343,7 +343,7 @@ const DashboardClient = () => {
 
     const fetchAllServices = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/services/all');
+            const response = await fetch('http://127.0.0.1:5000/api/services/all');
             if (response.ok) {
                 const data = await response.json();
                 setServices(data.services || {});
@@ -378,7 +378,7 @@ const DashboardClient = () => {
     const handleDownloadPDF = async (devisId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/devis/${devisId}/download`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${devisId}/download`, {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -408,7 +408,7 @@ const DashboardClient = () => {
     const handleViewPDF = (devisItem) => {
         if (devisItem.fichierPdf) {
             const token = localStorage.getItem('token');
-            window.open(`http://localhost:5000${devisItem.fichierPdf}?token=${token}`, '_blank');
+            window.open(`http://127.0.0.1:5000${devisItem.fichierPdf}?token=${token}`, '_blank');
         } else {
             showNotification('warning', 'Aucun PDF disponible pour ce devis');
         }
@@ -460,7 +460,7 @@ const DashboardClient = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/api/devis/demander', {
+            const response = await fetch('http://127.0.0.1:5000/api/devis/demander', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -498,7 +498,7 @@ const DashboardClient = () => {
                 return;
             }
 
-            const response = await fetch(`http://localhost:5000/api/devis/${devisId}`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/devis/${devisId}`, {
                 method: 'DELETE',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -531,7 +531,7 @@ const DashboardClient = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/users/me', {
+            const response = await fetch('http://127.0.0.1:5000/api/users/me', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

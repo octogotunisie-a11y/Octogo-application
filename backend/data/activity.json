@@ -2373,5 +2373,275 @@
       "email": "amalch206@gmail.com"
     },
     "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782742694601,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-29T14:18:14.601Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782743018506,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-29T14:23:38.506Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782743435255,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-29T14:30:35.255Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782743742386,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-29T14:35:42.386Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782743971468,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-06-29T14:39:31.468Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782744087388,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T14:41:27.388Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782744197839,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T14:43:17.839Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782744547334,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T14:49:07.334Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782744654931,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T14:50:54.931Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782745329721,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T15:02:09.721Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782745570592,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T15:06:10.592Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1782745799075,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-06-29T15:09:59.075Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783067130604,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T08:25:30.604Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783067295703,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-07-03T08:28:15.703Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783067509512,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T08:31:49.512Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783067617048,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-07-03T08:33:37.048Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783067697996,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T08:34:57.996Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783071742897,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T09:42:22.897Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783071815765,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-07-03T09:43:35.765Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783083847264,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T13:04:07.264Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783083956994,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T13:05:56.994Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783084024742,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-07-03T13:07:04.742Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783084124497,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T13:08:44.497Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783084181391,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T13:09:41.391Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783084391761,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-03T13:13:11.761Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783084582410,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-07-03T13:16:22.410Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783331115424,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-07-06T09:45:15.424Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
   }
 ]
