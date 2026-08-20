@@ -9,7 +9,7 @@
 // TOUS les points d'intégration du futur modèle IA sont marqués `TODO IA`
 // dans generationService.js (frontend) et generationRoutes.js (backend).
 // -----------------------------------------------------------------------------
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GraduationCap, Route, UserCheck, Handshake, ChevronRight, ChevronLeft,
   Sparkles, Loader2, AlertTriangle, RotateCcw,
@@ -21,6 +21,7 @@ import TrainingDetailsForm from '../components/generation/TrainingDetailsForm';
 import AIWorkspace from '../components/generation/AIWorkspace';
 import useGenerationRequest from '../hooks/useGenerationRequest';
 import { C, REQUEST_TYPES } from '../constants/generationConstants';
+import { useMock, maj, programmesDe, utilisateurParEmail, prochainId } from '../mock/mockStore.jsx';
 
 const ICONES_TYPE = { GraduationCap, Route, UserCheck, Handshake };
 
@@ -77,9 +78,109 @@ function EtapeType({ type, setType }) {
   );
 }
 
+// -----------------------------------------------------------------------------
+// Historique des programmes du client — écran d'accueil de la page.
+// Le client retrouve ses anciens programmes et peut en générer d'autres.
+// Données mock : aucun appel réseau, aucune IA.
+// -----------------------------------------------------------------------------
+function MesProgrammes({ programmes, onNouveau, onVoir, onDupliquer }) {
+  const LIBELLE_TYPE = REQUEST_TYPES.reduce((a, t) => ({ ...a, [t.id]: t.label }), {});
+  return (
+    <Card>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: C.dark }}>Mes programmes</div>
+          <div style={{ fontSize: 13.5, color: C.muted, marginTop: 2 }}>
+            {programmes.length} programme(s) généré(s).
+          </div>
+        </div>
+        <button style={btnPrimary} onClick={onNouveau}>
+          <Sparkles size={16} /> Nouveau programme
+        </button>
+      </div>
+
+      {programmes.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '38px 16px' }}>
+          <Sparkles size={34} color={C.border} />
+          <div style={{ fontSize: 15.5, fontWeight: 700, color: C.dark, margin: '12px 0 6px' }}>
+            Aucun programme généré pour le moment.
+          </div>
+          <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 18 }}>
+            Les programmes que vous générerez apparaîtront ici.
+          </div>
+          <button style={btnPrimary} onClick={onNouveau}>
+            <Sparkles size={16} /> Nouveau programme
+          </button>
+        </div>
+      ) : programmes.map((p) => (
+        <div key={p.id} style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
+          flexWrap: 'wrap', padding: '14px 0', borderTop: `1px solid ${C.border}`,
+        }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>{p.titre}</div>
+            <div style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>
+              {LIBELLE_TYPE[p.categorie] || p.categorie} · {new Date(p.genere_le).toLocaleDateString('fr-FR')}
+              {p.documents_ids && p.documents_ids.length > 0 && ` · ${p.documents_ids.length} document(s)`}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button style={btnGhost} onClick={() => onVoir(p, false)}>Voir</button>
+            <button style={btnGhost} onClick={() => onVoir(p, true)}>Modifier</button>
+            <button style={btnGhost} onClick={() => onDupliquer(p)}>Dupliquer</button>
+          </div>
+        </div>
+      ))}
+    </Card>
+  );
+}
+
 export default function GenerationProgramme() {
   const { user } = useAuth();
   const g = useGenerationRequest();
+
+  // Accueil = historique. L'assistant ne démarre que sur action explicite.
+  const [vue, setVue] = useState('historique');
+  const mock = useMock();
+  const profil = utilisateurParEmail(mock, user && user.email);
+  const societeId = profil ? profil.societe_id : (mock.societes[0] || {}).id;
+  const programmes = programmesDe(mock, societeId);
+
+  const dupliquer = (p) => {
+    maj((d) => {
+      d.programmes.push({
+        ...p,
+        id: prochainId(d, 'programme'),
+        titre: `${p.titre} (copie)`,
+        genere_le: new Date().toISOString(),
+      });
+    });
+  };
+
+  // Un programme n'entre dans l'historique QUE lorsqu'il est réellement
+  // finalisé par le client. Rien n'y est inscrit par avance.
+  const finaliser = async () => {
+    await g.finaliserEtCreerDemande();
+    maj((d) => {
+      d.programmes.push({
+        id: prochainId(d, 'programme'),
+        societe_id: societeId,
+        categorie: g.type,
+        titre: g.details.theme || (REQUEST_TYPES.find((t) => t.id === g.type) || {}).label || 'Programme',
+        parametres: { ...g.details },
+        documents_ids: g.details.documentsReference || [],
+        genere_le: new Date().toISOString(),
+      });
+    });
+  };
+
+  const ouvrir = (p, modifiable) => {
+    // Reprend les paramètres du programme dans l'assistant.
+    g.setType(p.categorie);
+    Object.entries(p.parametres || {}).forEach(([k, v]) => g.setDetailField(k, v));
+    g.allerEtape(modifiable ? 2 : 3);
+    setVue('assistant');
+  };
 
   const peutContinuerEtape0 = !!g.type;
   const peutContinuerEtape1 = g.description.mode === 'text' ? g.description.texte.trim().length > 0 : !!g.description.fichier;
@@ -97,7 +198,36 @@ export default function GenerationProgramme() {
         </div>
       </div>
 
-      <Stepper etapeActuelle={g.etape} />
+      {vue === 'historique' && (
+        <MesProgrammes
+          programmes={programmes}
+          onNouveau={() => { g.allerEtape(0); setVue('assistant'); }}
+          onVoir={ouvrir}
+          onDupliquer={dupliquer}
+        />
+      )}
+
+      {vue === 'assistant' && (
+        <button style={{ ...btnGhost, marginBottom: 16 }} onClick={() => setVue('historique')}>
+          <ChevronLeft size={16} /> Mes programmes
+        </button>
+      )}
+
+      {/* Une fois la catégorie choisie, l'écran devient dédié à cette catégorie :
+          son titre et ses champs lui sont propres, jamais ceux d'une autre. */}
+      {vue === 'assistant' && g.type && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', marginBottom: 16,
+          background: `${C.primary}0A`, border: `1px solid ${C.primary}33`, borderRadius: 12,
+        }}>
+          <Sparkles size={18} color={C.primary} />
+          <div style={{ fontSize: 15.5, fontWeight: 800, color: C.primary }}>
+            Génération Programme — {(REQUEST_TYPES.find((t) => t.id === g.type) || {}).label || g.type}
+          </div>
+        </div>
+      )}
+
+      {vue === 'assistant' && <Stepper etapeActuelle={g.etape} />}
 
       {g.error && (
         <div style={{
@@ -109,9 +239,9 @@ export default function GenerationProgramme() {
         </div>
       )}
 
-      {g.etape === 0 && <EtapeType type={g.type} setType={g.setType} />}
+      {vue === 'assistant' && g.etape === 0 && <EtapeType type={g.type} setType={g.setType} />}
 
-      {g.etape === 1 && (
+      {vue === 'assistant' && g.etape === 1 && (
         <Card>
           <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Décrivez votre besoin</div>
           <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>Importez un document existant ou décrivez votre besoin directement.</div>
@@ -119,15 +249,15 @@ export default function GenerationProgramme() {
         </Card>
       )}
 
-      {g.etape === 2 && (
+      {vue === 'assistant' && g.etape === 2 && (
         <Card>
           <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Informations complémentaires</div>
           <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>Ces informations permettront de personnaliser votre dossier complet.</div>
-          <TrainingDetailsForm details={g.details} setDetailField={g.setDetailField} />
+          <TrainingDetailsForm details={g.details} setDetailField={g.setDetailField} type={g.type} />
         </Card>
       )}
 
-      {g.etape === 3 && (
+      {vue === 'assistant' && g.etape === 3 && (
         <AIWorkspace
           documents={g.documents}
           genererCarte={g.genererCarte}
@@ -157,11 +287,11 @@ export default function GenerationProgramme() {
             </button>
           )}
 
-          {g.etape === 2 && (
+          {vue === 'assistant' && g.etape === 2 && (
             <button
               style={{ ...btnPrimary, opacity: peutFinaliser && !g.loading ? 1 : 0.5 }}
               disabled={!peutFinaliser || g.loading}
-              onClick={g.finaliserEtCreerDemande}
+              onClick={finaliser}
             >
               {g.loading ? <Loader2 size={18} style={{ animation: 'spin 0.8s linear infinite' }} /> : <Sparkles size={18} />}
               {g.loading ? 'Génération en cours…' : 'Générer mon dossier'}
@@ -170,7 +300,7 @@ export default function GenerationProgramme() {
         </div>
       )}
 
-      {g.etape === 3 && (
+      {vue === 'assistant' && g.etape === 3 && (
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <button style={btnGhost} onClick={g.reinitialiser}>
             <RotateCcw size={16} /> Nouvelle demande

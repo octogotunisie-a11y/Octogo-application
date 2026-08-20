@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AIChatWidget from './AIChatWidget';
+import EvaluationUser from '../evaluation/EvaluationDemo.jsx';
+import EspaceClient from '../client/EspaceClient.jsx';
 
 const DashboardClient = () => {
     const [user, setUser] = useState(() => {
@@ -1386,6 +1388,9 @@ const DashboardClient = () => {
                     {[
                         { id: 'devis', label: 'Mes Devis', icon: 'bi-file-earmark-text', count: devis.length },
                         { id: 'forms', label: 'Questionnaires', icon: 'bi-ui-checks', count: googleForms.length },
+                        { id: 'fichiers', label: 'Mes fichiers', icon: 'bi-folder2-open', count: null },
+                        { id: 'formations', label: 'Mes formations', icon: 'bi-mortarboard', count: null },
+                        { id: 'evaluation', label: 'Évaluation', icon: 'bi-clipboard-check', count: null },
                         { id: 'profile', label: 'Mon Profil', icon: 'bi-person', count: null }
                     ].map((tab) => (
                         <motion.button
@@ -1446,6 +1451,21 @@ const DashboardClient = () => {
                         minHeight: '600px'
                     }}
                 >
+                    {/* 🟢 TAB ÉVALUATION */}
+                    {activeTab === 'fichiers' && (
+                        <EspaceClient colors={colors} vue="fichiers" />
+                    )}
+
+                    {activeTab === 'formations' && (
+                        <EspaceClient colors={colors} vue="formations" />
+                    )}
+
+                    {activeTab === 'evaluation' && (
+                        <EvaluationUser colors={colors} />
+                    )}
+
+
+
                     {/* 📋 TAB DEVIS */}
                     {activeTab === 'devis' && (
                         <div>

@@ -1,0 +1,377 @@
+{
+  "societes": [
+    {
+      "id": 1,
+      "nom": "ABC",
+      "email": "contact@abc.tn",
+      "telephone": "+216 71 000 000",
+      "createdAt": "2026-08-14T12:01:56.963Z"
+    },
+    {
+      "id": 2,
+      "nom": "XYZ",
+      "email": "contact@xyz.tn",
+      "telephone": "+216 71 111 111",
+      "createdAt": "2026-08-14T12:01:56.963Z"
+    }
+  ],
+  "equipes": [
+    {
+      "id": 1,
+      "societeId": 1,
+      "nom": "Commerciale"
+    },
+    {
+      "id": 2,
+      "societeId": 1,
+      "nom": "RH"
+    },
+    {
+      "id": 3,
+      "societeId": 1,
+      "nom": "Finance"
+    },
+    {
+      "id": 4,
+      "societeId": 2,
+      "nom": "Commerciale"
+    }
+  ],
+  "membres": [
+    {
+      "id": 1,
+      "societeId": 1,
+      "equipeId": 1,
+      "nom": "Ahmed",
+      "email": "ahmed@abc.tn",
+      "roles": [
+        "manager",
+        "observateur"
+      ],
+      "observeIds": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": 2,
+      "societeId": 1,
+      "equipeId": 1,
+      "nom": "Amal",
+      "email": "amalch206@gmail.com",
+      "roles": [
+        "collaborateur"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 3,
+      "societeId": 1,
+      "equipeId": 1,
+      "nom": "Sarra",
+      "email": "sarra@abc.tn",
+      "roles": [
+        "collaborateur"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 4,
+      "societeId": 1,
+      "equipeId": 1,
+      "nom": "Ali",
+      "email": "ali@abc.tn",
+      "roles": [
+        "collaborateur"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 5,
+      "societeId": 1,
+      "equipeId": 2,
+      "nom": "Mohamed",
+      "email": "mohamed@abc.tn",
+      "roles": [
+        "manager"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 6,
+      "societeId": 1,
+      "equipeId": 2,
+      "nom": "Ines",
+      "email": "ines@abc.tn",
+      "roles": [
+        "collaborateur"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 7,
+      "societeId": 1,
+      "equipeId": 3,
+      "nom": "Sami",
+      "email": "sami@abc.tn",
+      "roles": [
+        "manager"
+      ],
+      "observeIds": []
+    },
+    {
+      "id": 8,
+      "societeId": 1,
+      "equipeId": 3,
+      "nom": "Mariem",
+      "email": "mariem@abc.tn",
+      "roles": [
+        "collaborateur"
+      ],
+      "observeIds": []
+    }
+  ],
+  "objets": [
+    {
+      "id": 1,
+      "libelle": "Communication",
+      "description": "Clarté, écoute active, adaptation du message."
+    },
+    {
+      "id": 2,
+      "libelle": "Gestion des conflits",
+      "description": "Désamorçage, médiation, maintien de la relation."
+    },
+    {
+      "id": 3,
+      "libelle": "Relation client",
+      "description": "Qualité de la prise en charge et du suivi."
+    },
+    {
+      "id": 4,
+      "libelle": "Leadership",
+      "description": "Entraînement de l’équipe, exemplarité."
+    },
+    {
+      "id": 5,
+      "libelle": "Organisation",
+      "description": "Priorisation, respect des délais, méthode."
+    },
+    {
+      "id": 6,
+      "libelle": "Esprit d’équipe",
+      "description": "Coopération et partage d’information."
+    }
+  ],
+  "cycles": [
+    {
+      "id": 1,
+      "libelle": "T3 2026",
+      "societeId": 1,
+      "equipeId": 1,
+      "observateurId": 1,
+      "collaborateurIds": [
+        2,
+        3,
+        4
+      ],
+      "objetIds": [
+        1,
+        2,
+        3
+      ],
+      "dateDebut": "2026-07-01",
+      "dateFin": "2026-09-30",
+      "statut": "ouvert",
+      "createdAt": "2026-08-14T12:01:56.963Z"
+    }
+  ],
+  "evaluations": [
+    {
+      "id": 1,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 2,
+      "objetId": 1,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 2,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 2,
+      "objetId": 2,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 3,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 2,
+      "objetId": 3,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 4,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 3,
+      "objetId": 1,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 5,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 3,
+      "objetId": 2,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 6,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 3,
+      "objetId": 3,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 7,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 4,
+      "objetId": 1,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 8,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 4,
+      "objetId": 2,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    },
+    {
+      "id": 9,
+      "cycleId": 1,
+      "observateurId": 1,
+      "collaborateurId": 4,
+      "objetId": 3,
+      "situation": "",
+      "dateObservation": null,
+      "niveau": null,
+      "statut": "a_evaluer",
+      "createdAt": "2026-08-14T12:01:56.963Z",
+      "updatedAt": null
+    }
+  ],
+  "audit": [
+    {
+      "id": 1,
+      "date": "2026-08-14T12:01:56.963Z",
+      "acteur": "Système",
+      "action": "CREATION_CYCLE",
+      "cible": "Cycle T3 2026 — ABC / Commerciale",
+      "details": "3 collaborateurs × 3 objets = 9 évaluations générées."
+    }
+  ],
+  "sequences": {
+    "entite": 1,
+    "ligne_hierarchique": 1,
+    "personne": 1,
+    "relation_observation": 1,
+    "objet": 7,
+    "descripteur_niveau": 1,
+    "cas_etalon": 1,
+    "item": 1,
+    "cycle": 2,
+    "objet_assigne": 1,
+    "cotation_canal_b": 1,
+    "declaration_canal_a": 1,
+    "passation": 1,
+    "reponse_item": 1,
+    "habilitation": 1,
+    "session_calibrage": 1,
+    "cotation_calibrage": 1,
+    "ecart_calcule": 1,
+    "signature": 1,
+    "indice_fiabilite_observateur": 1,
+    "signalement_hors_dispositif": 1,
+    "journal_purge": 2,
+    "audit": 2,
+    "societe": 3,
+    "equipe": 5,
+    "membre": 9,
+    "evaluation": 10
+  },
+  "entite": [],
+  "ligne_hierarchique": [],
+  "personne": [],
+  "relation_observation": [],
+  "objet": [],
+  "descripteur_niveau": [],
+  "cas_etalon": [],
+  "item": [],
+  "cycle": [],
+  "objet_assigne": [],
+  "cotation_canal_b": [],
+  "declaration_canal_a": [],
+  "passation": [],
+  "reponse_item": [],
+  "habilitation": [],
+  "session_calibrage": [],
+  "cotation_calibrage": [],
+  "ecart_calcule": [],
+  "signature": [],
+  "indice_fiabilite_observateur": [],
+  "signalement_hors_dispositif": [],
+  "journal_purge": [
+    {
+      "id": 1,
+      "execute_le": "2026-08-17T10:59:51.900Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    }
+  ]
+}

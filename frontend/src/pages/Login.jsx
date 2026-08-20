@@ -78,8 +78,18 @@ const Login = () => {
     console.log('Résultat login:', result);
     
     if (result.success) {
+      // Retour vers la page qui avait exigé la connexion (ex : génération de
+      // programme). À défaut, redirection habituelle selon le rôle.
+      let retour = null;
+      try {
+        retour = sessionStorage.getItem('octogo_retour_apres_login');
+        sessionStorage.removeItem('octogo_retour_apres_login');
+      } catch (e) { /* ignoré */ }
+
       // Rechargement complet pour repartir d'un état propre à chaque connexion.
-      if (result.user.role === 'admin') {
+      if (retour && result.user.role !== 'admin') {
+        window.location.href = retour;
+      } else if (result.user.role === 'admin') {
         window.location.href = '/admin/dashboard';
       } else {
         window.location.href = '/dashboard';

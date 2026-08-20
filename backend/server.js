@@ -132,24 +132,35 @@ const writeActivity = (activity) => {
     }
 };
 
+// Nombre maximal d'entrées conservées dans activity.json.
+// Sans plafond, le fichier grossit indéfiniment ; comme chaque écriture le
+// réécrit en entier de façon synchrone, il finit par bloquer la boucle
+// d'événements et donc toutes les requêtes, connexion comprise.
+const MAX_ACTIVITES = 500;
+
 const logActivity = (userId, type, details = {}) => {
-    try {
-        const activities = readActivity();
-        const activity = {
-            id: Date.now(),
-            userId,
-            type,
-            timestamp: new Date().toISOString(),
-            details,
-            ip: '127.0.0.1'
-        };
-        activities.push(activity);
-        writeActivity(activities);
-        return true;
-    } catch (error) {
-        console.error('❌ Erreur log activity:', error);
-        return false;
-    }
+    // Journalisation différée : la réponse HTTP part sans attendre l'écriture
+    // disque. Un journal lent ne doit jamais retarder une connexion.
+    setImmediate(() => {
+        try {
+            const activities = readActivity();
+            activities.push({
+                id: Date.now(),
+                userId,
+                type,
+                timestamp: new Date().toISOString(),
+                details,
+                ip: '127.0.0.1'
+            });
+            if (activities.length > MAX_ACTIVITES) {
+                activities.splice(0, activities.length - MAX_ACTIVITES);
+            }
+            writeActivity(activities);
+        } catch (error) {
+            console.error('❌ Erreur log activity:', error.message);
+        }
+    });
+    return true;
 };
 
 // ==================== MULTER CONFIG ====================
@@ -1690,6 +1701,24 @@ try {
     console.log('✅ Module Génération de Programme — Assistant IA (simulation) chargé');
 } catch (e) {
     console.error('⚠ Module Génération de Programme — Assistant IA NON chargé:', e.message);
+}
+
+// ==================== ÉVALUATION (cycles trimestriels) ====================
+// Module Évaluation : sociétés, équipes, membres, observateurs, cycles,
+// référentiel d'objets, saisie des niveaux par l'observateur, audit.
+// Persistance JSON dans backend/data/evaluation.json (aucune nouvelle base).
+// AUCUNE IA : les niveaux sont attribués manuellement par l'observateur.
+try {
+    const evaluationRoutes = require('./Routes/evaluationRoutes');
+    app.use('/api/evaluation', evaluationRoutes);
+    // Purge du verbatim : tâche planifiée, non exposée en HTTP, non désactivable
+    // par un administrateur client (exigence de conformité démontrable en audit).
+    if (typeof evaluationRoutes.demarrerTachesPlanifiees === 'function') {
+        evaluationRoutes.demarrerTachesPlanifiees();
+    }
+    console.log('✅ Module Évaluation chargé');
+} catch (e) {
+    console.error('⚠ Module Évaluation NON chargé:', e.message);
 }
 
 // Route 404

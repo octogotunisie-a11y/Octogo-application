@@ -22,8 +22,37 @@ export const REQUEST_TYPES = [
   { id: 'formation', label: 'Formation', icone: 'GraduationCap' },
   { id: 'parcours', label: 'Parcours de formation', icone: 'Route' },
   { id: 'coaching', label: 'Coaching', icone: 'UserCheck' },
-  { id: 'accompagnement', label: 'Accompagnement', icone: 'Handshake' },
+  { id: 'team_building', label: 'Team Building', icone: 'Handshake' },
 ];
+
+// Champs propres à chaque catégorie — une formation, un parcours, un coaching
+// et un team building ne se décrivent pas avec les mêmes informations.
+// Rendus dynamiquement par TrainingDetailsForm : aucun formulaire dupliqué.
+export const CHAMPS_PAR_TYPE = {
+  formation: [
+    { cle: 'population', label: 'Population concernée', type: 'text' },
+    { cle: 'duree', label: 'Durée souhaitée', type: 'select', options: ['1 jour', '2 jours', '3 jours', '5 jours'] },
+    { cle: 'niveau', label: 'Niveau', type: 'select', options: ['Découverte', 'Intermédiaire', 'Avancé', 'Expert'] },
+  ],
+  parcours: [
+    { cle: 'population', label: 'Population concernée', type: 'text' },
+    { cle: 'duree', label: 'Durée du parcours', type: 'select', options: ['1 mois', '3 mois', '6 mois', '1 an'] },
+    { cle: 'nbModules', label: 'Nombre de modules', type: 'number', min: 1, max: 8 },
+    { cle: 'contexte', label: 'Contexte', type: 'textarea' },
+  ],
+  coaching: [
+    { cle: 'population', label: 'Personne ou groupe accompagné', type: 'text' },
+    { cle: 'problematique', label: 'Problématique', type: 'textarea' },
+    { cle: 'duree', label: 'Durée', type: 'select', options: ['1 mois', '3 mois', '6 mois'] },
+    { cle: 'nbSeances', label: 'Nombre de séances', type: 'number', min: 1, max: 12 },
+  ],
+  team_building: [
+    { cle: 'nbParticipantsTB', label: 'Nombre de participants', type: 'number', min: 2, max: 300 },
+    { cle: 'duree', label: 'Durée', type: 'select', options: ['Demi-journée', '1 journée', '2 journées'] },
+    { cle: 'typeActivite', label: 'Type d’activité', type: 'select', options: ['Atelier collaboratif', 'Activité sportive', 'Activité créative', 'Jeu de rôle', 'Sortie terrain'] },
+    { cle: 'contexte', label: 'Contexte', type: 'textarea' },
+  ],
+};
 
 // Étape 2 — méthodes de description du besoin
 export const DESCRIPTION_MODES = [
@@ -68,6 +97,11 @@ export const DETAILS_FIELDS_DEFAULT = {
   datePrevue: '',
   langue: LANGUES[0],
   commentaires: '',
+  // Champs spécifiques par catégorie (voir CHAMPS_PAR_TYPE)
+  population: '', duree: '', niveau: '', nbModules: '3', contexte: '',
+  problematique: '', nbSeances: '6', nbParticipantsTB: '12', typeActivite: '',
+  // Documents de référence de la société cochés par le client
+  documentsReference: [],
 };
 
 // Les 12 modules générés (cartes de l'espace de travail IA)

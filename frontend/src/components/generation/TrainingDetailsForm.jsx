@@ -14,8 +14,10 @@
 // -----------------------------------------------------------------------------
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
-import { C, MODALITES, LANGUES, SECTEURS_ACTIVITE } from '../../constants/generationConstants';
+import { C, MODALITES, LANGUES, SECTEURS_ACTIVITE, CHAMPS_PAR_TYPE } from '../../constants/generationConstants';
 import { listerThemes } from '../../services/generationService';
+import { useMock, documentsDe, utilisateurParEmail } from '../../mock/mockStore.jsx';
+import { useAuth } from '../../AuthContext';
 
 const inputStyle = {
   width: '100%', padding: '11px 14px', borderRadius: 10, border: `1px solid ${C.border}`,
@@ -40,7 +42,20 @@ const Grid = ({ children, cols = 2 }) => (
   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: '0 16px' }}>{children}</div>
 );
 
-export default function TrainingDetailsForm({ details, setDetailField }) {
+export default function TrainingDetailsForm({ details, setDetailField, type }) {
+  // Documents de référence de la société — sélection préparant le futur flow
+  // « documents → IA → programme ». Aucun fichier n'est lu ni transmis ici.
+  const { user } = useAuth();
+  const mock = useMock();
+  const profil = utilisateurParEmail(mock, user && user.email);
+  const societeId = profil ? profil.societe_id : (mock.societes[0] || {}).id;
+  const documents = documentsDe(mock, societeId);
+  const selection = details.documentsReference || [];
+  const basculerDoc = (id) => setDetailField(
+    'documentsReference',
+    selection.includes(id) ? selection.filter((x) => x !== id) : [...selection, id]
+  );
+
   const [themes, setThemes] = useState([]);
   const [chargementThemes, setChargementThemes] = useState(true);
   const [erreurThemes, setErreurThemes] = useState(null);
@@ -126,6 +141,52 @@ export default function TrainingDetailsForm({ details, setDetailField }) {
         {ouvrirComplement ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         Informations complémentaires (facultatif)
       </button>
+
+      {/* Champs propres à la catégorie choisie — définis dans CHAMPS_PAR_TYPE,
+          jamais dupliqués dans un formulaire séparé par catégorie. */}
+      {(CHAMPS_PAR_TYPE[type] || []).length > 0 && (
+        <Grid cols={2}>
+          {(CHAMPS_PAR_TYPE[type] || []).map((champ) => (
+            <Field key={champ.cle} label={champ.label}>
+              {champ.type === 'select' ? (
+                <select style={inputStyle} value={val(champ.cle)} onChange={upd(champ.cle)}>
+                  <option value="">— Choisir —</option>
+                  {champ.options.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
+              ) : champ.type === 'textarea' ? (
+                <textarea rows={2} style={{ ...inputStyle, resize: 'vertical' }}
+                  value={val(champ.cle)} onChange={upd(champ.cle)} />
+              ) : (
+                <input type={champ.type === 'number' ? 'number' : 'text'}
+                  min={champ.min} max={champ.max}
+                  style={inputStyle} value={val(champ.cle)} onChange={upd(champ.cle)} />
+              )}
+            </Field>
+          ))}
+        </Grid>
+      )}
+
+      {/* Documents de référence de la société */}
+      <Field label="Documents de référence de la société">
+        {documents.length === 0 ? (
+          <div style={{ fontSize: 13, color: C.muted }}>
+            Aucun document. Ajoutez-en depuis l’onglet « Mes fichiers » de votre espace.
+          </div>
+        ) : (
+          <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, maxHeight: 180, overflowY: 'auto' }}>
+            {documents.map((d) => (
+              <label key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 4px', cursor: 'pointer', fontSize: 13.5, color: C.dark }}>
+                <input type="checkbox" checked={selection.includes(d.id)} onChange={() => basculerDoc(d.id)} />
+                <span style={{ flex: 1 }}>{d.nom}</span>
+                <span style={{ fontSize: 11.5, color: C.muted }}>{d.categorie}</span>
+              </label>
+            ))}
+          </div>
+        )}
+        <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
+          Ces documents serviront de contexte lors de la future génération. Aucun fichier n’est analysé à ce stade.
+        </div>
+      </Field>
 
       {ouvrirComplement && (
         <div style={{ paddingTop: 8 }}>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import EvaluationAdmin from '../evaluation/EvaluationDemo.jsx';
+import AdminMock from '../admin/AdminMock.jsx';
 
 const DashboardAdmin = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -959,7 +961,9 @@ const DashboardAdmin = () => {
                             { id: 'devis', label: 'Gestion Devis', icon: 'bi-file-earmark-text', badge: devisStats.enAttente },
                             { id: 'stats', label: 'Statistiques', icon: 'bi-bar-chart' },
                             { id: 'users', label: 'Utilisateurs', icon: 'bi-people', badge: users.length },
-                            { id: 'activities', label: 'Activités', icon: 'bi-clock-history', badge: activities.length }
+                            { id: 'activities', label: 'Activités', icon: 'bi-clock-history', badge: activities.length },
+                            { id: 'evaluation', label: 'Évaluation', icon: 'bi-clipboard-check' },
+                            { id: 'gestion', label: 'Administration', icon: 'bi-sliders' }
                         ].map((tab) => (
                             <motion.button
                                 key={tab.id}
@@ -2551,6 +2555,15 @@ const DashboardAdmin = () => {
                                 })}
                             </motion.div>
                         </motion.div>
+                    )}
+
+                    {/* Évaluation Tab */}
+                    {activeTab === 'evaluation' && (
+                        <EvaluationAdmin colors={colors} />
+                    )}
+
+                    {activeTab === 'gestion' && (
+                        <AdminMock colors={colors} />
                     )}
 
                     {/* Activités Tab */}

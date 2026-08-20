@@ -134,15 +134,15 @@
     "message": "zz",
     "contactPhone": "26450657",
     "contactEmail": "client@test.com",
-    "status": "validé",
+    "status": "en attente",
     "montant": null,
     "montantFinal": null,
     "devise": "TND",
     "commentaireAdmin": null,
-    "fichierPdf": "/uploads/devis/devis_11_1783339101219-181630283.pdf",
-    "fileName": "fichp-pr (2).pdf",
+    "fichierPdf": null,
+    "fileName": null,
     "messages": [],
     "createdAt": "2026-07-06T11:56:50.908Z",
-    "updatedAt": "2026-07-06T11:59:16.015Z"
+    "updatedAt": "2026-07-06T11:56:50.908Z"
   }
 ]

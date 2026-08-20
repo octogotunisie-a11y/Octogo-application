@@ -20,6 +20,20 @@ import Chatbot from './pages/chatbot.jsx';
 import GenerationProgramme from './pages/GenerationProgramme';
 
 // Composant pour les routes protégées client uniquement
+// Accès réservé aux utilisateurs connectés, quel que soit leur rôle.
+// Réutilise useAuth comme les autres gardes : aucun mécanisme d'authentification
+// nouveau n'est introduit.
+const AuthRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) {
+    // Mémorise la page demandée pour y revenir après connexion (voir Login.jsx).
+    try { sessionStorage.setItem('octogo_retour_apres_login', window.location.pathname + window.location.search); } catch (e) { /* ignoré */ }
+    return <Navigate to="/login?message=Connectez-vous pour accéder à la génération de programme" />;
+  }
+  return children;
+};
+
 const ClientRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -251,7 +265,15 @@ function AppContent() {
           <Route path="/formations" element={<Formations />} />
           <Route path="/parcours" element={<Parcours />} />
           <Route path="/team-building" element={<TeamBuilding />} />
-          <Route path="/generation-programme" element={<GenerationProgramme />} />
+          {/* Génération de programme : accès refusé hors connexion */}
+          <Route
+            path="/generation-programme"
+            element={
+              <AuthRoute>
+                <GenerationProgramme />
+              </AuthRoute>
+            }
+          />
           <Route path="/contact" element={<Contact />} />
           
           {/* Routes d'authentification */}

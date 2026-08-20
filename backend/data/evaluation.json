@@ -1,0 +1,442 @@
+{
+  "_version_schema": "1.0",
+  "sequences": {
+    "entite": 3,
+    "ligne_hierarchique": 3,
+    "personne": 5,
+    "relation_observation": 3,
+    "objet": 6,
+    "descripteur_niveau": 5,
+    "cas_etalon": 1,
+    "item": 1,
+    "cycle": 2,
+    "objet_assigne": 7,
+    "cotation_canal_b": 1,
+    "declaration_canal_a": 1,
+    "passation": 1,
+    "reponse_item": 1,
+    "habilitation": 1,
+    "session_calibrage": 1,
+    "cotation_calibrage": 1,
+    "ecart_calcule": 7,
+    "signature": 1,
+    "indice_fiabilite_observateur": 1,
+    "signalement_hors_dispositif": 1,
+    "journal_purge": 5,
+    "audit": 7
+  },
+  "entite": [
+    {
+      "id": 1,
+      "nom": "ABC",
+      "email": "contact@abc.tn",
+      "telephone": "+216 71 000 000",
+      "cree_le": "2026-08-17T11:43:43.431Z"
+    },
+    {
+      "id": 2,
+      "nom": "octogo",
+      "email": "amalch206@gmail.com",
+      "telephone": "26450657",
+      "cree_le": "2026-08-17T12:57:28.253Z"
+    }
+  ],
+  "ligne_hierarchique": [
+    {
+      "id": 1,
+      "entite_id": 1,
+      "parent_ligne_id": null,
+      "libelle": "Direction générale",
+      "responsable_id": 1,
+      "niveau_profondeur": 0,
+      "chemin": "1"
+    },
+    {
+      "id": 2,
+      "entite_id": 1,
+      "parent_ligne_id": 1,
+      "libelle": "Commerciale",
+      "responsable_id": 2,
+      "niveau_profondeur": 1,
+      "chemin": "1.2"
+    }
+  ],
+  "personne": [
+    {
+      "id": 1,
+      "entite_id": 1,
+      "ligne_id": 1,
+      "nom": "Client Test",
+      "email": "client@test.com",
+      "role": "collaborateur",
+      "actif": true,
+      "premier_cycle_valide": true
+    },
+    {
+      "id": 2,
+      "entite_id": 1,
+      "ligne_id": 2,
+      "nom": "Chkiwa AMAL",
+      "email": "amalch206@gmail.com",
+      "role": "manager_observateur",
+      "actif": true,
+      "premier_cycle_valide": true
+    },
+    {
+      "id": 3,
+      "entite_id": 1,
+      "ligne_id": 2,
+      "nom": "amiraaaa",
+      "email": "justf6115@gmail.com",
+      "role": "collaborateur",
+      "actif": true,
+      "premier_cycle_valide": false
+    },
+    {
+      "id": 4,
+      "entite_id": 1,
+      "ligne_id": 2,
+      "nom": "Sarra Ben Salah",
+      "email": "sarra@demo.local",
+      "role": "collaborateur",
+      "actif": true,
+      "premier_cycle_valide": false
+    }
+  ],
+  "relation_observation": [
+    {
+      "id": 1,
+      "observe_id": 3,
+      "observateur_id": 2,
+      "contexte": "hierarchique",
+      "periode_debut": "2026-01-01",
+      "periode_fin": null,
+      "ligne_id": 2
+    },
+    {
+      "id": 2,
+      "observe_id": 4,
+      "observateur_id": 2,
+      "contexte": "hierarchique",
+      "periode_debut": "2026-01-01",
+      "periode_fin": null,
+      "ligne_id": 2
+    }
+  ],
+  "objet": [
+    {
+      "id": 1,
+      "code": "COM-PRO",
+      "libelle": "Communication professionnelle",
+      "registre": "socle",
+      "secteur": null,
+      "version": 1,
+      "actif": true
+    },
+    {
+      "id": 2,
+      "code": "SIT-DIF",
+      "libelle": "Gestion des situations difficiles",
+      "registre": "socle",
+      "secteur": null,
+      "version": 1,
+      "actif": true
+    },
+    {
+      "id": 3,
+      "code": "ORG-PRI",
+      "libelle": "Organisation et priorisation",
+      "registre": "socle",
+      "secteur": null,
+      "version": 1,
+      "actif": true
+    },
+    {
+      "id": 4,
+      "code": "LEA-ENT",
+      "libelle": "Leadership",
+      "registre": "socle",
+      "secteur": null,
+      "version": 1,
+      "actif": true
+    },
+    {
+      "id": 5,
+      "code": "REL-CLI",
+      "libelle": "Relation client",
+      "registre": "situe",
+      "secteur": "distribution",
+      "version": 1,
+      "actif": true
+    }
+  ],
+  "descripteur_niveau": [
+    {
+      "id": 1,
+      "objet_id": 1,
+      "niveau": 1,
+      "question_tri": "La personne se situe-t-elle au niveau « reconnaître » ?",
+      "manifestations": [
+        "À documenter — manifestations du niveau 1."
+      ],
+      "exclusions": [
+        "À documenter — ce qui ne fonde pas le niveau 1."
+      ],
+      "formulation_canal_a": "À ce poste, j'attends de moi de savoir reconnaître."
+    },
+    {
+      "id": 2,
+      "objet_id": 1,
+      "niveau": 2,
+      "question_tri": "La personne se situe-t-elle au niveau « appliquer » ?",
+      "manifestations": [
+        "À documenter — manifestations du niveau 2."
+      ],
+      "exclusions": [
+        "À documenter — ce qui ne fonde pas le niveau 2."
+      ],
+      "formulation_canal_a": "À ce poste, j'attends de moi de savoir appliquer."
+    },
+    {
+      "id": 3,
+      "objet_id": 1,
+      "niveau": 3,
+      "question_tri": "La personne se situe-t-elle au niveau « réguler » ?",
+      "manifestations": [
+        "À documenter — manifestations du niveau 3."
+      ],
+      "exclusions": [
+        "À documenter — ce qui ne fonde pas le niveau 3."
+      ],
+      "formulation_canal_a": "À ce poste, j'attends de moi de savoir réguler."
+    },
+    {
+      "id": 4,
+      "objet_id": 1,
+      "niveau": 4,
+      "question_tri": "La personne se situe-t-elle au niveau « transmettre » ?",
+      "manifestations": [
+        "À documenter — manifestations du niveau 4."
+      ],
+      "exclusions": [
+        "À documenter — ce qui ne fonde pas le niveau 4."
+      ],
+      "formulation_canal_a": "À ce poste, j'attends de moi de savoir transmettre."
+    }
+  ],
+  "cas_etalon": [],
+  "item": [],
+  "cycle": [
+    {
+      "id": 1,
+      "entite_id": 1,
+      "numero": 1,
+      "libelle": "T3 2026",
+      "date_debut": "2026-07-01",
+      "date_fin": "2026-09-30",
+      "statut": "calcule",
+      "cloture_le": "2026-08-18T08:32:15.439Z",
+      "calcule_le": "2026-08-18T08:32:15.439Z",
+      "restitution_ouverte": false,
+      "cree_le": "2026-08-17T11:43:43.431Z"
+    }
+  ],
+  "objet_assigne": [
+    {
+      "id": 1,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 1,
+      "valide_par_manager": true
+    },
+    {
+      "id": 2,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 2,
+      "valide_par_manager": true
+    },
+    {
+      "id": 3,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 3,
+      "valide_par_manager": true
+    },
+    {
+      "id": 4,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 1,
+      "valide_par_manager": true
+    },
+    {
+      "id": 5,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 2,
+      "valide_par_manager": true
+    },
+    {
+      "id": 6,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 3,
+      "valide_par_manager": true
+    }
+  ],
+  "cotation_canal_b": [],
+  "declaration_canal_a": [],
+  "passation": [],
+  "reponse_item": [],
+  "habilitation": [],
+  "session_calibrage": [],
+  "cotation_calibrage": [],
+  "ecart_calcule": [
+    {
+      "id": 1,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 1,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    },
+    {
+      "id": 2,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 2,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    },
+    {
+      "id": 3,
+      "cycle_id": 1,
+      "personne_id": 3,
+      "objet_id": 3,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    },
+    {
+      "id": 4,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 1,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    },
+    {
+      "id": 5,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 2,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    },
+    {
+      "id": 6,
+      "cycle_id": 1,
+      "personne_id": 4,
+      "objet_id": 3,
+      "ecart": null,
+      "signe": "indeterminable",
+      "motif": "non_observe",
+      "condition_signalee": false,
+      "version_moteur": "eca-moteur-1.0.0"
+    }
+  ],
+  "signature": [],
+  "indice_fiabilite_observateur": [],
+  "signalement_hors_dispositif": [],
+  "journal_purge": [
+    {
+      "id": 1,
+      "execute_le": "2026-08-17T11:43:43.431Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Initialisation du journal — aucune purge due."
+    },
+    {
+      "id": 2,
+      "execute_le": "2026-08-18T07:35:10.343Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    },
+    {
+      "id": 3,
+      "execute_le": "2026-08-19T08:05:53.109Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    },
+    {
+      "id": 4,
+      "execute_le": "2026-08-20T07:21:27.523Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    }
+  ],
+  "audit": [
+    {
+      "id": 6,
+      "date": "2026-08-18T09:06:20.902Z",
+      "acteur": "Admin Octogo",
+      "action": "MODIFICATION_PERSONNE",
+      "cible": "Client Test",
+      "details": "Rôle : collaborateur"
+    },
+    {
+      "id": 5,
+      "date": "2026-08-18T08:48:14.728Z",
+      "acteur": "Admin Octogo",
+      "action": "MODIFICATION_PERSONNE",
+      "cible": "Client Test",
+      "details": "Rôle : collaborateur"
+    },
+    {
+      "id": 4,
+      "date": "2026-08-18T08:32:15.439Z",
+      "acteur": "Admin Octogo",
+      "action": "CLOTURE_CYCLE",
+      "cible": "T3 2026",
+      "details": "6 écart(s) calculé(s), 0 signature(s) émise(s). Moteur eca-moteur-1.0.0."
+    },
+    {
+      "id": 3,
+      "date": "2026-08-17T12:59:56.327Z",
+      "acteur": "Admin Octogo",
+      "action": "MODIFICATION_PERSONNE",
+      "cible": "Client Test",
+      "details": "Rôle : collaborateur"
+    },
+    {
+      "id": 2,
+      "date": "2026-08-17T12:59:49.690Z",
+      "acteur": "Admin Octogo",
+      "action": "MODIFICATION_PERSONNE",
+      "cible": "Client Test",
+      "details": "Rôle : collaborateur"
+    },
+    {
+      "id": 1,
+      "date": "2026-08-17T12:57:28.253Z",
+      "acteur": "Admin Octogo",
+      "action": "CREATION_ENTITE",
+      "cible": "octogo",
+      "details": ""
+    }
+  ]
+}
