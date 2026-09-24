@@ -478,5 +478,125 @@
       "email": "amalch206@gmail.com"
     },
     "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722157980,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-18T09:02:37.980Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722300665,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-18T09:05:00.665Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722357022,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-09-18T09:05:57.022Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722370077,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-09-18T09:06:10.077Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722379895,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-09-18T09:06:19.895Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722469625,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-18T09:07:49.625Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722483447,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-09-18T09:08:03.447Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722723874,
+    "userId": 2,
+    "type": "login",
+    "timestamp": "2026-09-18T09:12:03.874Z",
+    "details": {
+      "email": "client@test.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722753481,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-09-18T09:12:33.481Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1789722764798,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-18T09:12:44.798Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1790241476471,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-24T09:17:56.471Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1790241572678,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-09-24T09:19:32.678Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
   }
 ]

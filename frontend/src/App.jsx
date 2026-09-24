@@ -12,6 +12,7 @@ import Coaching from './pages/Coaching';
 import Parcours from './pages/Parcours';
 import TeamBuilding from './pages/TeamBuilding';
 import Contact from './pages/Contact';
+import BibliothequeSectorielle from './pages/BibliothequeSectorielle.jsx';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardClient from './pages/DashboardClient';
@@ -274,6 +275,7 @@ function AppContent() {
               </AuthRoute>
             }
           />
+          <Route path="/bibliotheque" element={<BibliothequeSectorielle />} />
           <Route path="/contact" element={<Contact />} />
           
           {/* Routes d'authentification */}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Brain,
@@ -27,7 +27,10 @@ import {
   Rocket,
   HeartPulse,
   Download,
-  ExternalLink
+  ExternalLink,
+  Library,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 
 const COLORS = {
@@ -303,501 +306,390 @@ const Card = ({ children, hover = true, delay = 0 }) => {
   )
 }
 
-// ==================== SECTION NOTRE CATALOGUE 2026 ====================
-const Catalogue2026Section = () => {
+// ==================== SECTION NOTRE CATALOGUE 2027 ====================
+// Carrousel éditorial : une affiche à la fois, grande, au centre, avec un bloc
+// de texte à gauche et une progression sous la composition.
+//
+// Sept affiches carrées 1080 x 1080 dans frontend/public/secteurs/ :
+//   catalogue-2027-affiche.jpg   l'affiche générale (non utilisée ici)
+//   banque-affiche.jpg           et les cinq autres secteurs
+//
+// Si une affiche manque, un aplat aux couleurs de la marque prend sa place.
+const SECTEURS_CATALOGUE = [
+  { cle: 'banque', nom: 'Banque', accroche: 'Décider sous incertitude, sans se laisser gouverner par elle.' },
+  { cle: 'assurance', nom: 'Assurance', accroche: 'Évaluer le risque sans se tromper de signal.' },
+  { cle: 'industrie', nom: 'Industrie', accroche: 'L’attention comme premier facteur de sécurité.' },
+  { cle: 'hotellerie', nom: 'Hôtellerie', accroche: 'L’accueil tenu dans la durée, pas seulement au premier client.' },
+  { cle: 'telecom', nom: 'Télécom', accroche: 'La relation client sous charge mentale continue.' },
+  { cle: 'distribution', nom: 'Distribution', accroche: 'Décider vite, sans décider mal.' },
+]
+
+const DUREE_AUTO = 6000
+
+// Une affiche du carrousel. Trois états : active, sortante, en attente.
+const AfficheCarrousel = ({ secteur, etat, sens }) => {
+  const [echec, setEchec] = useState(false)
+  const active = etat === 'active'
+
+  // L'affiche entre par le côté d'où vient le mouvement et sort par l'autre.
+  const decalage = active ? 0 : (sens === 'suivant' ? 40 : -40)
+
+  return (
+    <div
+      aria-hidden={!active}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        borderRadius: '16px',
+        overflow: 'hidden',
+        background: 'linear-gradient(145deg, #1E40AF 0%, #5B21B6 100%)',
+        opacity: active ? 1 : 0,
+        transform: `translateX(${decalage}px) scale(${active ? 1 : 0.97})`,
+        transition: 'opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)',
+        pointerEvents: active ? 'auto' : 'none',
+      }}
+    >
+      {!echec ? (
+        <img
+          src={`src/images/ims/${secteur.cle}.png`}
+          alt={`Affiche du catalogue ${secteur.nom} 2027`}
+          loading="lazy"
+          onError={() => setEchec(true)}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      ) : (
+        <div style={{
+          width: '100%', height: '100%',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', gap: '10px',
+          padding: '2rem', textAlign: 'center',
+        }}>
+          <span style={{
+            fontSize: '0.72rem', letterSpacing: '0.16em',
+            color: 'rgba(255, 255, 255, 0.55)',
+          }}>CATALOGUE 2027</span>
+          <span style={{
+            fontSize: 'clamp(1.3rem, 3vw, 2rem)', fontWeight: 800,
+            color: COLORS.white, lineHeight: 1.15,
+          }}>{secteur.nom}</span>
+          <span style={{
+            width: '38px', height: '2px', background: 'rgba(255, 255, 255, 0.35)', margin: '6px 0',
+          }} />
+          <span style={{
+            fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.6)',
+          }}>Affiche à déposer</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Flèche de navigation. Discrète au repos, franche au survol.
+const FlecheCarrousel = ({ direction, onClick, cote, dedans }) => {
+  const [survol, setSurvol] = useState(false)
+  const Icone = direction === 'precedent' ? ChevronLeft : ChevronRight
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setSurvol(true)}
+      onMouseLeave={() => setSurvol(false)}
+      aria-label={direction === 'precedent' ? 'Affiche précédente' : 'Affiche suivante'}
+      style={{
+        ...cote,
+        position: 'absolute',
+        top: '50%',
+        transform: `translateY(-50%) scale(${survol ? 1.06 : 1})`,
+        width: 'clamp(40px, 5vw, 52px)',
+        height: 'clamp(40px, 5vw, 52px)',
+        borderRadius: '50%',
+        border: `1px solid ${survol ? COLORS.primary : 'rgba(15, 23, 42, 0.12)'}`,
+        background: survol ? COLORS.primary : 'rgba(255, 255, 255, 0.92)',
+        color: survol ? COLORS.white : COLORS.dark,
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: survol
+          ? '0 14px 30px rgba(37, 99, 235, 0.32)'
+          : '0 6px 18px rgba(15, 23, 42, 0.10)',
+        transition: 'all 0.25s ease',
+        zIndex: 5,
+        backdropFilter: 'blur(6px)',
+      }}
+    >
+      <Icone size={22} />
+    </button>
+  )
+}
+
+const Catalogue2027Section = () => {
   const [isMobile, setIsMobile] = useState(false)
-  const [hovered, setHovered] = useState(false)
-  
+  const [index, setIndex] = useState(0)
+  const [sens, setSens] = useState('suivant')
+  const [auto, setAuto] = useState(true)
+
+  const total = SECTEURS_CATALOGUE.length
+  const courant = SECTEURS_CATALOGUE[index]
+
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768)
+    const onResize = () => setIsMobile(window.innerWidth < 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
-  
+
+  const aller = useCallback((n, direction) => {
+    setSens(direction)
+    setIndex(((n % total) + total) % total)
+  }, [total])
+
+  // Navigation manuelle : elle arrête le défilement automatique pour de bon.
+  // Reprendre seul après un clic donne l'impression d'un écran qui résiste.
+  const naviguer = useCallback((direction) => {
+    setAuto(false)
+    aller(direction === 'suivant' ? index + 1 : index - 1, direction)
+  }, [aller, index])
+
+  useEffect(() => {
+    if (!auto) return
+    const reduit = typeof window !== 'undefined'
+      && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduit) return
+
+    const t = setInterval(() => {
+      setSens('suivant')
+      setIndex((n) => (n + 1) % total)
+    }, DUREE_AUTO)
+    return () => clearInterval(t)
+  }, [auto, total])
+
+  // Flèches du clavier, une fois la composition survolée ou focalisée.
+  const onClavier = (e) => {
+    if (e.key === 'ArrowLeft') naviguer('precedent')
+    if (e.key === 'ArrowRight') naviguer('suivant')
+  }
+
+  const numero = String(index + 1).padStart(2, '0')
+
   return (
     <section style={{
-      padding: 'clamp(40px, 8vw, 100px) 0',
+      padding: 'clamp(48px, 9vw, 110px) 0',
       background: COLORS.white,
       position: 'relative',
-      width: '100%'
+      overflow: 'hidden',
     }}>
-      {/* Cerveaux flottants dans la section catalogue */}
-      {!isMobile && (
-        <>
-          <div style={{
-            position: 'absolute',
-            top: '10%',
-            left: '5%',
-            animation: 'float 6s ease-in-out infinite',
-            opacity: 0.08,
-            zIndex: 1
-          }}>
-            <Brain size={25} color={COLORS.primary} />
-          </div>
-          <div style={{
-            position: 'absolute',
-            top: '20%',
-            right: '5%',
-            animation: 'float 8s ease-in-out infinite 1s',
-            opacity: 0.08,
-            zIndex: 1
-          }}>
-            <Brain size={35} color={COLORS.secondary} />
-          </div>
-          <div style={{
-            position: 'absolute',
-            bottom: '20%',
-            left: '10%',
-            animation: 'float 7s ease-in-out infinite 2s',
-            opacity: 0.08,
-            zIndex: 1
-          }}>
-            <Brain size={30} color={COLORS.accent} />
-          </div>
-        </>
-      )}
-      
       <div style={{
         width: '100%',
+        boxSizing: 'border-box',
         margin: '0 auto',
         padding: '0 clamp(16px, 4vw, 32px)',
         maxWidth: '1200px',
         position: 'relative',
-        zIndex: 2
+        zIndex: 2,
       }}>
         <SectionTitle
-          subtitle="Découvrez notre collection exclusive de programmes et solutions neuroscientifiques pour 2026"
+          subtitle="Six éditions sectorielles, une méthode : les neurosciences appliquées au travail réel"
           centered
         >
-          Notre Catalogue 2026
+          Notre Catalogue 2027
         </SectionTitle>
 
-        <div style={{
-          marginTop: 'clamp(2rem, 4vw, 3rem)',
-          width: '100%'
-        }}>
-          <Card delay={200}>
+        {/* ---------- COMPOSITION ÉDITORIALE ---------- */}
+        <div
+          tabIndex={0}
+          onKeyDown={onClavier}
+          onMouseEnter={() => setAuto(false)}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 0.85fr) minmax(0, 1fr)',
+            gap: 'clamp(1.75rem, 5vw, 4.5rem)',
+            alignItems: 'center',
+            marginTop: 'clamp(1.5rem, 4vw, 3rem)',
+            outline: 'none',
+          }}
+        >
+          {/* --- Colonne texte --- */}
+          <div style={{ order: isMobile ? 2 : 1, textAlign: isMobile ? 'center' : 'left' }}>
             <div style={{
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: 'clamp(2rem, 4vw, 4rem)',
-              alignItems: 'center'
+              alignItems: 'center',
+              gap: '14px',
+              justifyContent: isMobile ? 'center' : 'flex-start',
+              marginBottom: '1.1rem',
             }}>
-              {/* Book Container - Design amélioré */}
-              <div 
-                style={{
-                  flex: isMobile ? '1' : '0 0 280px',
-                  position: 'relative',
-                  transform: hovered && !isMobile ? 'perspective(1000px) rotateY(-5deg) translateY(-5px)' : 'perspective(1000px) rotateY(-5deg)',
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: hovered && !isMobile ? 
-                    '30px 30px 60px rgba(0, 0, 0, 0.15), 15px 15px 30px rgba(37, 99, 235, 0.15)' : 
-                    '15px 15px 30px rgba(0, 0, 0, 0.08)',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: 'white'
-                }}
-                onMouseEnter={() => !isMobile && setHovered(true)}
-                onMouseLeave={() => !isMobile && setHovered(false)}
-              >
-                {/* Book Cover - Design plus élégant */}
-                <div style={{
-                  width: '280px',
-                  height: '360px',
-                  position: 'relative',
-                  background: 'linear-gradient(145deg, #2563EB 0%, #7C3AED 100%)',
-                  borderRadius: '12px 4px 4px 12px',
-                  overflow: 'hidden',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                  {/* Catalogue Image */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    left: '20px',
-                    right: '20px',
-                    bottom: '20px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.2)'
-                  }}>
-                    <img 
-                      src="/src/images/catalogue.png" 
-                      alt="Catalogue 2026 Octogo"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
-                      }}
-                      onError={(e) => {
-                        e.target.onerror = null
-                        e.target.style.display = 'none'
-                        // Fallback design élégant
-                        const fallback = document.createElement('div')
-                        fallback.style.cssText = `
-                          width: 100%;
-                          height: 100%;
-                          background: linear-gradient(145deg, #1E40AF 0%, #5B21B6 100%);
-                          display: flex;
-                          flex-direction: column;
-                          align-items: center;
-                          justify-content: center;
-                          color: white;
-                          padding: 2rem;
-                          text-align: center;
-                        `
-                        fallback.innerHTML = `
-                          <div style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: white;">2026</div>
-                          <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: rgba(255,255,255,0.9); max-width: 180px;">CATALOGUE</div>
-                          <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 1.5rem; color: rgba(255,255,255,0.7);">NEUROSCIENCES APPLIQUÉES</div>
-                          <div style="width: 40px; height: 3px; background: rgba(255,255,255,0.4); margin: 1rem 0;"></div>
-                          <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 1rem;">Édition Exclusive</div>
-                        `
-                        e.target.parentElement.appendChild(fallback)
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Book Spine élégant */}
-                  <div style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '15px',
-                    bottom: '15px',
-                    width: '15px',
-                    background: 'linear-gradient(to right, #1E3A8A, #4C1D95)',
-                    borderRight: '1px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: 'inset -2px 0 5px rgba(0, 0, 0, 0.3)',
-                    borderRadius: '2px 0 0 2px'
-                  }} />
-                  
-                  
-                  
-                  {/* Shine Effect */}
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '30%',
-                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%)',
-                    pointerEvents: 'none'
-                  }} />
-                  
-                  {/* Corner Accent */}
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    width: '40px',
-                    height: '40px',
-                    background: 'linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.1) 50%)',
-                    pointerEvents: 'none'
-                  }} />
-                </div>
-                
-                {/* Glow Effect on Hover */}
-                {hovered && !isMobile && (
-                  <div style={{
-                    position: 'absolute',
-                    inset: '-15px',
-                    background: 'radial-gradient(circle at center, rgba(37, 99, 235, 0.1), transparent 70%)',
-                    zIndex: -1,
-                    animation: 'glow 2s ease-in-out infinite'
-                  }} />
-                )}
-                
-                {/* Page curl effect */}
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  right: '0',
-                  transform: 'translateY(-50%)',
-                  width: '20px',
-                  height: '60px',
-                  background: 'linear-gradient(to left, rgba(255,255,255,0.3), rgba(255,255,255,0.1), transparent)',
-                  borderLeft: '1px solid rgba(255,255,255,0.2)',
-                  borderTopLeftRadius: '10px',
-                  borderBottomLeftRadius: '10px',
-                  pointerEvents: 'none'
-                }} />
-              </div>
-              
-              {/* Content */}
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  marginBottom: 'clamp(1rem, 2vw, 1.5rem)'
-                }}>
-                  <div style={{
-                    width: '60px',
-                    height: '60px',
-                    background: `${COLORS.primary}20`,
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: COLORS.primary
-                  }}>
-                    <BookOpen size={32} />
-                  </div>
-                  <div>
-                    <h3 style={{
-                      fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                      fontWeight: 700,
-                      marginBottom: '0.5rem',
-                      color: COLORS.dark
-                    }}>
-                      Catalogue Octogo 2026
-                    </h3>
-                    <p style={{
-                      fontSize: 'clamp(1rem, 2vw, 1.25rem)',
-                      color: COLORS.primary,
-                      fontWeight: 600
-                    }}>
-                      Édition exclusive - Programmes de formation avancés
-                    </p>
-                  </div>
-                </div>
-                
-                <div style={{
-                  marginBottom: 'clamp(1.5rem, 3vw, 2rem)'
-                }}>
-                  <p style={{
-                    fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                    color: COLORS.textGray,
-                    lineHeight: 1.6,
-                    marginBottom: '1.5rem'
-                  }}>
-                    Plongez au cœur de nos solutions neuroscientifiques innovantes pour 2026. 
-                    Ce catalogue présente nos programmes de formation certifiants, nos ateliers 
-                    spécialisés et nos outils d'optimisation cognitive.
-                  </p>
-                  
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-                    gap: 'clamp(1rem, 2vw, 1.5rem)',
-                    marginTop: '2rem'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem'
-                    }}>
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        background: `${COLORS.primary}20`,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <CheckCircle size={12} color={COLORS.primary} />
-                      </div>
-                      <span style={{
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        color: COLORS.dark
-                      }}>
-                        Programmes NeuroLeadership
-                      </span>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem'
-                    }}>
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        background: `${COLORS.primary}20`,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <CheckCircle size={12} color={COLORS.primary} />
-                      </div>
-                      <span style={{
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        color: COLORS.dark
-                      }}>
-                        Ateliers NeuroMarketing
-                      </span>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem'
-                    }}>
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        background: `${COLORS.primary}20`,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <CheckCircle size={12} color={COLORS.primary} />
-                      </div>
-                      <span style={{
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        color: COLORS.dark
-                      }}>
-                        Formations NeuroLearning
-                      </span>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem'
-                    }}>
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        background: `${COLORS.primary}20`,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <CheckCircle size={12} color={COLORS.primary} />
-                      </div>
-                      <span style={{
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        color: COLORS.dark
-                      }}>
-                        Solutions NeuroRésilience
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div style={{
-                  display: 'flex',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  gap: '1rem',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingTop: '1.5rem',
-                  borderTop: '1px solid rgba(37, 99, 235, 0.1)'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                    color: COLORS.textGray
-                  }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      background: `${COLORS.primary}10`,
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: COLORS.primary
-                    }}>
-                      <Sparkles size={16} />
-                    </div>
-                    <span>Édition limitée 2026 • 128 pages • Format PDF & Imprimé</span>
-                  </div>
-                  
-                  <div style={{
-                    display: 'flex',
-                    gap: '1rem',
-                    flexWrap: 'wrap',
-                    justifyContent: isMobile ? 'center' : 'flex-end'
-                  }}>
-                    <Link
-                      to="/download-catalogue"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: COLORS.gradientMain,
-                        color: COLORS.white,
-                        padding: 'clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px)',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        fontWeight: 600,
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        transition: 'all 0.3s ease',
-                        minWidth: isMobile ? '100%' : 'auto'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isMobile) {
-                          e.currentTarget.style.transform = 'translateY(-2px)'
-                          e.currentTarget.style.boxShadow = '0 10px 30px rgba(37, 99, 235, 0.3)'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isMobile) {
-                          e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = 'none'
-                        }
-                      }}
-                    >
-                      <Download size={18} />
-                      Télécharger PDF
-                    </Link>
-                    
-                    <Link
-                      to="/contact"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: 'transparent',
-                        color: COLORS.primary,
-                        padding: 'clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px)',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        fontWeight: 600,
-                        fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                        border: `2px solid ${COLORS.primary}`,
-                        transition: 'all 0.3s ease',
-                        minWidth: isMobile ? '100%' : 'auto'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isMobile) {
-                          e.currentTarget.style.transform = 'translateY(-2px)'
-                          e.currentTarget.style.background = `${COLORS.primary}10`
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isMobile) {
-                          e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.background = 'transparent'
-                        }
-                      }}
-                    >
-                      <ExternalLink size={18} />
-                      Demander l'Imprimé
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <span style={{
+                fontSize: 'clamp(2.4rem, 6vw, 3.6rem)',
+                fontWeight: 800,
+                lineHeight: 1,
+                color: 'transparent',
+                WebkitTextStroke: `1.5px ${COLORS.primary}55`,
+              }}>{numero}</span>
+              <span style={{
+                width: '46px', height: '1px', background: 'rgba(15, 23, 42, 0.18)',
+              }} />
+              <span style={{
+                fontSize: '0.78rem',
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: COLORS.textGray,
+                fontWeight: 600,
+              }}>Édition sectorielle</span>
             </div>
-          </Card>
+
+            {/* Le nom change avec l'affiche : même rythme, même courbe. */}
+            <h3 key={courant.cle} style={{
+              margin: '0 0 0.9rem',
+              fontSize: 'clamp(1.9rem, 4.4vw, 3rem)',
+              lineHeight: 1.1,
+              fontWeight: 800,
+              color: COLORS.dark,
+              letterSpacing: '-0.02em',
+              animation: 'octogoEntree 0.6s ease both',
+            }}>{courant.nom}</h3>
+
+            <p key={`${courant.cle}-t`} style={{
+              margin: '0 0 1.75rem',
+              maxWidth: '430px',
+              marginLeft: isMobile ? 'auto' : 0,
+              marginRight: isMobile ? 'auto' : 0,
+              fontSize: 'clamp(0.95rem, 2vw, 1.08rem)',
+              lineHeight: 1.65,
+              color: '#4B5563',
+              animation: 'octogoEntree 0.6s ease 0.06s both',
+            }}>{courant.accroche}</p>
+
+            <Link
+              to="/bibliotheque"
+              style={{
+                padding: 'clamp(12px, 3vw, 15px) clamp(22px, 4vw, 32px)',
+                background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
+                color: COLORS.white,
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                boxShadow: '0 8px 28px rgba(37, 99, 235, 0.32)',
+              }}
+            >
+              <Library size={19} />
+              <span>Explorer la bibliothèque</span>
+            </Link>
+          </div>
+
+          {/* --- Colonne affiche --- */}
+          <div style={{
+            order: isMobile ? 1 : 2,
+            position: 'relative',
+            width: '100%',
+            maxWidth: isMobile ? '420px' : 'none',
+            margin: '0 auto',
+          }}>
+            {/* Halo discret derrière l'affiche */}
+            <div style={{
+              position: 'absolute',
+              inset: '-8% -6% -10% -6%',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${COLORS.primary}16 0%, transparent 68%)`,
+              zIndex: 0,
+            }} />
+
+            <div style={{
+              position: 'relative',
+              aspectRatio: '1 / 1',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 28px 64px rgba(15, 23, 42, 0.22)',
+              zIndex: 1,
+            }}>
+              {SECTEURS_CATALOGUE.map((s, i) => (
+                <AfficheCarrousel
+                  key={s.cle}
+                  secteur={s}
+                  etat={i === index ? 'active' : 'attente'}
+                  sens={sens}
+                />
+              ))}
+            </div>
+
+            {/* Sur petit écran les flèches passent à l'intérieur du cadre :
+                débordantes, elles sortaient de la zone de texte. */}
+            <FlecheCarrousel
+              direction="precedent"
+              onClick={() => naviguer('precedent')}
+              cote={{ left: isMobile ? '12px' : 'clamp(-22px, -2vw, -12px)' }}
+            />
+            <FlecheCarrousel
+              direction="suivant"
+              onClick={() => naviguer('suivant')}
+              cote={{ right: isMobile ? '12px' : 'clamp(-22px, -2vw, -12px)' }}
+            />
+          </div>
+        </div>
+
+        {/* ---------- PROGRESSION ---------- */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '18px',
+          marginTop: 'clamp(2rem, 4vw, 3rem)',
+          flexWrap: 'wrap',
+        }}>
+          <span style={{
+            fontSize: '0.82rem',
+            fontWeight: 700,
+            color: COLORS.dark,
+            fontVariantNumeric: 'tabular-nums',
+          }}>{numero}</span>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {SECTEURS_CATALOGUE.map((s, i) => {
+              const actif = i === index
+              return (
+                <button
+                  key={s.cle}
+                  type="button"
+                  onClick={() => { setAuto(false); aller(i, i > index ? 'suivant' : 'precedent') }}
+                  aria-label={`Afficher l’édition ${s.nom}`}
+                  aria-current={actif ? 'true' : undefined}
+                  style={{
+                    width: actif ? '34px' : '8px',
+                    height: '8px',
+                    padding: 0,
+                    border: 'none',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    background: actif
+                      ? `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`
+                      : 'rgba(15, 23, 42, 0.16)',
+                    transition: 'width 0.45s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s ease',
+                  }}
+                />
+              )
+            })}
+          </div>
+
+          <span style={{
+            fontSize: '0.82rem',
+            color: '#94A3B8',
+            fontVariantNumeric: 'tabular-nums',
+          }}>{String(total).padStart(2, '0')}</span>
         </div>
       </div>
-      
+
       <style>{`
-        @keyframes glow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+        @keyframes octogoEntree {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+        @media (prefers-reduced-motion: reduce) {
+          @keyframes octogoEntree { from { opacity: 1; } to { opacity: 1; } }
         }
       `}</style>
     </section>
@@ -1071,6 +963,9 @@ const HeroSection = () => {
             <div style={{
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
+              // Avec trois boutons, la rangée dépasse sur tablette : le retour à
+              // la ligne évite le débordement sans changer l'aspect sur desktop.
+              flexWrap: 'wrap',
               gap: '1rem',
               justifyContent: 'center',
               alignItems: 'center',
@@ -1117,6 +1012,30 @@ const HeroSection = () => {
               }}>
                 <BookOpen size={20} />
                 <span>Explorer nos Solutions</span>
+              </Link>
+
+              {/* Même style que le bouton précédent : la bibliothèque sectorielle
+                  est un accès de même niveau, pas une action principale. */}
+              <Link to="/bibliotheque" style={{
+                padding: 'clamp(12px, 3vw, 16px) clamp(20px, 4vw, 32px)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: COLORS.white,
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.2s ease',
+                width: isMobile ? '100%' : 'auto',
+                maxWidth: '300px'
+              }}>
+                <Library size={20} />
+                <span>Explorer nos Catalogues 2027</span>
               </Link>
             </div>
 
@@ -1925,9 +1844,9 @@ const TeamSection = () => {
           ))}
         </div>
         
-        {/* Ajout de la section Catalogue 2026 après l'équipe - MÊME STYLE */}
+        {/* Section Catalogue 2027 après l'équipe - MÊME STYLE */}
         <div style={{ marginTop: 'clamp(60px, 8vw, 100px)' }}>
-          <Catalogue2026Section />
+          <Catalogue2027Section />
         </div>
       </div>
     </section>

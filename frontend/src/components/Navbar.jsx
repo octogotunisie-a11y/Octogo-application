@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../AuthContext.jsx'
 import {
-  Menu, X, User, LogOut, Home, BookOpen, Users, FileText, Mail, Target, Sparkles, ChevronDown
+  Menu, X, User, LogOut, Home, BookOpen, Users, FileText, Mail, Target, Sparkles, ChevronDown, Library
 } from 'lucide-react'
 
 const COLORS = {
@@ -24,6 +24,7 @@ const NAV_ITEMS = [
   { path: '/coaching', label: 'Coaching', icon: Users },
   { path: '/articles', label: 'Articles', icon: FileText },
   { path: '/clients', label: 'Clients', icon: Users },
+  { path: '/bibliotheque', label: 'Bibliothèque sectorielle', shortLabel: 'Bibliothèque', icon: Library },
   { path: '/contact', label: 'Contact', icon: Mail },
   { path: '/generation-programme', label: 'Génération de Programme', shortLabel: 'Générateur', icon: Sparkles, highlight: true },
 ]
@@ -40,9 +41,12 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Deux paliers : mobile (<992, menu burger) et compact (<1200, labels courts).
+  // Le choix des libellés se fait sur la place RÉELLEMENT disponible, pas sur la
+  // largeur de l'écran : le conteneur est plafonné, donc un écran de 1920 n'offre
+  // pas 1920 px à la barre. Mesures : 1438 px en libellés courts, 1950 en longs.
   const isMobile = width < 992
-  const isCompact = width < 1200
+  const largeurUtile = Math.min(width, 1600) - (width < 992 ? 32 : 56)
+  const isCompact = largeurUtile < 1950
 
   const closeMenu = () => { setIsMenuOpen(false); setUserMenuOpen(false) }
   // Déconnexion : on vide la session PUIS on recharge complètement l'app
@@ -61,28 +65,42 @@ const Navbar = () => {
       borderBottom: `1px solid ${COLORS.border}`, zIndex: 1000, boxShadow: '0 1px 12px rgba(17,24,39,0.06)',
     },
     container: {
-      height: '100%', maxWidth: 1400, margin: '0 auto', padding: isMobile ? '0 16px' : '0 28px',
+      // 1600 et non 1400 : avec neuf entrées, la barre a besoin de 1438 px en
+      // libellés courts. Plafonnée à 1400, elle n'en avait que 1344 et le
+      // contenu débordait, même sur un écran de 1920.
+      height: '100%', maxWidth: 1600, margin: '0 auto', padding: isMobile ? '0 16px' : '0 28px',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
     },
     logo: { display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 },
     logoImg: { height: isMobile ? 42 : 50, width: 'auto', objectFit: 'contain', display: 'block' },
     desktopNav: {
-      display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'center',
-      flexWrap: 'nowrap', overflow: 'visible',
+      display: 'flex', alignItems: 'center', gap: 2, flex: '1 1 auto',
+      // 'safe center' centre tant que tout tient, puis s'aligne à gauche dès que
+      // la rangée déborde : sans cela, les premiers liens sortent par la gauche.
+      justifyContent: 'safe center',
+      flexWrap: 'nowrap',
+      // minWidth 0 autorise la rétraction : sans lui, un conteneur flex refuse de
+      // passer sous la largeur de son contenu et pousse le bloc de droite hors écran.
+      minWidth: 0, overflowX: 'auto', overflowY: 'hidden',
+      scrollbarWidth: 'none', msOverflowStyle: 'none',
     },
     link: {
+      // flexShrink 0 : sans lui, chaque lien se comprime quand la rangée manque
+      // de place et son texte, en nowrap, déborde sur le lien suivant.
+      flexShrink: 0,
       display: 'inline-flex', alignItems: 'center', gap: 6, padding: isCompact ? '8px 10px' : '8px 13px',
       fontSize: isCompact ? 13.5 : 14.5, fontWeight: 500, lineHeight: 1, color: COLORS.text,
       textDecoration: 'none', borderRadius: 8, whiteSpace: 'nowrap', transition: 'color .18s, background .18s',
     },
     cta: {
+      flexShrink: 0,
       display: 'inline-flex', alignItems: 'center', gap: 6, padding: isCompact ? '8px 12px' : '9px 16px',
       fontSize: isCompact ? 13.5 : 14.5, fontWeight: 600, lineHeight: 1, color: '#fff',
       textDecoration: 'none', borderRadius: 9, whiteSpace: 'nowrap',
       background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`,
       boxShadow: '0 4px 12px rgba(124,58,237,0.25)', marginLeft: 4,
     },
-    right: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 },
+    right: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, minWidth: 'max-content' },
     btnOutline: {
       padding: '9px 16px', background: 'transparent', border: `1px solid ${COLORS.primary}`, color: COLORS.primary,
       borderRadius: 9, fontSize: 14, fontWeight: 600, textDecoration: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
@@ -152,13 +170,17 @@ const Navbar = () => {
 
   return (
     <>
+      {/* scrollbarWidth ne couvre pas Chrome : cette règle masque la barre de
+          défilement de la rangée de liens, qui reste défilable au trackpad. */}
+      <style>{'.octogo-nav-liens::-webkit-scrollbar{display:none}'}</style>
+
       <nav style={S.nav}>
         <div style={S.container}>
           {renderLogo()}
 
           {/* ---------- NAVIGATION DESKTOP ---------- */}
           {!isMobile && (
-            <div style={S.desktopNav}>
+            <div className="octogo-nav-liens" style={S.desktopNav}>
               {NAV_ITEMS.filter((i) => !i.highlight).map((item) => {
                 const Icone = item.icon
                 return (
@@ -169,11 +191,21 @@ const Navbar = () => {
                       e.currentTarget.style.background = active ? `${COLORS.primary}0F` : 'transparent'
                     }}>
                     {!isCompact && <Icone size={16} />}
-                    {item.label}
+                    {/* En mode compact le libellé court était ignoré ici, alors
+                        qu'il est utilisé pour le bouton d'action : d'où la rangée
+                        trop large et « Contact » masqué en bout de course. */}
+                    {isCompact ? (item.shortLabel || item.label) : item.label}
                   </NavLink>
                 )
               })}
-              {/* Outil phare mis en avant */}
+            </div>
+          )}
+
+          {/* ---------- ZONE DROITE ---------- */}
+
+          {/* Outil phare : hors de la zone défilante, toujours entièrement visible */}
+          {!isMobile && (
+            <div style={{ display: 'flex', flexShrink: 0 }}>
               {NAV_ITEMS.filter((i) => i.highlight).map((item) => {
                 const Icone = item.icon
                 return (
@@ -188,7 +220,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* ---------- ZONE DROITE ---------- */}
           <div style={S.right}>
             {isAuthenticated ? (
               !isMobile ? (
