@@ -394,3 +394,26 @@ function construireModuleMock(moduleKey, demande) {
     genereLe: new Date().toISOString(),
   };
 }
+export async function envoyerMessageProgramme(requestId, message, historique = []) {
+  if (MODE_MOCK) {
+    await attendre();
+    return {
+      role: 'assistant',
+      contenu:
+        `Bien reçu. J'ai pris en compte votre précision : « ${message} ».\n\n` +
+        `Je régénère les parties concernées du programme. ` +
+        `Les 3 documents officiels (devis, feuille de présence, fiche programme) seront mis à jour.`,
+      documents: [
+        { id: 'devis', titre: 'Devis', type: 'PDF' },
+        { id: 'presence', titre: 'Feuille de présence', type: 'PDF' },
+        { id: 'fiche', titre: 'Fiche programme', type: 'PDF' },
+      ],
+    };
+  }
+  const resp = await fetch(`${API_BASE}/ia/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ requestId, message, historique }),
+  });
+  return handle(resp);
+}

@@ -1,21 +1,18 @@
 // src/components/generation/TrainingDetailsForm.jsx
 // -----------------------------------------------------------------------------
 // Étape 3 — VERSION MINIMALISTE.
-// Le client ne renseigne QUE ce qu'il sait réellement : le sujet, le nombre
-// de participants, les informations de son entreprise, ses objectifs, et
-// quelques infos complémentaires facultatives.
+// Le client ne renseigne QUE ce qu'il sait réellement : le NOMBRE DE JOURS,
+// le nombre de participants, les informations de son entreprise, ses objectifs,
+// et quelques infos complémentaires facultatives.
 //
-// Tout le reste (contenu pédagogique, nombre d'heures, modules, formateur,
-// devis, facture, évaluations, KPI, étude d'impact) sera généré
-// AUTOMATIQUEMENT à l'étape suivante par le moteur de simulation (backend),
-// qui préfigure le futur modèle IA — voir backend/simulationEngine.js.
-//
-// La liste des thèmes vient du backend (aucune donnée codée en dur ici).
+// ⚠️ MODIFICATION (05/10/2026) : le champ « Sujet / formation souhaitée »
+// a été supprimé et remplacé par « Nombre de jours (1 à 5) ».
 // -----------------------------------------------------------------------------
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
-import { C, MODALITES, LANGUES, SECTEURS_ACTIVITE, CHAMPS_PAR_TYPE } from '../../constants/generationConstants';
-import { listerThemes } from '../../services/generationService';
+import {
+  C, MODALITES, LANGUES, SECTEURS_ACTIVITE, CHAMPS_PAR_TYPE, NOMBRE_JOURS,
+} from '../../constants/generationConstants';
 import { useMock, documentsDe, utilisateurParEmail } from '../../mock/mockStore.jsx';
 import { useAuth } from '../../AuthContext';
 
@@ -43,8 +40,6 @@ const Grid = ({ children, cols = 2 }) => (
 );
 
 export default function TrainingDetailsForm({ details, setDetailField, type }) {
-  // Documents de référence de la société — sélection préparant le futur flow
-  // « documents → IA → programme ». Aucun fichier n'est lu ni transmis ici.
   const { user } = useAuth();
   const mock = useMock();
   const profil = utilisateurParEmail(mock, user && user.email);
@@ -56,24 +51,7 @@ export default function TrainingDetailsForm({ details, setDetailField, type }) {
     selection.includes(id) ? selection.filter((x) => x !== id) : [...selection, id]
   );
 
-  const [themes, setThemes] = useState([]);
-  const [chargementThemes, setChargementThemes] = useState(true);
-  const [erreurThemes, setErreurThemes] = useState(null);
   const [ouvrirComplement, setOuvrirComplement] = useState(false);
-
-  const chargerThemes = () => {
-    setChargementThemes(true);
-    setErreurThemes(null);
-    listerThemes()
-      .then((liste) => {
-        if (!liste.length) throw new Error('Liste vide');
-        setThemes(liste);
-      })
-      .catch(() => setErreurThemes('Impossible de charger la liste des thèmes. Vérifiez que le backend est démarré (node server.js) et réessayez.'))
-      .finally(() => setChargementThemes(false));
-  };
-
-  useEffect(() => { chargerThemes(); }, []);
 
   const val = (k) => details[k] ?? '';
   const upd = (k) => (e) => setDetailField(k, e.target.value);
@@ -86,39 +64,33 @@ export default function TrainingDetailsForm({ details, setDetailField, type }) {
       }}>
         <Sparkles size={16} color={C.primary} style={{ flexShrink: 0, marginTop: 2 }} />
         <span style={{ fontSize: 13, color: C.dark, lineHeight: 1.5 }}>
-          Renseignez uniquement ce que vous savez. Le programme détaillé, le nombre d\u2019heures, le
-          formateur, le devis et tous les autres documents seront générés automatiquement à l\u2019étape suivante.
+          Renseignez uniquement ce que vous savez. Le programme détaillé, le nombre d'heures, le
+          formateur, le devis et tous les autres documents seront générés automatiquement à l'étape suivante.
         </span>
       </div>
 
-      <Field label="Sujet / formation souhaitée" requis>
-        <select style={inputStyle} value={val('theme')} onChange={upd('theme')} disabled={chargementThemes || !themes.length}>
-          <option value="">{chargementThemes ? 'Chargement…' : themes.length ? 'Sélectionner un thème…' : 'Aucun thème disponible'}</option>
-          {themes.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
-        </select>
-        {erreurThemes && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-            <span style={{ fontSize: 12.5, color: C.danger }}>{erreurThemes}</span>
-            <button onClick={chargerThemes} style={{ fontSize: 12, fontWeight: 700, color: C.primary, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-              Réessayer
-            </button>
-          </div>
-        )}
-      </Field>
-
+      {/* ✅ Champ « Nombre de jours » — REMPLACE l'ancien « Sujet / formation souhaitée » */}
       <Grid>
+        <Field label="Nombre de jours (1 à 5)" requis>
+          <select style={inputStyle} value={val('nombreJours')} onChange={upd('nombreJours')}>
+            {NOMBRE_JOURS.map((j) => (
+              <option key={j.valeur} value={j.valeur}>{j.label}</option>
+            ))}
+          </select>
+        </Field>
         <Field label="Nombre de participants" requis>
           <input type="number" min="1" style={inputStyle} value={val('nbParticipants')} onChange={upd('nbParticipants')} placeholder="Ex : 15" />
         </Field>
-        <Field label="Nom de la société" requis>
-          <input style={inputStyle} value={val('societe')} onChange={upd('societe')} placeholder="Ex : BIAT Banque" />
-        </Field>
       </Grid>
 
+      <Field label="Nom de la société" requis>
+        <input style={inputStyle} value={val('societe')} onChange={upd('societe')} placeholder="Ex : BIAT Banque" />
+      </Field>
+
       <Grid>
-        <Field label="Secteur d\u2019activité">
+        <Field label="Secteur d'activité">
           <select style={inputStyle} value={val('secteur')} onChange={upd('secteur')}>
-            <option value="">Sélectionner\u2026</option>
+            <option value="">Sélectionner…</option>
             {SECTEURS_ACTIVITE.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </Field>
@@ -142,8 +114,6 @@ export default function TrainingDetailsForm({ details, setDetailField, type }) {
         Informations complémentaires (facultatif)
       </button>
 
-      {/* Champs propres à la catégorie choisie — définis dans CHAMPS_PAR_TYPE,
-          jamais dupliqués dans un formulaire séparé par catégorie. */}
       {(CHAMPS_PAR_TYPE[type] || []).length > 0 && (
         <Grid cols={2}>
           {(CHAMPS_PAR_TYPE[type] || []).map((champ) => (
@@ -166,11 +136,10 @@ export default function TrainingDetailsForm({ details, setDetailField, type }) {
         </Grid>
       )}
 
-      {/* Documents de référence de la société */}
       <Field label="Documents de référence de la société">
         {documents.length === 0 ? (
           <div style={{ fontSize: 13, color: C.muted }}>
-            Aucun document. Ajoutez-en depuis l’onglet « Mes fichiers » de votre espace.
+            Aucun document. Ajoutez-en depuis l'onglet « Mes fichiers » de votre espace.
           </div>
         ) : (
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, maxHeight: 180, overflowY: 'auto' }}>
@@ -184,7 +153,7 @@ export default function TrainingDetailsForm({ details, setDetailField, type }) {
           </div>
         )}
         <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
-          Ces documents serviront de contexte lors de la future génération. Aucun fichier n’est analysé à ce stade.
+          Ces documents serviront de contexte lors de la future génération. Aucun fichier n'est analysé à ce stade.
         </div>
       </Field>
 

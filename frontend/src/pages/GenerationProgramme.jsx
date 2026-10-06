@@ -1,24 +1,25 @@
 // src/pages/GenerationProgramme.jsx
 // -----------------------------------------------------------------------------
-// Page « Génération de Programme » — refonte complète (architecture uniquement,
-// sans IA — voir consigne du 03/07/2026).
+// Page « Génération de Programme » — refonte complète.
 //
 // Parcours : Type de demande -> Description du besoin -> Infos complémentaires
-//            -> Espace de travail (12 cartes de modules) -> Documents générés.
+//            -> Interface Resultat (chat type ChatGPT).
 //
-// TOUS les points d'intégration du futur modèle IA sont marqués `TODO IA`
-// dans generationService.js (frontend) et generationRoutes.js (backend).
+// ⚠️ MODIFICATION (05/10/2026) :
+//  - Le champ « Sujet / formation souhaitée » a été remplacé par « Nombre de jours ».
+//  - L'ancien AIWorkspace (12 cartes) est remplacé par Resultat.jsx (chat).
+//  - Le clic sur « Générer mon dossier » bascule IMMÉDIATEMENT à l'étape 3.
 // -----------------------------------------------------------------------------
 import React, { useState } from 'react';
 import {
   GraduationCap, Route, UserCheck, Handshake, ChevronRight, ChevronLeft,
-  Sparkles, Loader2, AlertTriangle, RotateCcw,
+  Sparkles, AlertTriangle, RotateCcw,
 } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import Stepper from '../components/generation/shared/Stepper';
 import UploadTrainingRequest from '../components/generation/UploadTrainingRequest';
 import TrainingDetailsForm from '../components/generation/TrainingDetailsForm';
-import AIWorkspace from '../components/generation/AIWorkspace';
+import Resultat from './Resultat';
 import useGenerationRequest from '../hooks/useGenerationRequest';
 import { C, REQUEST_TYPES } from '../constants/generationConstants';
 import { useMock, maj, programmesDe, utilisateurParEmail, prochainId } from '../mock/mockStore.jsx';
@@ -46,8 +47,12 @@ const btnGhost = {
 function EtapeType({ type, setType }) {
   return (
     <Card>
-      <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Quel type de demande souhaitez-vous générer ?</div>
-      <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>Sélectionnez la catégorie qui correspond le mieux à votre besoin.</div>
+      <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>
+        Quel type de demande souhaitez-vous générer ?
+      </div>
+      <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>
+        Sélectionnez la catégorie qui correspond le mieux à votre besoin.
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
         {REQUEST_TYPES.map((t) => {
           const Icone = ICONES_TYPE[t.icone];
@@ -69,7 +74,9 @@ function EtapeType({ type, setType }) {
               }}>
                 <Icone size={24} color={actif ? '#fff' : C.muted} />
               </div>
-              <div style={{ fontWeight: 700, fontSize: 14.5, color: actif ? C.primary : C.dark }}>{t.label}</div>
+              <div style={{ fontWeight: 700, fontSize: 14.5, color: actif ? C.primary : C.dark }}>
+                {t.label}
+              </div>
             </div>
           );
         })}
@@ -80,8 +87,6 @@ function EtapeType({ type, setType }) {
 
 // -----------------------------------------------------------------------------
 // Historique des programmes du client — écran d'accueil de la page.
-// Le client retrouve ses anciens programmes et peut en générer d'autres.
-// Données mock : aucun appel réseau, aucune IA.
 // -----------------------------------------------------------------------------
 function MesProgrammes({ programmes, onNouveau, onVoir, onDupliquer }) {
   const LIBELLE_TYPE = REQUEST_TYPES.reduce((a, t) => ({ ...a, [t.id]: t.label }), {});
@@ -139,7 +144,6 @@ export default function GenerationProgramme() {
   const { user } = useAuth();
   const g = useGenerationRequest();
 
-  // Accueil = historique. L'assistant ne démarre que sur action explicite.
   const [vue, setVue] = useState('historique');
   const mock = useMock();
   const profil = utilisateurParEmail(mock, user && user.email);
@@ -157,25 +161,33 @@ export default function GenerationProgramme() {
     });
   };
 
-  // Un programme n'entre dans l'historique QUE lorsqu'il est réellement
-  // finalisé par le client. Rien n'y est inscrit par avance.
-  const finaliser = async () => {
-    await g.finaliserEtCreerDemande();
-    maj((d) => {
-      d.programmes.push({
-        id: prochainId(d, 'programme'),
-        societe_id: societeId,
-        categorie: g.type,
-        titre: g.details.theme || (REQUEST_TYPES.find((t) => t.id === g.type) || {}).label || 'Programme',
-        parametres: { ...g.details },
-        documents_ids: g.details.documentsReference || [],
-        genere_le: new Date().toISOString(),
-      });
-    });
+  // ---------------------------------------------------------------------------
+  // Finalisation : bascule IMMÉDIATE à l'étape 3 (interface Resultat),
+  // enregistrement backend en arrière-plan.
+  // ---------------------------------------------------------------------------
+  const finaliser = () => {
+    // 1) Bascule immédiate → l'utilisateur voit tout de suite l'interface chat
+    g.allerEtape(3);
+
+    // 2) Enregistrement en arrière-plan (ne bloque pas l'UI)
+    g.finaliserEtCreerDemande()
+      .then(() => {
+        maj((d) => {
+          d.programmes.push({
+            id: prochainId(d, 'programme'),
+            societe_id: societeId,
+            categorie: g.type,
+            titre: g.details.objectifs || (REQUEST_TYPES.find((t) => t.id === g.type) || {}).label || 'Programme',
+            parametres: { ...g.details },
+            documents_ids: g.details.documentsReference || [],
+            genere_le: new Date().toISOString(),
+          });
+        });
+      })
+      .catch((e) => console.warn('Enregistrement arrière-plan échoué :', e));
   };
 
   const ouvrir = (p, modifiable) => {
-    // Reprend les paramètres du programme dans l'assistant.
     g.setType(p.categorie);
     Object.entries(p.parametres || {}).forEach(([k, v]) => g.setDetailField(k, v));
     g.allerEtape(modifiable ? 2 : 3);
@@ -183,8 +195,17 @@ export default function GenerationProgramme() {
   };
 
   const peutContinuerEtape0 = !!g.type;
-  const peutContinuerEtape1 = g.description.mode === 'text' ? g.description.texte.trim().length > 0 : !!g.description.fichier;
-  const peutFinaliser = !!(g.details.theme && g.details.societe && g.details.nbParticipants && g.details.objectifs);
+  const peutContinuerEtape1 = g.description.mode === 'text'
+    ? g.description.texte.trim().length > 0
+    : !!g.description.fichier;
+
+  // ⚠️ Utilise 'nombreJours' (nouveau champ) au lieu de 'theme' (supprimé)
+  const peutFinaliser = !!(
+    g.details.nombreJours &&
+    g.details.societe &&
+    g.details.nbParticipants &&
+    g.details.objectifs
+  );
 
   return (
     <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 64px' }}>
@@ -194,10 +215,13 @@ export default function GenerationProgramme() {
           Assistant de Génération de Programme
         </div>
         <div style={{ fontSize: 14, color: C.muted, marginTop: 4 }}>
-          {user ? `Bonjour ${user.name?.split(' ')[0] || ''}, décrivez votre besoin et laissez l\u2019assistant préparer votre dossier complet.` : 'Décrivez votre besoin pour générer votre dossier de formation complet.'}
+          {user
+            ? `Bonjour ${user.name?.split(' ')[0] || ''}, décrivez votre besoin et laissez l'assistant préparer votre dossier complet.`
+            : 'Décrivez votre besoin pour générer votre dossier de formation complet.'}
         </div>
       </div>
 
+      {/* ---------- Vue historique ---------- */}
       {vue === 'historique' && (
         <MesProgrammes
           programmes={programmes}
@@ -207,14 +231,14 @@ export default function GenerationProgramme() {
         />
       )}
 
+      {/* ---------- Bouton retour (assistant) ---------- */}
       {vue === 'assistant' && (
         <button style={{ ...btnGhost, marginBottom: 16 }} onClick={() => setVue('historique')}>
           <ChevronLeft size={16} /> Mes programmes
         </button>
       )}
 
-      {/* Une fois la catégorie choisie, l'écran devient dédié à cette catégorie :
-          son titre et ses champs lui sont propres, jamais ceux d'une autre. */}
+      {/* ---------- Bandeau catégorie ---------- */}
       {vue === 'assistant' && g.type && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', marginBottom: 16,
@@ -227,8 +251,10 @@ export default function GenerationProgramme() {
         </div>
       )}
 
+      {/* ---------- Stepper ---------- */}
       {vue === 'assistant' && <Stepper etapeActuelle={g.etape} />}
 
+      {/* ---------- Erreur éventuelle ---------- */}
       {g.error && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px',
@@ -239,40 +265,51 @@ export default function GenerationProgramme() {
         </div>
       )}
 
+      {/* ---------- Étape 0 : Type ---------- */}
       {vue === 'assistant' && g.etape === 0 && <EtapeType type={g.type} setType={g.setType} />}
 
+      {/* ---------- Étape 1 : Description ---------- */}
       {vue === 'assistant' && g.etape === 1 && (
         <Card>
-          <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Décrivez votre besoin</div>
-          <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>Importez un document existant ou décrivez votre besoin directement.</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>
+            Décrivez votre besoin
+          </div>
+          <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>
+            Importez un document existant ou décrivez votre besoin directement.
+          </div>
           <UploadTrainingRequest description={g.description} setDescription={g.setDescription} />
         </Card>
       )}
 
+      {/* ---------- Étape 2 : Informations complémentaires ---------- */}
       {vue === 'assistant' && g.etape === 2 && (
         <Card>
-          <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Informations complémentaires</div>
-          <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>Ces informations permettront de personnaliser votre dossier complet.</div>
-          <TrainingDetailsForm details={g.details} setDetailField={g.setDetailField} type={g.type} />
+          <div style={{ fontSize: 18, fontWeight: 800, color: C.dark, marginBottom: 4 }}>
+            Informations complémentaires
+          </div>
+          <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>
+            Ces informations permettront de personnaliser votre dossier complet.
+          </div>
+          <TrainingDetailsForm
+            details={g.details}
+            setDetailField={g.setDetailField}
+            type={g.type}
+          />
         </Card>
       )}
 
+      {/* ---------- Étape 3 : Interface Resultat (chat type ChatGPT) ---------- */}
       {vue === 'assistant' && g.etape === 3 && (
-        <AIWorkspace
-          documents={g.documents}
-          genererCarte={g.genererCarte}
-          regenererCarte={g.regenererCarte}
-          modifierCarte={g.modifierCarte}
-          supprimerCarte={g.supprimerCarte}
-          enregistrerCarte={g.enregistrerCarte}
-          validerCarte={g.validerCarte}
-          telechargerCarte={g.telechargerCarte}
-          copierCarte={g.copierCarte}
+        <Resultat
+          g={g}
+          onRetour={() => g.allerEtape(2)}
+          onNouvelle={() => { g.reinitialiser(); setVue('historique'); }}
         />
       )}
 
-      {g.etape < 3 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+      {/* ---------- Barre de navigation (étapes 0, 1, 2) ---------- */}
+      {vue === 'assistant' && g.etape < 3 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, alignItems: 'center' }}>
           <button style={btnGhost} onClick={g.etapePrecedente} disabled={g.etape === 0}>
             <ChevronLeft size={18} /> Précédent
           </button>
@@ -287,22 +324,23 @@ export default function GenerationProgramme() {
             </button>
           )}
 
-          {vue === 'assistant' && g.etape === 2 && (
+          {g.etape === 2 && (
             <button
-              style={{ ...btnPrimary, opacity: peutFinaliser && !g.loading ? 1 : 0.5 }}
-              disabled={!peutFinaliser || g.loading}
+              style={{ ...btnPrimary, opacity: peutFinaliser ? 1 : 0.5, cursor: peutFinaliser ? 'pointer' : 'not-allowed' }}
+              disabled={!peutFinaliser}
               onClick={finaliser}
             >
-              {g.loading ? <Loader2 size={18} style={{ animation: 'spin 0.8s linear infinite' }} /> : <Sparkles size={18} />}
-              {g.loading ? 'Génération en cours…' : 'Générer mon dossier'}
+              <Sparkles size={18} />
+              Générer mon dossier
             </button>
           )}
         </div>
       )}
 
+      {/* ---------- Bouton "Nouvelle demande" (étape 3 uniquement) ---------- */}
       {vue === 'assistant' && g.etape === 3 && (
         <div style={{ marginTop: 24, textAlign: 'center' }}>
-          <button style={btnGhost} onClick={g.reinitialiser}>
+          <button style={btnGhost} onClick={() => { g.reinitialiser(); setVue('historique'); }}>
             <RotateCcw size={16} /> Nouvelle demande
           </button>
         </div>

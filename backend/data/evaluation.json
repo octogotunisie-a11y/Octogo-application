@@ -22,7 +22,7 @@
     "signature": 1,
     "indice_fiabilite_observateur": 1,
     "signalement_hors_dispositif": 1,
-    "journal_purge": 8,
+    "journal_purge": 11,
     "audit": 7
   },
   "entite": [
@@ -403,6 +403,24 @@
     {
       "id": 7,
       "execute_le": "2026-09-24T09:14:43.104Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    },
+    {
+      "id": 8,
+      "execute_le": "2026-10-01T12:04:15.512Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    },
+    {
+      "id": 9,
+      "execute_le": "2026-10-05T09:24:10.644Z",
+      "enregistrements_traites": 0,
+      "commentaire": "Aucun enregistrement échu."
+    },
+    {
+      "id": 10,
+      "execute_le": "2026-10-06T09:24:10.517Z",
       "enregistrements_traites": 0,
       "commentaire": "Aucun enregistrement échu."
     }

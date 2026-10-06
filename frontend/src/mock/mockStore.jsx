@@ -12,17 +12,16 @@
 //
 // Hiérarchie respectée dès maintenant :  Société → Formation → Cycle → Questions
 //
-// AVERTISSEMENT : les questions et contenus sont fictifs. Ils ne proviennent
-// pas du manuel d'évaluateur et ne doivent jamais être présentés comme les
-// formulations officielles du protocole RESPECT.
+// ⚠️ MODIFICATION (05/10/2026) :
+//  - Ajout de `conversations: []` pour l'historique du chat type ChatGPT.
+//  - Isolation par société ET par email (chaque compte a son propre historique).
+//  - `_version` bumpée à 10, clé sessionStorage → 'octogo_mock_v10'.
 // -----------------------------------------------------------------------------
 import { useSyncExternalStore } from 'react';
 
 // ============================================================================
 // CONSTANTES PARTAGÉES
 // ============================================================================
-// Formats proposés dans l'interface d'ajout. Aucun fichier n'est réellement
-// lu ni analysé à ce stade : seule l'extension oriente l'icône affichée.
 export const FORMATS_DOCUMENT = [
     { ext: 'pdf', label: 'PDF', icone: 'bi-file-earmark-pdf' },
     { ext: 'docx', label: 'Word (DOCX)', icone: 'bi-file-earmark-word' },
@@ -50,9 +49,6 @@ export const iconeDocument = (nom) => {
     return 'bi-file-earmark-text';
 };
 
-// Statuts d'intégration d'un document. Aujourd'hui déclaratifs : ils
-// préfigurent le traitement réel (extraction, indexation) qui viendra avec le
-// backend. L'Admin les ajuste depuis sa console pour éprouver l'affichage.
 export const STATUTS_DOCUMENT = {
     integre: { code: 'integre', label: 'Intégré', ton: 'termine', icone: 'bi-check-circle-fill' },
     en_cours: { code: 'en_cours', label: 'En cours d’intégration', ton: 'soumis', icone: 'bi-hourglass-split' },
@@ -60,14 +56,12 @@ export const STATUTS_DOCUMENT = {
     echec: { code: 'echec', label: 'Échec', ton: 'danger', icone: 'bi-x-circle-fill' }
 };
 
-// Statuts d'une formation, du point de vue du client.
 export const STATUTS_FORMATION = {
     a_venir: { code: 'a_venir', label: 'À venir', ton: 'attente' },
     en_cours: { code: 'en_cours', label: 'En cours', ton: 'soumis' },
     terminee: { code: 'terminee', label: 'Terminée', ton: 'termine' }
 };
 
-// Types d'action tracés dans le journal d'activité.
 export const TYPES_ACTIVITE = {
     connexion: { label: 'Connexion', icone: 'bi-box-arrow-in-right', ton: 'neutre' },
     deconnexion: { label: 'Déconnexion', icone: 'bi-box-arrow-right', ton: 'neutre' },
@@ -89,7 +83,6 @@ export const CATEGORIES_DOCUMENT = [
     'Stratégie', 'Organisation', 'Ressources humaines', 'Identité', 'Présentation', 'Postes', 'Autre'
 ];
 
-// Échelle de réponse du collaborateur (canal A).
 export const ECHELLE = [
     { valeur: 1, label: 'Faible' },
     { valeur: 2, label: 'Modérée' },
@@ -97,9 +90,6 @@ export const ECHELLE = [
     { valeur: 4, label: 'Très élevée' }
 ];
 
-// Niveaux de cotation de l'observateur (canal B).
-// « Non observé » figure au même rang que les quatre niveaux : ce n'est pas un
-// zéro, et il n'est jamais repris automatiquement du cycle précédent.
 export const NIVEAUX = [
     { valeur: 1, label: 'Niveau 1' },
     { valeur: 2, label: 'Niveau 2' },
@@ -108,8 +98,6 @@ export const NIVEAUX = [
     { valeur: 'non_observe', label: 'Non observé' }
 ];
 
-// L'observateur ne reçoit jamais plus de deux questions : au-delà, la cotation
-// devient déclarative et la donnée perd sa valeur.
 export const MAX_QUESTIONS_OBSERVATEUR = 2;
 
 export const MSG = {
@@ -122,69 +110,48 @@ export const MSG = {
 // ÉTAT INITIAL
 // ============================================================================
 export const donneesInitiales = () => ({
-    _version: 9,
+    _version: 10,
 
-    // Vide. AUCUNE société n'est créée automatiquement — ni depuis le champ
-    // `company` d'un compte, ni depuis quoi que ce soit d'autre. Seul l'Admin
-    // décide de leur création, depuis son interface.
     societes: [],
 
-    // ⚠ AUCUN compte n'est inventé. Ces trois entrées correspondent aux trois
-    // comptes client de backend/data/users.json. Le compte admin n'a pas de
-    // fiche : il administre sans être évalué.
-    //
-    // `societe_id: null` et `roles: []` sont l'état de départ, et un état
-    // parfaitement valide. Le rattachement et les rôles relèvent de l'Admin :
-    // rien n'est deviné à partir du nom, de l'email ou de l'entreprise déclarée.
     utilisateurs: [
         { id: 1, nom: 'Client Test', email: 'client@test.com', telephone: '', societe_id: null, roles: [], actif: true },
         { id: 2, nom: 'Chkiwa AMAL', email: 'amalch206@gmail.com', telephone: '', societe_id: null, roles: [], actif: true },
         { id: 3, nom: 'Amira', email: 'justf6115@gmail.com', telephone: '', societe_id: null, roles: [], actif: true }
     ],
 
-    // Vide. Chaque entrée porte `societe_id` et `ajoute_par`, figés au moment
-    // du dépôt : si l'Admin déplace ensuite l'utilisateur vers une autre
-    // société, le document reste rattaché à celle d'origine. L'historique
-    // ne se réécrit pas.
     documents: [],
 
-    // Vide : c'est l'Admin qui renseigne les formations et leurs thèmes.
-    // Aucune formation n'est préchargée.
     formations: [],
 
-    // Vide : un cycle naît de la préparation d'une évaluation par l'Admin.
     cycles: [],
 
-    // Vide : les questions sont produites par la commande de génération.
     questions_observateur: [],
 
-    // Vide : les tests sont produits par la commande de génération.
     tests: [],
 
-    // Journal d'activité. Alimenté par les actions réelles des utilisateurs.
-    // Les entrées d'amorçage reprennent les connexions consignées dans
-    // users.json : aucune activité n'est inventée sur un compte fictif.
     journal: [
         { id: 1, utilisateur_id: 1, type: 'connexion', detail: '', date: '2026-08-17T11:02:53.000Z' },
         { id: 2, utilisateur_id: 2, type: 'connexion', detail: '', date: '2026-08-14T10:59:16.000Z' },
         { id: 3, utilisateur_id: 3, type: 'connexion', detail: '', date: '2026-02-05T11:54:57.000Z' }
     ],
 
-    // Historique des programmes. Vide au départ : un programme n'y figure que
-    // s'il a été réellement généré depuis « Génération Programme ».
-    // Ne jamais y placer d'entrées fictives : l'historique n'est pas une vitrine.
+    // Historique des programmes. Vide au départ.
     programmes: [],
+
+    // ⚠️ AJOUT — Historique des conversations (chat type ChatGPT), isolé par
+    // société ET par email. Chaque entrée :
+    //   { id, societe_id, utilisateur_email, titre, messages: [], cree_le, maj_le }
+    conversations: [],
 
     sequences: {
         societe: 1, utilisateur: 4, document: 1, formation: 1, cycle: 1,
-        question_observateur: 1, test: 1, resultat_test: 1, programme: 1, journal: 4
+        question_observateur: 1, test: 1, resultat_test: 1, programme: 1, journal: 4,
+        conversation: 1
     }
 });
 
-// Gabarit de questions vrai/faux, utilisé par la commande de génération de
-// l'Admin. Les items sont composés à partir de la formation et du thème qu'il
-// a lui-même renseignés — rien n'est préchargé dans l'application.
-// TODO IA — remplacer par un appel réel : POST /api/ia/test { formation, theme, documents }
+// Gabarit de questions vrai/faux (inchangé)
 export function banqueTest(formation, theme = '') {
     return [
         { id: 1, texte: `Les apports de « ${formation} » s’appliquent de la même façon quel que soit l’interlocuteur.`, bonne: false },
@@ -197,18 +164,15 @@ export function banqueTest(formation, theme = '') {
 }
 
 // ============================================================================
-// MAGASIN — singleton, sans provider à monter.
-// Les dashboards existants n'ont pas à être enveloppés dans un contexte.
+// MAGASIN — singleton
 // ============================================================================
-const CLE = 'octogo_mock_v9';
+const CLE = 'octogo_mock_v10';  // ⚠️ bumpé de v9 → v10
 
 const charger = () => {
     try {
         const brut = sessionStorage.getItem(CLE);
         if (!brut) return donneesInitiales();
         const data = JSON.parse(brut);
-        // Structure obsolète : on repart propre plutôt que de laisser un écran
-        // planter sur une clé absente.
         if (!data || data._version !== donneesInitiales()._version) return donneesInitiales();
         return data;
     } catch (e) {
@@ -220,13 +184,12 @@ let etat = charger();
 const abonnes = new Set();
 
 const persister = () => {
-    try { sessionStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) { /* quota : on continue en mémoire */ }
+    try { sessionStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) { /* quota */ }
 };
 
 const subscribe = (f) => { abonnes.add(f); return () => abonnes.delete(f); };
 const getSnapshot = () => etat;
 
-/** Applique une mutation sur une copie de l'état. */
 export const maj = (muter) => {
     const copie = JSON.parse(JSON.stringify(etat));
     muter(copie);
@@ -235,22 +198,14 @@ export const maj = (muter) => {
     abonnes.forEach((f) => f());
 };
 
-/** Remet le jeu de données à son état d'origine. */
 export const reinitialiser = () => {
     etat = donneesInitiales();
     persister();
     abonnes.forEach((f) => f());
 };
 
-/** Abonnement React à l'état mock. */
 export const useMock = () => useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-/**
- * Résout la société courante depuis le compte connecté.
- * AUCUN repli : si l'utilisateur n'est rattaché à aucune société, societeId
- * vaut null et l'écran le dit. Choisir une société à sa place serait
- * exactement l'automatisme que l'Admin doit contrôler.
- */
 export const useSocieteCourante = (user) => {
     const data = useMock();
     const profil = utilisateurParEmail(data, user && user.email);
@@ -260,8 +215,7 @@ export const useSocieteCourante = (user) => {
 };
 
 // ============================================================================
-// SÉLECTEURS — tout accès passe par ici, avec l'identifiant de la société.
-// L'isolation entre sociétés ne peut pas être oubliée dans un écran.
+// SÉLECTEURS
 // ============================================================================
 export const utilisateurParEmail = (d, email) => {
     if (!email) return null;
@@ -271,14 +225,11 @@ export const utilisateurParEmail = (d, email) => {
 
 export const documentsDe = (d, societeId) => d.documents.filter((x) => x.societe_id === societeId);
 export const formationsDe = (d, societeId) => d.formations.filter((f) => f.societe_id === societeId);
-// Un utilisateur possède un rôle si son tableau `roles` le contient.
 export const aRole = (u, role) => !!u && Array.isArray(u.roles) && u.roles.includes(role);
 
 export const utilisateursDe = (d, societeId, role) =>
     d.utilisateurs.filter((u) => u.societe_id === societeId && (!role || aRole(u, role)));
 
-// Comptes existants non encore rattachés à une société : c'est parmi eux que
-// l'Admin choisit. Aucun compte n'est créé au passage.
 export const utilisateursNonRattaches = (d) =>
     d.utilisateurs.filter((u) => u.societe_id == null);
 
@@ -291,7 +242,6 @@ export const cycleDeSociete = (d, societeId) => d.cycles.find((c) => c.societe_i
 export const formationDuCycle = (d, cycle) =>
     cycle ? d.formations.find((f) => f.id === cycle.formation_id) || null : null;
 
-// Questions posées à l'observateur pour un cycle. Deux au maximum.
 export const questionsObservateur = (d, cycleId, inclureInactives = false) =>
     d.questions_observateur
         .filter((q) => q.cycle_id === cycleId && (inclureInactives || q.actif))
@@ -307,21 +257,51 @@ export const resultatDe = (d, testId, utilisateurId) =>
 export const programmesDe = (d, societeId) =>
     d.programmes.filter((p) => p.societe_id === societeId).slice().reverse();
 
-/** Cycle d'une personne : celui de sa société, quel que soit son rôle. */
 export const cycleDe = (d, utilisateurId) => {
     const u = d.utilisateurs.find((x) => x.id === utilisateurId);
     return u && u.societe_id != null ? cycleDeSociete(d, u.societe_id) : null;
 };
 
-/** Identifiant suivant — compteur déterministe, aucun aléatoire. */
 export const prochainId = (d, cle) => {
     const n = d.sequences[cle] || 1;
     d.sequences[cle] = n + 1;
     return n;
 };
 
-// Gabarit des questions d'observation. Une à deux, jamais davantage.
-// TODO IA — remplacer par : POST /api/ia/questions-observateur { formation, theme, documents }
+// ============================================================================
+// CONVERSATIONS (chat type ChatGPT) — ⚠️ AJOUT
+// ============================================================================
+
+/**
+ * Liste les conversations d'un compte donné, triées par date de mise à jour
+ * décroissante (la plus récente en premier).
+ *
+ * Isolation : filtre sur `societe_id` ET `utilisateur_email` pour qu'un
+ * utilisateur ne voie jamais les conversations d'un autre.
+ */
+export const conversationsDe = (d, societeId, email) => {
+    if (!d.conversations) return [];
+    const e = String(email || '').trim().toLowerCase();
+    return d.conversations
+        .filter((c) =>
+            c.societe_id === societeId &&
+            String(c.utilisateur_email || '').trim().toLowerCase() === e
+        )
+        .slice()
+        .sort((a, b) => new Date(b.maj_le) - new Date(a.maj_le));
+};
+
+/** Récupère une conversation par son id. */
+export const conversationParId = (d, id) =>
+    (d.conversations || []).find((c) => c.id === id) || null;
+
+/** Compte les conversations d'un utilisateur (utile pour l'UI). */
+export const nombreConversations = (d, societeId, email) =>
+    conversationsDe(d, societeId, email).length;
+
+// ============================================================================
+// Gabarit questions observateur (inchangé)
+// ============================================================================
 export function gabaritQuestionsObservateur(formation, theme = '') {
     const sujet = theme || formation;
     return [
@@ -331,15 +311,11 @@ export function gabaritQuestionsObservateur(formation, theme = '') {
 }
 
 // ---------------------------------------------------------------- Fichiers
-// Les fichiers réellement choisis par le client sont conservés en mémoire, le
-// temps de la session, pour permettre la consultation. Un Blob n'est pas
-// sérialisable : il ne part donc jamais dans sessionStorage, et disparaît au
-// rafraîchissement — l'entrée du document, elle, subsiste.
 const fichiers = new Map();
 
 export const memoriserFichier = (documentId, file) => {
     try { fichiers.set(documentId, { url: URL.createObjectURL(file), type: file.type }); }
-    catch (e) { /* consultation simplement indisponible */ }
+    catch (e) { /* consultation indisponible */ }
 };
 
 export const urlFichier = (documentId) => {
@@ -354,26 +330,13 @@ export const oublierFichier = (documentId) => {
 
 // ============================================================================
 // OPÉRATIONS D'ADMINISTRATION
-//
-// Aucune de ces fonctions n'impose de règle métier : elles exécutent ce que
-// l'Admin décide. Une société peut être vide, un utilisateur sans société,
-// un utilisateur sans rôle — ce sont des états valides, pas des erreurs.
 // ============================================================================
-
-/** Rattache, déplace ou détache un utilisateur. `societeId = null` détache. */
 export const rattacherUtilisateur = (d, utilisateurId, societeId) => {
     const u = d.utilisateurs.find((x) => x.id === utilisateurId);
     if (!u) return;
     u.societe_id = societeId == null ? null : Number(societeId);
-    // Les documents déjà déposés ne bougent pas : ils restent rattachés à la
-    // société qui était la sienne au moment du dépôt (voir §14).
 };
 
-/**
- * Supprime une société sans supprimer les comptes de ses membres : ils
- * redeviennent simplement non attribués. Supprimer un compte parce que sa
- * société disparaît serait une décision que l'Admin n'a pas prise.
- */
 export const supprimerSociete = (d, societeId) => {
     d.societes = d.societes.filter((s) => s.id !== societeId);
     d.utilisateurs.forEach((u) => { if (u.societe_id === societeId) u.societe_id = null; });
@@ -382,16 +345,14 @@ export const supprimerSociete = (d, societeId) => {
     d.cycles = d.cycles.filter((cy) => cy.societe_id !== societeId);
     d.questions_observateur = d.questions_observateur.filter((q) => !cycles.includes(q.cycle_id));
     d.tests = d.tests.filter((t) => t.societe_id !== societeId);
-    // Les documents sont conservés : ils gardent la trace de leur société
-    // d'origine, y compris supprimée. L'historique ne se réécrit pas.
+    // ⚠️ On supprime aussi les conversations rattachées à cette société.
+    d.conversations = (d.conversations || []).filter((c) => c.societe_id !== societeId);
 };
 
-/** Supprime un compte. Ses documents restent, avec leur auteur d'origine. */
 export const supprimerUtilisateur = (d, utilisateurId) => {
     d.utilisateurs = d.utilisateurs.filter((u) => u.id !== utilisateurId);
 };
 
-/** Nom d'une société, y compris supprimée : le document en garde la trace. */
 export const nomSociete = (d, societeId) => {
     if (societeId == null) return null;
     const s = d.societes.find((x) => x.id === societeId);
@@ -399,13 +360,6 @@ export const nomSociete = (d, societeId) => {
 };
 
 // ---------------------------------------------------------------- Activité
-/**
- * Trace une action dans le journal. À appeler DANS un maj().
- * @param {object} d           brouillon de l'état
- * @param {number} utilisateurId
- * @param {string} type        clé de TYPES_ACTIVITE
- * @param {string} detail      complément lisible
- */
 export const tracer = (d, utilisateurId, type, detail = '') => {
     d.journal.unshift({
         id: prochainId(d, 'journal'),

@@ -77,6 +77,13 @@ export const THEMES_SUGGERES = [
 // le reste — programme, formateur, devis, KPI... — est généré automatiquement
 // par la simulation / le futur modèle IA, voir backend/simulationEngine.js).
 export const MODALITES = ['Présentiel', 'Distanciel', 'Hybride'];
+export const NOMBRE_JOURS = [
+  { valeur: '1', label: '1 jour' },
+  { valeur: '2', label: '2 jours' },
+  { valeur: '3', label: '3 jours' },
+  { valeur: '4', label: '4 jours' },
+  { valeur: '5', label: '5 jours' },
+];
 export const LANGUES = ['Français', 'Arabe', 'Anglais'];
 export const SECTEURS_ACTIVITE = [
   'Banque & Finance', 'Assurance', 'Industrie', 'Aviation & Transport',
@@ -85,7 +92,7 @@ export const SECTEURS_ACTIVITE = [
 ];
 
 export const DETAILS_FIELDS_DEFAULT = {
-  theme: '',              // sujet / formation souhaitée (obligatoire — pilote toute la simulation)
+  nombreJours: '2',               // sujet / formation souhaitée (obligatoire — pilote toute la simulation)
   nbParticipants: '',     // obligatoire
   societe: '',            // obligatoire — informations entreprise
   secteur: '',

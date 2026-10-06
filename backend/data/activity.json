@@ -598,5 +598,35 @@
       "email": "amalch206@gmail.com"
     },
     "ip": "127.0.0.1"
+  },
+  {
+    "id": 1790856266566,
+    "userId": 1,
+    "type": "login",
+    "timestamp": "2026-10-01T12:04:26.566Z",
+    "details": {
+      "email": "admin@octogo.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1791192253765,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-10-05T09:24:13.765Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1791211634459,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-10-05T14:47:14.459Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
   }
 ]

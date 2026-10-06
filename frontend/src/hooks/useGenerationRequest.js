@@ -3,12 +3,22 @@
 // Hook central : tout l'état du parcours « Génération de Programme » vit ici.
 // Les composants (formulaires, stepper, cartes) ne font que lire/appeler ce
 // hook — aucune logique métier dupliquée dans les composants d'affichage.
+//
+// ⚠️ MODIFICATION (05/10/2026) :
+//  - Ajout de la gestion des conversations (chat type ChatGPT).
+//  - `envoyerMessage` persiste dans sessionStorage via maj().
+//  - Isolation par société ET par email.
 // -----------------------------------------------------------------------------
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { envoyerMessageProgramme } from '../services/generationService';
 import {
   DETAILS_FIELDS_DEFAULT, MODULES, DOCUMENT_STATUS,
 } from '../constants/generationConstants';
 import * as api from '../services/generationService';
+import {
+  useMock, maj, conversationsDe, utilisateurParEmail, prochainId,
+} from '../mock/mockStore.jsx';
+import { useAuth } from '../AuthContext';
 
 function documentsInitiaux() {
   const docs = {};
@@ -19,11 +29,11 @@ function documentsInitiaux() {
 }
 
 export default function useGenerationRequest() {
-  // Navigation du stepper : 0 = type, 1 = description, 2 = infos complémentaires, 3 = espace de travail
+  // Navigation du stepper : 0 = type, 1 = description, 2 = infos, 3 = résultat
   const [etape, setEtape] = useState(0);
 
   const [requestId, setRequestId] = useState(null);
-  const [type, setType] = useState(null); // 'formation' | 'parcours' | 'coaching' | 'accompagnement'
+  const [type, setType] = useState(null);
 
   const [description, setDescription] = useState({ mode: 'text', texte: '', fichier: null, fichierNom: null });
   const [details, setDetails] = useState(DETAILS_FIELDS_DEFAULT);
@@ -34,6 +44,23 @@ export default function useGenerationRequest() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  // ----- Chat / conversation -----
+  const [conversationId, setConversationId] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  // ----- Contexte utilisateur (pour filtrer l'historique par compte) -----
+  const { user } = useAuth();
+  const mock = useMock();
+  const profil = utilisateurParEmail(mock, user && user.email);
+  const societeId = profil ? profil.societe_id : (mock.societes[0] || {}).id;
+  const email = user && user.email;
+
+  // Liste des conversations du compte connecté (recalculée à chaque rendu)
+  const conversations = useMemo(
+    () => conversationsDe(mock, societeId, email),
+    [mock, societeId, email]
+  );
+
   const setDetailField = useCallback((champ, valeur) => {
     setDetails((d) => ({ ...d, [champ]: valeur }));
   }, []);
@@ -42,16 +69,20 @@ export default function useGenerationRequest() {
   const etapeSuivante = useCallback(() => setEtape((e) => Math.min(e + 1, 3)), []);
   const etapePrecedente = useCallback(() => setEtape((e) => Math.max(e - 1, 0)), []);
 
-  // Crée la demande en base. Le backend génère IMMÉDIATEMENT tous les
-  // documents via le moteur de simulation (voir simulationEngine.js) — la
-  // réponse contient donc déjà les 11 modules remplis, prêts à afficher.
+  // ---------------------------------------------------------------------------
+  // Création de la demande (backend en arrière-plan)
+  // ---------------------------------------------------------------------------
   const finaliserEtCreerDemande = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const payload = { type, description: { mode: description.mode, texte: description.texte, fichierNom: description.fichierNom }, details };
+      const payload = {
+        type,
+        description: { mode: description.mode, texte: description.texte, fichierNom: description.fichierNom },
+        details,
+      };
       const resp = await api.creerDemande(payload);
-      const demande = resp.demande;
+      const demande = resp.demande || resp.request;
       const id = demande?.id;
       setRequestId(id);
 
@@ -59,7 +90,6 @@ export default function useGenerationRequest() {
         await api.uploaderDocumentBesoin(id, description.fichier);
       }
 
-      // Hydrate l'état local avec les documents déjà générés par la simulation.
       if (demande?.documents) {
         setDocuments((docsActuels) => ({ ...docsActuels, ...demande.documents }));
       }
@@ -74,8 +104,9 @@ export default function useGenerationRequest() {
     }
   }, [type, description, details]);
 
-  // ---- gestion des cartes / modules ----
-
+  // ---------------------------------------------------------------------------
+  // Gestion des cartes / modules (conservé pour compatibilité)
+  // ---------------------------------------------------------------------------
   const marquerStatut = useCallback((moduleKey, status, patch = {}) => {
     setDocuments((docs) => ({
       ...docs,
@@ -83,9 +114,6 @@ export default function useGenerationRequest() {
     }));
   }, []);
 
-  // TODO IA : `api.genererModule` appelle pour l'instant un stub backend qui
-  // renvoie une structure vide/gabarit. À terme, cet appel déclenchera le
-  // véritable pipeline IA (analyse besoin + génération de contenu).
   const genererCarte = useCallback(async (moduleKey) => {
     if (!requestId) return;
     marquerStatut(moduleKey, DOCUMENT_STATUS.GENERATION_EN_COURS);
@@ -127,7 +155,7 @@ export default function useGenerationRequest() {
       const doc = documents[moduleKey];
       await api.enregistrerModule(requestId, moduleKey, doc.data);
     } catch (e) {
-      setError(e.message || 'Erreur lors de l\u2019enregistrement.');
+      setError(e.message || 'Erreur lors de l\'enregistrement.');
     } finally {
       setSaving(false);
     }
@@ -170,6 +198,129 @@ export default function useGenerationRequest() {
     }));
   }, []);
 
+  // ---------------------------------------------------------------------------
+  // Gestion des conversations (chat type ChatGPT)
+  // ---------------------------------------------------------------------------
+
+  /** Crée une nouvelle conversation vide et la retourne. */
+  const nouvelleConversation = useCallback((titre = 'Nouvelle conversation') => {
+    let idCree = null;
+    maj((d) => {
+      idCree = prochainId(d, 'conversation');
+      if (!d.conversations) d.conversations = [];
+      d.conversations.push({
+        id: idCree,
+        societe_id: societeId,
+        utilisateur_email: email,
+        titre,
+        messages: [],
+        cree_le: new Date().toISOString(),
+        maj_le: new Date().toISOString(),
+      });
+    });
+    setConversationId(idCree);
+    setMessages([]);
+    return idCree;
+  }, [societeId, email]);
+
+  /** Charge une conversation existante dans l'état local. */
+  const chargerConversation = useCallback((id) => {
+    const conv = (mock.conversations || []).find((c) => c.id === id);
+    if (!conv) return;
+    setConversationId(id);
+    setMessages(conv.messages || []);
+  }, [mock.conversations]);
+
+  /** Supprime une conversation. */
+  const supprimerConversation = useCallback((id) => {
+    maj((d) => {
+      d.conversations = (d.conversations || []).filter((c) => c.id !== id);
+    });
+    if (conversationId === id) {
+      setConversationId(null);
+      setMessages([]);
+    }
+  }, [conversationId]);
+
+  /** Persiste le fil de messages dans la conversation courante. */
+  const persistMessages = useCallback((msgs) => {
+    if (!conversationId) return;
+    maj((d) => {
+      const conv = (d.conversations || []).find((c) => c.id === conversationId);
+      if (conv) {
+        conv.messages = msgs;
+        conv.maj_le = new Date().toISOString();
+        // Auto-titre : premier message utilisateur (40 premiers caractères)
+        if (conv.titre === 'Nouvelle conversation') {
+          const premier = msgs.find((m) => m.role === 'user');
+          if (premier) {
+            conv.titre = premier.contenu.slice(0, 40) + (premier.contenu.length > 40 ? '…' : '');
+          }
+        }
+      }
+    });
+  }, [conversationId]);
+
+  // ---------------------------------------------------------------------------
+  // Envoi de message (chat) — persiste automatiquement
+  // ---------------------------------------------------------------------------
+  const envoyerMessage = useCallback(async (texte) => {
+    if (!texte || !texte.trim()) return;
+
+    // 1) Crée la conversation si aucune n'est active
+    let convId = conversationId;
+    if (!convId) {
+      convId = nouvelleConversation('Nouvelle conversation');
+    }
+
+    const userMsg = { role: 'user', contenu: texte.trim(), date: new Date().toISOString() };
+    const nouveaux = [...messages, userMsg];
+    setMessages(nouveaux);
+    persistMessages(nouveaux);
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const resp = await envoyerMessageProgramme(requestId, texte, messages);
+      const assistantMsg = {
+        role: 'assistant',
+        contenu: resp.contenu,
+        documents: resp.documents || [],
+        date: new Date().toISOString(),
+      };
+      const avecReponse = [...nouveaux, assistantMsg];
+      setMessages(avecReponse);
+      persistMessages(avecReponse);
+    } catch (e) {
+      setError(e.message || 'Erreur lors de l\'envoi du message.');
+    } finally {
+      setLoading(false);
+    }
+  }, [requestId, messages, conversationId, nouvelleConversation, persistMessages]);
+
+  // ---------------------------------------------------------------------------
+  // Actions globales
+  // ---------------------------------------------------------------------------
+  const telechargerTout = useCallback(async () => {
+    try {
+      await telechargerCarte('devis');
+      await telechargerCarte('presence');
+      await telechargerCarte('fiche');
+    } catch (e) {
+      setError(e.message || 'Erreur lors du téléchargement groupé.');
+    }
+  }, [telechargerCarte]);
+
+  const copierTout = useCallback(async () => {
+    try {
+      const texte = messages
+        .map((m) => `${m.role === 'user' ? 'Vous' : 'Assistant'} : ${m.contenu}`)
+        .join('\n\n');
+      await navigator.clipboard.writeText(texte);
+    } catch (_) { /* ignoré */ }
+  }, [messages]);
+
   const reinitialiser = useCallback(() => {
     setEtape(0);
     setRequestId(null);
@@ -178,23 +329,43 @@ export default function useGenerationRequest() {
     setDetails(DETAILS_FIELDS_DEFAULT);
     setDocuments(documentsInitiaux());
     setError(null);
+    setConversationId(null);
+    setMessages([]);
   }, []);
 
   return {
-    // navigation
+    // ----- Chat / conversations -----
+    conversations,
+    conversationId,
+    messages,
+    setMessages,
+    envoyerMessage,
+    nouvelleConversation,
+    chargerConversation,
+    supprimerConversation,
+    telechargerTout,
+    copierTout,
+
+    // ----- Navigation -----
     etape, allerEtape, etapeSuivante, etapePrecedente,
-    // étape 1
+
+    // ----- Étape 1 -----
     type, setType,
-    // étape 2
+
+    // ----- Étape 2 -----
     description, setDescription,
-    // étape 3
+
+    // ----- Étape 3 -----
     details, setDetailField,
-    // création
+
+    // ----- Création -----
     requestId, finaliserEtCreerDemande, loading, error, setError,
-    // espace de travail (étape 4)
+
+    // ----- Espace de travail (ancien) -----
     documents, genererCarte, regenererCarte, modifierCarte, supprimerCarte,
     enregistrerCarte, validerCarte, telechargerCarte, copierCarte, saving,
-    // divers
+
+    // ----- Divers -----
     reinitialiser,
   };
 }

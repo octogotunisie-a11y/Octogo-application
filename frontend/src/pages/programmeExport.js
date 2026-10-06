@@ -30,7 +30,7 @@ const esc = (v) =>
     String(v == null ? '' : v)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/>/g, '&gt;'); 
 
 const fmt = (n) => Number(n || 0).toLocaleString('fr-FR');
 
@@ -41,7 +41,7 @@ const statutBudgetLabel = (statut) => {
         case 'DÉPASSEMENT':
             return 'Dépassement budgétaire';
         default:
-            return 'Budget non renseigné';
+            return 'Budget non renseigné ';
     }
 };
 
@@ -85,7 +85,7 @@ export function buildDocumentHtml(resultat, options = {}) {
         </div>
       </td></tr>
     </table>`;
-
+    
     // -- 1. Contexte stratégique --
     const contexte = `
     ${bandeau('1. Contexte stratégique')}
