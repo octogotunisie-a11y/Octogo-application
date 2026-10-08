@@ -67,7 +67,8 @@ const COLORS = {
   gradientMain: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
   gradientLight: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.05))',
   gradientDark: 'linear-gradient(135deg, #7C3AED 0%, #DB2777 100%)',
-  gradientAccent: 'linear-gradient(135deg, #EC4899 0%, #F97316 100%)'
+  gradientAccent: 'linear-gradient(135deg, #EC4899 0%, #F97316 100%)',
+  gradientTriple: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%)'
 }
 
 // ==================== ANIMATIONS ====================
@@ -149,6 +150,11 @@ const Coaching = () => {
   // Fonction pour gérer le contact (bouton principal)
   const handleContact = () => {
     navigate('/contact')
+  }
+
+  // ✅ NOUVELLE FONCTION : Navigation vers la génération de coaching
+  const handleSimulerCoaching = () => {
+    navigate('/generation-programme')
   }
 
   // Fonction pour gérer la demande de devis (identique à Parcours)
@@ -666,6 +672,29 @@ const Coaching = () => {
           .tab-glow:hover::before {
             transform: translateX(100%);
           }
+
+          /* ✅ Simuler button styles */
+          .simuler-button {
+            padding: clamp(16px, 3vw, 20px) clamp(32px, 5vw, 48px);
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 16px;
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+          }
+
+          .simuler-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+          }
         `}
       </style>
       
@@ -703,7 +732,6 @@ const Coaching = () => {
         overflow: 'hidden',
         width: '100%'
       }} ref={(el) => addRef(el, 1)}>
-        {/* Background elements */}
         <div style={{
           position: 'absolute',
           top: '10%',
@@ -894,6 +922,44 @@ const Coaching = () => {
         </div>
       </section>
 
+      {/* ✅ NOUVEAU : Bouton Simuler mon coaching */}
+      <section style={{
+        padding: 'clamp(30px, 5vw, 50px) 0 clamp(40px, 6vw, 60px)',
+        background: COLORS.white,
+        textAlign: 'center',
+        width: '100%'
+      }}>
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          padding: '0 clamp(20px, 4vw, 40px)',
+          ...getAnimationStyle('simuler-section', 0)
+        }}>
+          <button
+            onClick={handleSimulerCoaching}
+            className="simuler-button"
+          >
+            <Sparkles size={24} />
+            <span>Simuler mon coaching</span>
+            <ArrowRight size={20} />
+          </button>
+          
+          <p style={{
+            marginTop: '20px',
+            color: COLORS.textGray,
+            fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
+            fontStyle: 'italic',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}>
+            <Star size={16} color={COLORS.primary} />
+            Créez votre coaching personnalisé avec l'IA en quelques minutes
+          </p>
+        </div>
+      </section>
+
       {/* Process Section */}
       <section style={{
         padding: 'clamp(60px, 8vw, 80px) 0',
@@ -946,7 +1012,6 @@ const Coaching = () => {
             gap: '30px',
             position: 'relative'
           }}>
-            {/* Connecting line for desktop */}
             {!isMobile && (
               <div style={{
                 position: 'absolute',
@@ -1050,7 +1115,6 @@ const Coaching = () => {
           margin: '0 auto',
           padding: '0 clamp(20px, 4vw, 40px)'
         }}>
-          {/* Tab Navigation améliorée */}
           <div style={{
             display: 'flex',
             justifyContent: 'center',
@@ -1135,7 +1199,6 @@ const Coaching = () => {
             </button>
           </div>
 
-          {/* Section Title */}
           <div style={{
             textAlign: 'center',
             marginBottom: '60px',
@@ -1168,7 +1231,6 @@ const Coaching = () => {
             </p>
           </div>
 
-          {/* Coaching Cards avec images */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
@@ -1194,7 +1256,6 @@ const Coaching = () => {
                 onMouseEnter={() => !isMobile && setHoveredCard(index)}
                 onMouseLeave={() => !isMobile && setHoveredCard(null)}
               >
-                {/* Image Section */}
                 <div style={{
                   height: '200px',
                   width: '100%',
@@ -1212,7 +1273,6 @@ const Coaching = () => {
                     }}
                     fallbackColor={`${coaching.color}20`}
                   />
-                  {/* Overlay avec titre sur l'image */}
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
@@ -1235,14 +1295,12 @@ const Coaching = () => {
                   </div>
                 </div>
                 
-                {/* Content Section */}
                 <div style={{
                   padding: '30px',
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
-                  {/* Durée et séances */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1322,7 +1380,6 @@ const Coaching = () => {
                     ))}
                   </div>
                   
-                  {/* Best for */}
                   <div style={{
                     background: `${coaching.color}08`,
                     padding: '15px',
@@ -1353,7 +1410,6 @@ const Coaching = () => {
                     </div>
                   </div>
                   
-                  {/* CTA Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1409,7 +1465,6 @@ const Coaching = () => {
         overflow: 'hidden',
         width: '100%'
       }} ref={(el) => addRef(el, 5)}>
-        {/* Background decoration */}
         <div style={{
           position: 'absolute',
           top: '-100px',
@@ -1508,7 +1563,6 @@ const Coaching = () => {
                 onMouseEnter={() => !isMobile && setHoveredCard(index + 3)}
                 onMouseLeave={() => !isMobile && setHoveredCard(null)}
               >
-                {/* Image Section */}
                 <div style={{
                   height: '200px',
                   width: '100%',
@@ -1526,7 +1580,6 @@ const Coaching = () => {
                     }}
                     fallbackColor={`${coaching.color}20`}
                   />
-                  {/* Overlay avec titre sur l'image */}
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
@@ -1549,14 +1602,12 @@ const Coaching = () => {
                   </div>
                 </div>
                 
-                {/* Content */}
                 <div style={{
                   padding: '30px',
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
-                  {/* Durée */}
                   <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -1775,7 +1826,7 @@ const Coaching = () => {
         </div>
       </section>
 
-      {/* CTA Section finale */}
+      {/* ✅ CTA Section finale MODIFIÉE */}
       <section style={{
         padding: 'clamp(60px, 8vw, 100px) 0',
         background: COLORS.white,
@@ -1783,7 +1834,6 @@ const Coaching = () => {
         overflow: 'hidden',
         width: '100%'
       }} ref={(el) => addRef(el, 7)}>
-        {/* Background elements - simplifiés pour fond blanc */}
         <div style={{
           position: 'absolute',
           top: '0',
@@ -1827,7 +1877,7 @@ const Coaching = () => {
                 fontSize: '0.95rem',
                 letterSpacing: '0.5px'
               }}>
-                Commencez votre transformation dès aujourd'hui
+                Créez votre coaching sur mesure
               </span>
             </div>
             
@@ -1839,7 +1889,7 @@ const Coaching = () => {
               lineHeight: 1.1,
               letterSpacing: '-0.5px'
             }}>
-              Prêt à libérer votre{' '}
+              Créez mon propre{' '}
               <span style={{
                 background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
                 WebkitBackgroundClip: 'text',
@@ -1847,7 +1897,7 @@ const Coaching = () => {
                 backgroundClip: 'text',
                 display: 'inline-block'
               }}>
-                plein potentiel
+                coaching
               </span>
               ?
             </h2>
@@ -1861,7 +1911,16 @@ const Coaching = () => {
               marginRight: 'auto',
               lineHeight: 1.6
             }}>
-              Contactez-nous pour un diagnostic gratuit et découvrez le programme adapté à vos objectifs
+              <strong style={{
+                background: COLORS.gradientTriple,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontWeight: 700
+              }}>
+                Un besoin spécifique ?
+              </strong>{' '}
+              Générez un programme de coaching sur mesure adapté à vos objectifs, votre profil et votre rythme grâce à notre IA.
             </p>
             
             <div style={{
@@ -1872,7 +1931,7 @@ const Coaching = () => {
               alignItems: 'center'
             }}>
               <button
-                onClick={handleContact}
+                onClick={handleSimulerCoaching}
                 style={{
                   padding: '20px 48px',
                   background: COLORS.gradientMain,
@@ -1903,45 +1962,9 @@ const Coaching = () => {
                   }
                 }}
               >
-                <MessageCircle size={24} />
-                Prendre rendez-vous gratuit
+                <Sparkles size={24} />
+                Générer mon coaching
                 <ArrowUpRight size={20} />
-              </button>
-              
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                style={{
-                  padding: '20px 40px',
-                  background: 'transparent',
-                  color: COLORS.primary,
-                  border: `2px solid ${COLORS.primary}30`,
-                  borderRadius: '15px',
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  minWidth: isMobile ? '100%' : 'auto'
-                }}
-                className="hover-lift"
-                onMouseEnter={(e) => {
-                  if (!isMobile) {
-                    e.currentTarget.style.background = `${COLORS.primary}10`;
-                    e.currentTarget.style.borderColor = COLORS.primary;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isMobile) {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.borderColor = `${COLORS.primary}30`;
-                  }
-                }}
-              >
-                <BookOpen size={24} />
-                Revoir les programmes
               </button>
             </div>
             
@@ -1960,15 +1983,15 @@ const Coaching = () => {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle size={16} color={COLORS.primary} />
-                  <span>Rendez-vous sous 48h</span>
+                  <span>Programme généré en quelques minutes</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle size={16} color={COLORS.primary} />
-                  <span>Garantie satisfait ou remboursé</span>
+                  <span>100% personnalisé par IA</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CheckCircle size={16} color={COLORS.primary} />
-                  <span>Accompagnement personnalisé</span>
+                  <span>Approche neuroscientifique</span>
                 </div>
               </div>
             </div>

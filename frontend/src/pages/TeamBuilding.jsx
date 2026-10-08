@@ -178,7 +178,6 @@ const TeamBuilding = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated) {
-          // Animation initiale seulement si pas encore animé
           animateNumbers()
           setHasAnimated(true)
         }
@@ -285,15 +284,12 @@ const TeamBuilding = () => {
 
   // Fonction pour gérer la demande de devis (identique à Parcours et Coaching)
   const handleDemandeDevis = (activity) => {
-    // Vérifier si l'utilisateur est connecté
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     
     if (!token || !user) {
-      // Si non connecté, rediriger vers login avec retour vers dashboard
       navigate(`/login?redirect=/dashboard&action=demande-devis&teamBuildingId=${activity.id}&teamBuildingNom=${encodeURIComponent(activity.title)}`);
     } else {
-      // Si connecté, rediriger vers le dashboard avec paramètres
       navigate(`/dashboard?action=demande-devis&teamBuildingId=${activity.id}&teamBuildingNom=${encodeURIComponent(activity.title)}`);
     }
   };
@@ -310,9 +306,14 @@ const TeamBuilding = () => {
     document.body.style.overflow = 'auto'
   }
 
-  // Fonction pour contacter (bouton principal CTA)
+  // ✅ Fonction pour contacter (bouton principal CTA)
   const handleContact = () => {
     navigate('/contact')
+  }
+
+  // ✅ NOUVELLE FONCTION : Navigation vers la génération de team building
+  const handleSimulerTeamBuilding = () => {
+    navigate('/generation-programme')
   }
 
   return (
@@ -342,7 +343,6 @@ const TeamBuilding = () => {
         transition={{ duration: 0.8 }}
       >
         <div className="container">
-          {/* Logo centré */}
           <div className="logo-container">
             <motion.img 
               src="/src/images/1.png" 
@@ -440,6 +440,34 @@ const TeamBuilding = () => {
                 </motion.div>
               ))}
             </div>
+          </motion.div>
+
+          {/* ✅ NOUVEAU : Bouton Simuler mon Team Building sous les stats */}
+          <motion.div 
+            className="simuler-button-container"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ amount: 0.3, once: true }}
+          >
+            <motion.button
+              className="simuler-button"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 15px 40px rgba(139, 92, 246, 0.4)' }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleSimulerTeamBuilding}
+            >
+              <i className="bi bi-magic"></i>
+              Simuler mon Team Building
+              <i className="bi bi-arrow-right"></i>
+            </motion.button>
+            
+            <p className="simuler-subtitle">
+              <i className="bi bi-stars"></i>
+              Créez votre expérience de team building personnalisée avec l'IA en quelques minutes
+            </p>
           </motion.div>
 
           {/* Filters */}
@@ -629,7 +657,7 @@ const TeamBuilding = () => {
                         </div>
                       </motion.div>
 
-                      {/* Action Buttons - MODIFIÉ */}
+                      {/* Action Buttons */}
                       <div className="action-buttons">
                         <motion.button
                           whileHover={{ 
@@ -685,7 +713,6 @@ const TeamBuilding = () => {
                           )}
                         </motion.button>
 
-                        {/* NOUVEAU BOUTON "Demander devis" avec la même logique */}
                         <motion.button
                           whileHover={{ 
                             scale: 1.05,
@@ -757,7 +784,7 @@ const TeamBuilding = () => {
             </motion.p>
           </motion.div>
 
-          {/* CTA Section */}
+          {/* ✅ CTA Section MODIFIÉE */}
           <motion.div
             className="cta-section"
             initial={{ opacity: 0, y: 50 }}
@@ -770,15 +797,18 @@ const TeamBuilding = () => {
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <i className="bi bi-calendar-heart-fill"></i>
+              <i className="bi bi-lightbulb-fill"></i>
             </motion.div>
             
             <h2 className="cta-title">
-              Organisez votre Team Building
+              Créez mon propre Team Building
             </h2>
             
             <p className="cta-description">
-              Contactez-nous pour créer une expérience sur mesure adaptée à votre équipe
+              <strong className="cta-highlight">
+                Un besoin spécifique ?
+              </strong>{' '}
+              Générez une expérience de team building sur mesure adaptée à vos enjeux, vos équipes et votre calendrier grâce à notre IA.
             </p>
             
             <div className="cta-buttons">
@@ -788,24 +818,11 @@ const TeamBuilding = () => {
                   boxShadow: "0 15px 30px rgba(139, 92, 246, 0.4)"
                 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleContact}
+                onClick={handleSimulerTeamBuilding}
                 className="cta-button primary"
               >
-                <i className="bi bi-calendar-check"></i>
-                Réserver un Team Building
-              </motion.button>
-              
-              <motion.button
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 8px 20px rgba(139, 92, 246, 0.2)"
-                }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => window.open('tel:+21628262829')}
-                className="cta-button secondary"
-              >
-                <i className="bi bi-telephone"></i>
-                +216 28 262 829
+                <i className="bi bi-magic"></i>
+                Générer mon Team Building
               </motion.button>
             </div>
             
@@ -964,7 +981,7 @@ const TeamBuilding = () => {
                     </div>
                   </motion.div>
 
-                  {/* Actions du modal - MODIFIÉ */}
+                  {/* Actions du modal */}
                   <div className="modal-actions">
                     <motion.button
                       whileHover={{ 
@@ -980,7 +997,6 @@ const TeamBuilding = () => {
                       Télécharger le programme
                     </motion.button>
 
-                    {/* NOUVEAU BOUTON dans le modal */}
                     <motion.button
                       whileHover={{ 
                         scale: 1.02,
@@ -1161,6 +1177,50 @@ const TeamBuilding = () => {
 
         .stat-underline {
           display: none;
+        }
+
+        /* ✅ Simuler button styles */
+        .simuler-button-container {
+          text-align: center;
+          margin-bottom: 2.5rem;
+          padding: 0 15px;
+        }
+
+        .simuler-button {
+          padding: 18px 40px;
+          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
+          color: white;
+          border: none;
+          border-radius: 16px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+          transition: all 0.3s ease;
+          letter-spacing: 0.02em;
+        }
+
+        .simuler-button i {
+          font-size: 1.3rem;
+        }
+
+        .simuler-button i:last-child {
+          font-size: 1.1rem;
+        }
+
+        .simuler-subtitle {
+          margin-top: 1rem;
+          color: #6B7280;
+          font-size: 0.9rem;
+          font-style: italic;
+        }
+
+        .simuler-subtitle i {
+          color: #8B5CF6;
+          margin-right: 5px;
         }
 
         /* Filter container mobile */
@@ -1487,6 +1547,13 @@ const TeamBuilding = () => {
           line-height: 1.6;
         }
 
+        .cta-highlight {
+          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-weight: 700;
+        }
+
         .cta-buttons {
           display: flex;
           flex-direction: column;
@@ -1789,6 +1856,16 @@ const TeamBuilding = () => {
             border-radius: 2px;
           }
 
+          /* Simuler button desktop */
+          .simuler-button-container {
+            margin-bottom: 3rem;
+          }
+
+          .simuler-button {
+            padding: 20px 48px;
+            font-size: 1.15rem;
+          }
+
           .filter-container {
             padding: 2rem;
             border-radius: 20px;
@@ -1984,6 +2061,12 @@ const TeamBuilding = () => {
 
           .cta-title {
             font-size: 1.3rem;
+          }
+
+          .simuler-button {
+            padding: 14px 24px;
+            font-size: 0.95rem;
+            width: 100%;
           }
         }
       `}</style>

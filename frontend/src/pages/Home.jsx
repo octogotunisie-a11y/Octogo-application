@@ -137,7 +137,6 @@ const FloatingBrains = () => {
   
   return (
     <>
-      {/* Cerveaux flottants sur la page entière */}
       <div style={{
         position: 'fixed',
         top: '10%',
@@ -290,7 +289,6 @@ const Card = ({ children, hover = true, delay = 0 }) => {
           e.currentTarget.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.08)'
         } : undefined}
       >
-        {/* Effet de brillance */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -307,14 +305,6 @@ const Card = ({ children, hover = true, delay = 0 }) => {
 }
 
 // ==================== SECTION NOTRE CATALOGUE 2027 ====================
-// Carrousel éditorial : une affiche à la fois, grande, au centre, avec un bloc
-// de texte à gauche et une progression sous la composition.
-//
-// Sept affiches carrées 1080 x 1080 dans frontend/public/secteurs/ :
-//   catalogue-2027-affiche.jpg   l'affiche générale (non utilisée ici)
-//   banque-affiche.jpg           et les cinq autres secteurs
-//
-// Si une affiche manque, un aplat aux couleurs de la marque prend sa place.
 const SECTEURS_CATALOGUE = [
   { cle: 'banque', nom: 'Banque', accroche: 'Décider sous incertitude, sans se laisser gouverner par elle.' },
   { cle: 'assurance', nom: 'Assurance', accroche: 'Évaluer le risque sans se tromper de signal.' },
@@ -326,12 +316,10 @@ const SECTEURS_CATALOGUE = [
 
 const DUREE_AUTO = 6000
 
-// Une affiche du carrousel. Trois états : active, sortante, en attente.
 const AfficheCarrousel = ({ secteur, etat, sens }) => {
   const [echec, setEchec] = useState(false)
   const active = etat === 'active'
 
-  // L'affiche entre par le côté d'où vient le mouvement et sort par l'autre.
   const decalage = active ? 0 : (sens === 'suivant' ? 40 : -40)
 
   return (
@@ -384,7 +372,6 @@ const AfficheCarrousel = ({ secteur, etat, sens }) => {
   )
 }
 
-// Flèche de navigation. Discrète au repos, franche au survol.
 const FlecheCarrousel = ({ direction, onClick, cote, dedans }) => {
   const [survol, setSurvol] = useState(false)
   const Icone = direction === 'precedent' ? ChevronLeft : ChevronRight
@@ -445,8 +432,6 @@ const Catalogue2027Section = () => {
     setIndex(((n % total) + total) % total)
   }, [total])
 
-  // Navigation manuelle : elle arrête le défilement automatique pour de bon.
-  // Reprendre seul après un clic donne l'impression d'un écran qui résiste.
   const naviguer = useCallback((direction) => {
     setAuto(false)
     aller(direction === 'suivant' ? index + 1 : index - 1, direction)
@@ -466,7 +451,6 @@ const Catalogue2027Section = () => {
     return () => clearInterval(t)
   }, [auto, total])
 
-  // Flèches du clavier, une fois la composition survolée ou focalisée.
   const onClavier = (e) => {
     if (e.key === 'ArrowLeft') naviguer('precedent')
     if (e.key === 'ArrowRight') naviguer('suivant')
@@ -497,7 +481,6 @@ const Catalogue2027Section = () => {
           Notre Catalogue 2027
         </SectionTitle>
 
-        {/* ---------- COMPOSITION ÉDITORIALE ---------- */}
         <div
           tabIndex={0}
           onKeyDown={onClavier}
@@ -511,7 +494,6 @@ const Catalogue2027Section = () => {
             outline: 'none',
           }}
         >
-          {/* --- Colonne texte --- */}
           <div style={{ order: isMobile ? 2 : 1, textAlign: isMobile ? 'center' : 'left' }}>
             <div style={{
               display: 'flex',
@@ -539,7 +521,6 @@ const Catalogue2027Section = () => {
               }}>Édition sectorielle</span>
             </div>
 
-            {/* Le nom change avec l'affiche : même rythme, même courbe. */}
             <h3 key={courant.cle} style={{
               margin: '0 0 0.9rem',
               fontSize: 'clamp(1.9rem, 4.4vw, 3rem)',
@@ -582,7 +563,6 @@ const Catalogue2027Section = () => {
             </Link>
           </div>
 
-          {/* --- Colonne affiche --- */}
           <div style={{
             order: isMobile ? 1 : 2,
             position: 'relative',
@@ -590,7 +570,6 @@ const Catalogue2027Section = () => {
             maxWidth: isMobile ? '420px' : 'none',
             margin: '0 auto',
           }}>
-            {/* Halo discret derrière l'affiche */}
             <div style={{
               position: 'absolute',
               inset: '-8% -6% -10% -6%',
@@ -617,8 +596,6 @@ const Catalogue2027Section = () => {
               ))}
             </div>
 
-            {/* Sur petit écran les flèches passent à l'intérieur du cadre :
-                débordantes, elles sortaient de la zone de texte. */}
             <FlecheCarrousel
               direction="precedent"
               onClick={() => naviguer('precedent')}
@@ -632,7 +609,6 @@ const Catalogue2027Section = () => {
           </div>
         </div>
 
-        {/* ---------- PROGRESSION ---------- */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -830,7 +806,6 @@ const HeroSection = () => {
       }}
       onMouseMove={handleMouseMove}
     >
-      {/* Background elements - only on desktop */}
       {!isMobile && (
         <div style={{
           position: 'absolute',
@@ -844,7 +819,6 @@ const HeroSection = () => {
         }} />
       )}
       
-      {/* Brain icons floating effect */}
       {!isMobile && (
         <>
           <div style={{
@@ -960,83 +934,14 @@ const HeroSection = () => {
               pour libérer le potentiel humain, améliorer la performance des organisations et favoriser le bien-être.
             </p>
 
+            {/* ✅ Bouton unique "Nos Clients" */}
             <div style={{
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              // Avec trois boutons, la rangée dépasse sur tablette : le retour à
-              // la ligne évite le débordement sans changer l'aspect sur desktop.
-              flexWrap: 'wrap',
-              gap: '1rem',
               justifyContent: 'center',
               alignItems: 'center',
               marginBottom: 'clamp(2rem, 4vw, 3rem)'
             }}>
-              <Link to="/contact" style={{
-                padding: 'clamp(12px, 3vw, 16px) clamp(20px, 4vw, 32px)',
-                background: COLORS.gradientMain,
-                color: COLORS.white,
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',
-                transition: 'transform 0.2s ease',
-                width: isMobile ? '100%' : 'auto',
-                maxWidth: '300px'
-              }}>
-                <MessageCircle size={20} />
-                <span>Démarrer la Transformation</span>
-              </Link>
               
-              <Link to="/formations" style={{
-                padding: 'clamp(12px, 3vw, 16px) clamp(20px, 4vw, 32px)',
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: COLORS.white,
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)',
-                transition: 'all 0.2s ease',
-                width: isMobile ? '100%' : 'auto',
-                maxWidth: '300px'
-              }}>
-                <BookOpen size={20} />
-                <span>Explorer nos Solutions</span>
-              </Link>
-
-              {/* Même style que le bouton précédent : la bibliothèque sectorielle
-                  est un accès de même niveau, pas une action principale. */}
-              <Link to="/bibliotheque" style={{
-                padding: 'clamp(12px, 3vw, 16px) clamp(20px, 4vw, 32px)',
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: COLORS.white,
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)',
-                transition: 'all 0.2s ease',
-                width: isMobile ? '100%' : 'auto',
-                maxWidth: '300px'
-              }}>
-                <Library size={20} />
-                <span>Explorer nos Catalogues 2027</span>
-              </Link>
             </div>
 
             <div style={{
@@ -1436,7 +1341,6 @@ const ServicesSection = () => {
       position: 'relative',
       width: '100%'
     }}>
-      {/* Cerveaux flottants dans la section services */}
       {!isMobile && (
         <>
           <div style={{
@@ -1726,7 +1630,6 @@ const TeamSection = () => {
                 position: 'relative',
                 marginBottom: 'clamp(1rem, 2vw, 1.5rem)'
               }}>
-                {/* Image du membre avec fallback */}
                 <div style={{
                   width: 'clamp(100px, 20vw, 140px)',
                   height: 'clamp(100px, 20vw, 140px)',
@@ -1765,7 +1668,6 @@ const TeamSection = () => {
                   />
                 </div>
                 
-                {/* Effet de halo */}
                 <div style={{
                   position: 'absolute',
                   top: '50%',
@@ -1844,7 +1746,6 @@ const TeamSection = () => {
           ))}
         </div>
         
-        {/* Section Catalogue 2027 après l'équipe - MÊME STYLE */}
         <div style={{ marginTop: 'clamp(60px, 8vw, 100px)' }}>
           <Catalogue2027Section />
         </div>
@@ -1891,40 +1792,6 @@ const TestimonialsSection = () => {
             <Card key={index} delay={index * 100}>
               <div style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                marginBottom: 'clamp(1rem, 2vw, 1.5rem)'
-              }}>
-                <img 
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    objectFit: 'cover'
-                  }}
-                />
-                <div>
-                  <div style={{
-                    fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-                    fontWeight: 700,
-                    color: COLORS.dark,
-                    marginBottom: '0.25rem'
-                  }}>
-                    {testimonial.name}
-                  </div>
-                  <div style={{
-                    fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
-                    color: COLORS.textGray
-                  }}>
-                    {testimonial.company}
-                  </div>
-                </div>
-              </div>
-              
-              <div style={{
-                display: 'flex',
                 gap: '0.5rem',
                 marginBottom: 'clamp(1rem, 2vw, 1.5rem)'
               }}>
@@ -1960,6 +1827,7 @@ const TestimonialsSection = () => {
   )
 }
 
+// ✅ CTA Section MODIFIÉE
 const CTASection = () => {
   const [hover, setHover] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -1988,7 +1856,6 @@ const CTASection = () => {
         }} />
       )}
       
-      {/* Cerveaux flottants dans la section CTA */}
       {!isMobile && (
         <>
           <div style={{
@@ -2044,14 +1911,14 @@ const CTASection = () => {
             lineHeight: 1.1,
             color: COLORS.white
           }}>
-            Prêt pour la{' '}
+            Prêt à révéler le potentiel de{' '}
             <span style={{
               background: 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
             }}>
-              Révolution Neurosciences
+              vos équipes
             </span>
             ?
           </h2>
@@ -2099,30 +1966,8 @@ const CTASection = () => {
                 maxWidth: '300px'
               }}
             >
-              <Brain size={20} />
-              <span>Commencer la Transformation</span>
-            </Link>
-            
-            <Link to="/formations" style={{
-              padding: 'clamp(14px, 3vw, 18px) clamp(24px, 5vw, 40px)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: COLORS.white,
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-              fontWeight: 600,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(10px)',
-              transition: 'all 0.2s ease',
-              width: isMobile ? '100%' : 'auto',
-              maxWidth: '300px'
-            }}>
-              <BookOpen size={20} />
-              <span>Voir nos Programmes</span>
+              <MessageCircle size={20} />
+              <span>Contacter nous pour plus d'information</span>
             </Link>
           </div>
           
@@ -2163,7 +2008,6 @@ const Home = () => {
       minHeight: '100vh',
       position: 'relative'
     }}>
-      {/* Cerveaux flottants sur toute la page */}
       <FloatingBrains />
       
       <HeroSection />

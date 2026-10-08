@@ -628,5 +628,15 @@
       "email": "amalch206@gmail.com"
     },
     "ip": "127.0.0.1"
+  },
+  {
+    "id": 1791464498180,
+    "userId": 3,
+    "type": "login",
+    "timestamp": "2026-10-08T13:01:38.180Z",
+    "details": {
+      "email": "amalch206@gmail.com"
+    },
+    "ip": "127.0.0.1"
   }
 ]

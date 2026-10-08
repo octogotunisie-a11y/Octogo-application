@@ -367,59 +367,59 @@ const Parcours = () => {
       website: 'www.octogo.tn',
       email: 'contact@octogo.tn'
     },
-   {
-  id: 8,
-  title: 'TRIVIUM',
-  subtitle: 'Leadership, discernement et gouvernance stratégique',
-  category: 'LEADERSHIP',
-  duration: '24h à 72h',
-  price: 'Sur devis',
-  description: 'TRIVIUM est une architecture de développement du leadership conçue pour renforcer la qualité des décisions, la stabilité humaine et la gouvernance dans des environnements complexes et incertains.',
-  image: 'src/images/parcours/trivium.jpg',
-  detailedImage: 'src/images/parcours/trivium.jpg',
-  pdf: 'src/pdfs/parcour/trivium.pdf',
-  rating: 4.9,
-  participants: 210,
-  features: [
-    'Leadership stratégique',
-    'Discernement décisionnel',
-    'Influence et communication',
-    'Gouvernance humaine'
-  ],
-  color: '#dc2626',
-  gradient: 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)',
-  icon: 'bi-diagram-3',
-  type: 'LEADERSHIP',
-  detailedDescription: 'TRIVIUM transpose l’architecture historique du Trivium — Grammaire, Rhétorique et Logique — au leadership moderne. Le programme développe la stabilité intérieure du dirigeant, sa capacité d’influence et son discernement stratégique pour gouverner avec lucidité dans un monde instable.',
-  objectifsPedagogiques: [
-    'Développer une prise de décision lucide sous pression',
-    'Renforcer la stabilité émotionnelle et cognitive du leader',
-    'Structurer une communication claire et influente',
-    'Maîtriser les fondamentaux du leadership stratégique'
-  ],
-  objectifsOperationnels: [
-    'Améliorer la qualité des décisions stratégiques',
-    'Renforcer la cohérence et la gouvernance des équipes',
-    'Développer une influence durable et éthique',
-    'Réduire les risques liés à la surcharge cognitive et émotionnelle'
-  ],
-  deroule: 'Formation structurée autour des trois piliers du programme TRIVIUM : ÉVEIL → CAPTER → VOL D’AIGLE.',
-  scenarios: [
-    'Version Executive (24h) : vision stratégique, leadership et gouvernance',
-    'Version Immersive (48h à 72h) : ateliers de décision, intelligence émotionnelle et simulation de gestion sous pression'
-  ],
-  evaluation: 'Évaluation basée sur la qualité décisionnelle, la stabilité émotionnelle, la capacité d’influence et le discernement stratégique. KPI : clarté décisionnelle >75%, stabilité cognitive >70%, impact relationnel >65%.',
-  livrables: [
-    'Diagnostic de leadership',
-    'Matrice de discernement stratégique',
-    'Plan de gouvernance personnelle',
-    'Rapport d’évaluation et attestation'
-  ],
-  contact: '+216 28 26 28 29',
-  website: 'www.octogo.tn',
-  email: 'contact@octogo.tn'
-}
-];
+    {
+      id: 8,
+      title: 'TRIVIUM',
+      subtitle: 'Leadership, discernement et gouvernance stratégique',
+      category: 'LEADERSHIP',
+      duration: '24h à 72h',
+      price: 'Sur devis',
+      description: 'TRIVIUM est une architecture de développement du leadership conçue pour renforcer la qualité des décisions, la stabilité humaine et la gouvernance dans des environnements complexes et incertains.',
+      image: 'src/images/parcours/trivium.jpg',
+      detailedImage: 'src/images/parcours/trivium.jpg',
+      pdf: 'src/pdfs/parcour/trivium.pdf',
+      rating: 4.9,
+      participants: 210,
+      features: [
+        'Leadership stratégique',
+        'Discernement décisionnel',
+        'Influence et communication',
+        'Gouvernance humaine'
+      ],
+      color: '#dc2626',
+      gradient: 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)',
+      icon: 'bi-diagram-3',
+      type: 'LEADERSHIP',
+      detailedDescription: 'TRIVIUM transpose l’architecture historique du Trivium — Grammaire, Rhétorique et Logique — au leadership moderne. Le programme développe la stabilité intérieure du dirigeant, sa capacité d’influence et son discernement stratégique pour gouverner avec lucidité dans un monde instable.',
+      objectifsPedagogiques: [
+        'Développer une prise de décision lucide sous pression',
+        'Renforcer la stabilité émotionnelle et cognitive du leader',
+        'Structurer une communication claire et influente',
+        'Maîtriser les fondamentaux du leadership stratégique'
+      ],
+      objectifsOperationnels: [
+        'Améliorer la qualité des décisions stratégiques',
+        'Renforcer la cohérence et la gouvernance des équipes',
+        'Développer une influence durable et éthique',
+        'Réduire les risques liés à la surcharge cognitive et émotionnelle'
+      ],
+      deroule: 'Formation structurée autour des trois piliers du programme TRIVIUM : ÉVEIL → CAPTER → VOL D’AIGLE.',
+      scenarios: [
+        'Version Executive (24h) : vision stratégique, leadership et gouvernance',
+        'Version Immersive (48h à 72h) : ateliers de décision, intelligence émotionnelle et simulation de gestion sous pression'
+      ],
+      evaluation: 'Évaluation basée sur la qualité décisionnelle, la stabilité émotionnelle, la capacité d’influence et le discernement stratégique. KPI : clarté décisionnelle >75%, stabilité cognitive >70%, impact relationnel >65%.',
+      livrables: [
+        'Diagnostic de leadership',
+        'Matrice de discernement stratégique',
+        'Plan de gouvernance personnelle',
+        'Rapport d’évaluation et attestation'
+      ],
+      contact: '+216 28 26 28 29',
+      website: 'www.octogo.tn',
+      email: 'contact@octogo.tn'
+    }
+  ];
 
   const categories = ['TOUS', 'LEADERSHIP', 'VENTE', 'MANAGEMENT', 'TRANSFORMATION', 'STRATÉGIE', 'MARKETING'];
 
@@ -484,6 +484,11 @@ const Parcours = () => {
 
   const handleContact = () => {
     navigate('/contact');
+  };
+
+  // ✅ NOUVELLE FONCTION : Navigation vers la génération de parcours
+  const handleSimulerParcours = () => {
+    navigate('/generation-programme');
   };
 
   const handleViewDetails = (parcoursItem) => {
@@ -805,6 +810,17 @@ const Parcours = () => {
             height: 45px !important;
             fontSize: 1.25rem !important;
           }
+          
+          /* ✅ Simuler button responsive */
+          .simuler-button-container {
+            margin-bottom: 2rem !important;
+          }
+          
+          .simuler-button {
+            padding: 14px 24px !important;
+            font-size: 0.95rem !important;
+            width: 100% !important;
+          }
         }
         
         @media (max-width: 480px) {
@@ -961,6 +977,52 @@ const Parcours = () => {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* ✅ NOUVEAU : Bouton Simuler mon parcours sous les stats */}
+          <div className="simuler-button-container" style={{ 
+            textAlign: 'center',
+            marginBottom: '3rem'
+          }}>
+            <motion.button
+              className="simuler-button"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 15px 40px rgba(139, 92, 246, 0.4)' }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleSimulerParcours}
+              style={{
+                padding: '18px 40px',
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '16px',
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)',
+                transition: 'all 0.3s ease',
+                letterSpacing: '0.02em'
+              }}
+            >
+              <i className="bi bi-magic" style={{ fontSize: '1.3rem' }}></i>
+              Simuler mon parcours
+              <i className="bi bi-arrow-right" style={{ fontSize: '1.1rem' }}></i>
+            </motion.button>
+            
+            <p style={{
+              marginTop: '1rem',
+              color: '#6B7280',
+              fontSize: '0.9rem',
+              fontStyle: 'italic'
+            }}>
+              <i className="bi bi-stars" style={{ color: '#8B5CF6', marginRight: '5px' }}></i>
+              Créez votre parcours certifiant personnalisé avec l'IA en quelques minutes
+            </p>
           </div>
 
           {/* Filters */}
@@ -1281,7 +1343,7 @@ const Parcours = () => {
             ))}
           </div>
 
-          {/* CTA Section */}
+          {/* ✅ CTA Section MODIFIÉE */}
           <div className="cta-section" style={{ 
             background: 'white',
             borderRadius: '20px',
@@ -1320,7 +1382,7 @@ const Parcours = () => {
               position: 'relative',
               zIndex: 1
             }}>
-              <i className="bi bi-gear-fill"></i>
+              <i className="bi bi-lightbulb-fill"></i>
             </div>
             
             <h2 className="cta-title" style={{ 
@@ -1331,7 +1393,7 @@ const Parcours = () => {
               position: 'relative',
               zIndex: 1
             }}>
-              Parcours Sur Mesure
+              Créez mon propre parcours
             </h2>
             
             <p className="cta-description" style={{ 
@@ -1348,9 +1410,9 @@ const Parcours = () => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
               }}>
-                Besoin d'un parcours adapté à votre entreprise ?
+                Un besoin spécifique ?
               </strong>{' '}
-              Nos experts créent des programmes personnalisés basés sur vos objectifs spécifiques.
+              Générez un parcours certifiant sur mesure adapté à vos enjeux, vos équipes et votre calendrier grâce à notre IA.
             </p>
             
             <div className="cta-buttons" style={{ 
@@ -1365,46 +1427,24 @@ const Parcours = () => {
                 className="cta-button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleContact}
+                onClick={handleSimulerParcours}
                 style={{
-                  padding: '16px 32px',
+                  padding: '18px 36px',
                   background: mainGradient,
                   color: 'white',
                   border: 'none',
                   borderRadius: '12px',
-                  fontSize: '1rem',
-                  fontWeight: 600,
+                  fontSize: '1.05rem',
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '10px',
+                  boxShadow: '0 8px 25px rgba(139, 92, 246, 0.35)'
                 }}
               >
-                <i className="bi bi-calendar-check"></i>
-                Demander un devis
-              </motion.button>
-              
-              <motion.button
-                className="cta-button"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => window.open('tel:+21628262829')}
-                style={{
-                  padding: '16px 32px',
-                  background: 'white',
-                  color: '#1F2937',
-                  border: '2px solid rgba(139, 92, 246, 0.2)',
-                  borderRadius: '12px',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px'
-                }}
-              >
-                <i className="bi bi-telephone"></i>
-                +216 28 262 829
+                <i className="bi bi-magic"></i>
+                Générer mon parcours
               </motion.button>
             </div>
             
