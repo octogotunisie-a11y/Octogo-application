@@ -35,7 +35,7 @@ export default function useGenerationRequest() {
   const [requestId, setRequestId] = useState(null);
   const [type, setType] = useState(null);
 
-  const [description, setDescription] = useState({ mode: 'text', texte: '', fichier: null, fichierNom: null });
+  const [description, setDescription] = useState({ mode: 'text', texte: '', fichier: null, fichierNom: null, documentId: null });
   const [details, setDetails] = useState(DETAILS_FIELDS_DEFAULT);
 
   const [documents, setDocuments] = useState(documentsInitiaux());
@@ -78,7 +78,7 @@ export default function useGenerationRequest() {
     try {
       const payload = {
         type,
-        description: { mode: description.mode, texte: description.texte, fichierNom: description.fichierNom },
+        description: { mode: description.mode, texte: description.texte, fichierNom: description.fichierNom, documentId: description.documentId },
         details,
       };
       const resp = await api.creerDemande(payload);
@@ -86,8 +86,11 @@ export default function useGenerationRequest() {
       const id = demande?.id;
       setRequestId(id);
 
-      if (description.mode === 'upload' && description.fichier) {
-        await api.uploaderDocumentBesoin(id, description.fichier);
+      if (description.mode === 'upload') {
+        // Le document est déjà dans « Mes documents » (import immédiat ou sélection) :
+        // on le relie simplement à la demande, sans le réimporter.
+        if (description.documentId) await api.selectionnerDocument(id, description.documentId);
+        else if (description.fichier) await api.uploaderDocumentBesoin(id, description.fichier);
       }
 
       if (demande?.documents) {
@@ -325,7 +328,7 @@ export default function useGenerationRequest() {
     setEtape(0);
     setRequestId(null);
     setType(null);
-    setDescription({ mode: 'text', texte: '', fichier: null, fichierNom: null });
+    setDescription({ mode: 'text', texte: '', fichier: null, fichierNom: null, documentId: null });
     setDetails(DETAILS_FIELDS_DEFAULT);
     setDocuments(documentsInitiaux());
     setError(null);

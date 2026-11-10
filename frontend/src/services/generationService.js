@@ -29,7 +29,10 @@ const API_BASE = '/api';
 // Pour rebrancher le serveur réel : passer MODE_MOCK à false. Aucun composant
 // n'a à changer.
 // -----------------------------------------------------------------------------
-export const MODE_MOCK = true;
+// Piloté par la variable d'environnement Vite VITE_USE_MOCK (frontend/.env).
+// Par défaut (comportement actuel) : mock actif. Mettre VITE_USE_MOCK=false pour
+// utiliser le backend réel de génération.
+export const MODE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false';
 
 const LATENCE_MS = 500;
 const attendre = () => new Promise((r) => setTimeout(r, LATENCE_MS));
@@ -127,6 +130,23 @@ export async function uploaderDocumentBesoin(id, file) {
     method: 'POST',
     headers: authHeaders(), // ne pas fixer Content-Type : le navigateur gère le multipart
     body: form,
+  });
+  return handle(resp);
+}
+
+// Relie à la demande un document DÉJÀ présent dans « Mes documents » (aucun réimport).
+// Les documents eux-mêmes sont toujours réels (/api/documents) ; seul le lien avec la
+// demande est local tant que MODE_MOCK est actif.
+export async function selectionnerDocument(id, documentId) {
+  if (MODE_MOCK) {
+    const d = memoireMock.demandes.find((x) => String(x.id) === String(id));
+    if (d) d.description = { ...(d.description || {}), documentId };
+    return { success: true, documentId };
+  }
+  const resp = await fetch(`${API_BASE}/generation/requests/${id}/document`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ documentId }),
   });
   return handle(resp);
 }

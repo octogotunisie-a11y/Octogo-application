@@ -197,7 +197,16 @@ export default function GenerationProgramme() {
   const peutContinuerEtape0 = !!g.type;
   const peutContinuerEtape1 = g.description.mode === 'text'
     ? g.description.texte.trim().length > 0
-    : !!g.description.fichier;
+    : !!(g.description.documentId || g.description.fichier);
+
+  // Message expliquant pourquoi « Suivant » / « Générer » est inactif (aucun bouton muet).
+  const manquants = [];
+  if (g.etape === 0 && !peutContinuerEtape0) manquants.push('Choisissez un type de demande pour continuer.');
+  if (g.etape === 1 && !peutContinuerEtape1) {
+    manquants.push(g.description.mode === 'text'
+      ? 'Décrivez votre besoin dans la zone de texte pour continuer.'
+      : 'Aucun document sélectionné : importez un document ou choisissez-en un dans « Mes documents » pour continuer.');
+  }
 
   // ⚠️ Utilise 'nombreJours' (nouveau champ) au lieu de 'theme' (supprimé)
   const peutFinaliser = !!(
@@ -206,6 +215,13 @@ export default function GenerationProgramme() {
     g.details.nbParticipants &&
     g.details.objectifs
   );
+  if (g.etape === 2 && !peutFinaliser) {
+    const champs = [
+      ['nombreJours', 'nombre de jours'], ['societe', 'société'],
+      ['nbParticipants', 'nombre de participants'], ['objectifs', 'objectifs'],
+    ].filter(([k]) => !g.details[k]).map(([, l]) => l);
+    manquants.push(`Informations manquantes : ${champs.join(', ')}.`);
+  }
 
   return (
     <div style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 64px' }}>
@@ -261,7 +277,23 @@ export default function GenerationProgramme() {
           background: `${C.danger}10`, border: `1px solid ${C.danger}30`, borderRadius: 10, marginBottom: 16,
         }}>
           <AlertTriangle size={18} color={C.danger} />
-          <span style={{ fontSize: 13.5, color: C.danger }}>{g.error}</span>
+          <span style={{ fontSize: 13.5, color: C.danger }}>
+            La génération n’a pas abouti. Vérifiez les informations saisies et réessayez. Si le problème persiste, contactez l’administrateur.
+            <span style={{ display: 'block', fontSize: 12.5, opacity: 0.85, marginTop: 2 }}>Détail : {g.error}</span>
+          </span>
+        </div>
+      )}
+
+      {/* ---------- Progression de la création ---------- */}
+      {g.loading && (
+        <div role="status" style={{
+          display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', marginBottom: 16,
+          background: `${C.primary}10`, border: `1px solid ${C.primary}30`, borderRadius: 10,
+        }}>
+          <Sparkles size={18} color={C.primary} />
+          <span style={{ fontSize: 13.5, color: C.dark }}>
+            Votre programme est en cours de préparation. Les informations fournies et le document sélectionné sont en cours de traitement ; ne quittez pas la page.
+          </span>
         </div>
       )}
 
@@ -275,7 +307,9 @@ export default function GenerationProgramme() {
             Décrivez votre besoin
           </div>
           <div style={{ fontSize: 13.5, color: C.muted, marginBottom: 22 }}>
-            Importez un document existant ou décrivez votre besoin directement.
+            Créez un programme de formation adapté à vos besoins. Décrivez vos objectifs et sélectionnez les documents
+            que vous souhaitez utiliser comme sources : importez-en un nouveau ou réutilisez un document de « Mes documents ».
+            L’IA n’utilisera que les informations et documents que vous choisissez ici pour cette génération.
           </div>
           <UploadTrainingRequest description={g.description} setDescription={g.setDescription} />
         </Card>
@@ -327,13 +361,19 @@ export default function GenerationProgramme() {
           {g.etape === 2 && (
             <button
               style={{ ...btnPrimary, opacity: peutFinaliser ? 1 : 0.5, cursor: peutFinaliser ? 'pointer' : 'not-allowed' }}
-              disabled={!peutFinaliser}
+              disabled={!peutFinaliser || g.loading}
               onClick={finaliser}
             >
               <Sparkles size={18} />
-              Générer mon dossier
+              {g.loading ? 'Génération en cours…' : 'Générer mon dossier'}
             </button>
           )}
+        </div>
+      )}
+
+      {vue === 'assistant' && g.etape < 3 && manquants.length > 0 && (
+        <div role="note" style={{ marginTop: 12, textAlign: 'right', fontSize: 13, color: C.muted }}>
+          {manquants.join(' ')}
         </div>
       )}
 

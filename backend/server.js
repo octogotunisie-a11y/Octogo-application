@@ -1555,6 +1555,23 @@ app.get('/api/devis/:id/download', authenticateToken, (req, res) => {
     }
 });
 
+// ==================== MODULES APA (documents + formations + IA) ====================
+try {
+    const documentsRoutes = require('./Routes/documentsRoutes');
+    app.use('/api/documents', documentsRoutes);
+    console.log('✅ Module Documents chargé');
+} catch (e) {
+    console.error('⚠ Module Documents NON chargé:', e.message);
+}
+
+try {
+    const formationsRoutes = require('./Routes/formationsRoutes');
+    app.use('/api/formations', formationsRoutes);
+    console.log('✅ Module Formations & Tests chargé');
+} catch (e) {
+    console.error('⚠ Module Formations NON chargé:', e.message);
+}
+
 // ==================== ROUTES SUPPLÉMENTAIRES ====================
 
 // Changer le mot de passe
@@ -1775,5 +1792,27 @@ app.listen(PORT, () => {
     console.log('│   ├── PUT    /api/generation/requests/:id/modules/:key/valider');
     console.log('│   ├── GET    /api/generation/requests/:id/modules/:key/download');
     console.log('│   └── GET    /api/generation/cv/:formateurId');
-    console.log('└── UPLOAD: /uploads/devis/');
+   console.log('├── DOCUMENTS (NOUVEAU)');
+console.log('│   ├── GET    /api/documents');
+console.log('│   ├── POST   /api/documents/upload');
+console.log('│   ├── GET    /api/documents/:id/download');
+console.log('│   ├── GET    /api/documents/:id/text');
+console.log('│   ├── DELETE /api/documents/:id');
+console.log('│   └── GET    /api/documents/stats/all');
+console.log('├── FORMATIONS (NOUVEAU)');
+console.log('│   ├── GET    /api/formations');
+console.log('│   ├── POST   /api/formations');
+console.log('│   ├── POST   /api/formations/:id/generer-tests');
+console.log('│   ├── POST   /api/formations/:id/generer-questions-observateur');
+console.log('│   ├── POST   /api/formations/:id/envoyer');
+console.log('│   ├── GET    /api/formations/mes-tests');
+console.log('│   ├── GET    /api/formations/tests/:testId');
+console.log('│   ├── POST   /api/formations/tests/:testId/soumettre');
+console.log('│   ├── GET    /api/formations/mes-observations');
+console.log('│   ├── POST   /api/formations/:id/observations');
+console.log('│   ├── GET    /api/formations/:id/collecte');
+console.log('│   ├── POST   /api/formations/:id/generer-rapport');
+console.log('│   ├── POST   /api/formations/:id/envoyer-rapport');
+console.log('│   └── GET    /api/formations/rapports');
+console.log('└── UPLOAD: /uploads/devis/ + /uploads/documents/');
 });

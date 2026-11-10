@@ -1,860 +1,1053 @@
 // frontend/src/client/EspaceClient.jsx
 // -----------------------------------------------------------------------------
-// Espace client mock — trois vues dans un seul composant, sélectionnées par la
-// prop `vue` depuis les onglets du DashboardClient existant :
+// Vues du Dashboard Client.
+//   apercu | fichiers (documents) | formations | tests | resultats | feedback
+//   programmes | generation
 //
-//     fichiers    → « Mes fichiers »      (documents ajoutés par le client)
-//     formations  → « Mes formations »   (formations réalisées)
-//     tests       → « Tests »            (pré et post formation)
-//
-// Un seul fichier plutôt que trois : ces vues partagent la même société, les
-// mêmes primitives et la même couche de données. Les séparer n'aurait produit
-// que de la duplication d'imports et de résolution de société.
-//
-// ⚠ AUCUN téléversement réel, AUCUNE analyse de fichier, AUCUNE base, AUCUNE IA.
-// Les scores de test sont calculés à partir des réponses réellement saisies.
+// Filtré par entreprise rattachée via utilisateurs[] (voir useWorkflow).
+// La vue "fichiers" gère l'upload vers /api/documents.
 // -----------------------------------------------------------------------------
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../AuthContext';
 import {
-    useSocieteCourante, maj, documentsDe, formationsDe, testDe, resultatDe,
-    prochainId, tracer, programmesDe, cycleDeSociete,
-    memoriserFichier, urlFichier, oublierFichier,
-    CATEGORIES_DOCUMENT, FORMATS_DOCUMENT, iconeDocument,
-    extensionDe, typeDocument, STATUTS_DOCUMENT, STATUTS_FORMATION
-} from '../mock/mockStore.jsx';
-import {
-    fusionner, Carte, Bouton, Badge, Modale, EtatVide, Alerte, FilAriane,
-    ChampTexte, ChampListe, Pastille, BandeauMock, Statistique, OngletsInternes
-} from '../evaluation/ui.jsx';
+  getEntrepriseDuClient, getFormationsEntreprise, getContenusFormation,
+  getReponsesFormation, getResultatsFormation, getFeedbacksFormation
+} from '../workflow/useWorkflow';
 
-const EspaceClient = ({ colors, vue = 'fichiers' }) => {
-    const c = fusionner(colors);
-    const { user } = useAuth();
-    const contexte = useSocieteCourante(user);
-
-    // Aucun repli automatique : sans rattachement, l'écran le dit clairement
-    // plutôt que de choisir une société à la place de l'administrateur.
-    if (contexte.societeId == null) {
-        return (
-            <EtatVide c={c} icone="bi-building-exclamation" titre="Société non attribuée"
-                texte="Votre compte n’est rattaché à aucune société pour le moment. Votre administrateur doit vous y rattacher pour que vous puissiez déposer des documents et accéder à votre évaluation." />
-        );
-    }
-
-    if (vue === 'apercu') return <VueApercu c={c} colors={colors} {...contexte} />;
-    if (vue === 'formations') return <VueFormations c={c} colors={colors} {...contexte} />;
-    if (vue === 'programmes') return <VueProgrammes c={c} colors={colors} {...contexte} />;
-    if (vue === 'tests') return <VueTests c={c} colors={colors} {...contexte} />;
-    return <VueFichiers c={c} colors={colors} {...contexte} />;
+const T = {
+  primary: '#1E3A8A', primaryLight: '#2563EB', primarySoft: '#EFF6FF', primaryDark: '#172554',
+  primaryGradient: 'linear-gradient(135deg, #1E3A8A 0%, #172554 100%)',
+  accent: '#0D9488', accentSoft: '#F0FDFA',
+  success: '#059669', successSoft: '#ECFDF5',
+  warning: '#D97706', warningSoft: '#FFFBEB',
+  danger: '#DC2626', dangerSoft: '#FEF2F2',
+  info: '#0284C7', infoSoft: '#EFF6FF',
+  ink: '#0F172A', inkSoft: '#334155', inkMuted: '#64748B', inkFaint: '#94A3B8',
+  line: '#E2E8F0', lineSoft: '#F1F5F9',
+  bg: '#F8FAFC', bgCard: '#FFFFFF', bgSunken: '#F1F5F9', white: '#FFFFFF',
+  shadowSm: '0 1px 2px 0 rgb(15 23 42 / 0.05)',
+  shadowMd: '0 4px 12px -2px rgb(15 23 42 / 0.08)',
+  shadowLg: '0 12px 28px -8px rgb(15 23 42 / 0.12)'
 };
 
-// ============================================================================
-// MES FICHIERS
-// ============================================================================
-const VueFichiers = ({ c, data, profil, societe, societeId }) => {
-    const [modale, setModale] = useState(false);
-    const [remplace, setRemplace] = useState(null);   // document en cours de remplacement
-    const [fichierEnAttente, setFichierEnAttente] = useState(null); // fichier choisi, catégorie à renseigner
-    const [documentOuvert, setDocumentOuvert] = useState(null);     // consultation
-    const [filtre, setFiltre] = useState('');
-    const [message, setMessage] = useState(null);
-
-    const documents = documentsDe(data, societeId);
-    const visibles = filtre ? documents.filter((d) => d.categorie === filtre) : documents;
-
-    const notifier = (m) => { setMessage(m); setTimeout(() => setMessage(null), 3000); };
-
-    // Sélecteur de fichier réel : le client choisit un fichier de son poste.
-    // Seules les MÉTADONNÉES sont lues (nom, taille). Le contenu n'est ni
-    // téléversé, ni lu, ni analysé — cela viendra avec le backend et l'IA.
-    const champFichier = useRef(null);
-    const ouvrirSelecteur = () => champFichier.current && champFichier.current.click();
-
-    const fichierChoisi = (e) => {
-        const f = e.target.files && e.target.files[0];
-        e.target.value = '';
-        if (!f) return;
-        if (!EXTENSIONS_ACCEPTEES.some((ext) => f.name.toLowerCase().endsWith(ext))) {
-            notifier(`Format non pris en charge. Formats attendus : ${EXTENSIONS_ACCEPTEES.join(', ')}.`);
-            return;
-        }
-        // Le fichier lui-même est conservé le temps de la session, afin que le
-        // client puisse le rouvrir. Son contenu n'est ni lu, ni transmis.
-        setFichierEnAttente({ nom: f.name, taille: formaterTaille(f.size), fichier: f });
-    };
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <EnTete c={c} icone="bi-folder2-open" titre="Mes fichiers"
-                sousTitre={`Documents rattachés à ${societe ? societe.nom : 'votre société'}.`} />
-
-            <BandeauMock c={c}>
-                Interface préparée pour la suite. Les fichiers ne sont ni téléversés ni analysés :
-                ils serviront plus tard de contexte à la génération de programmes et de questions.
-            </BandeauMock>
-
-            {message && <Alerte c={c} ton="succes">{message}</Alerte>}
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                <Statistique c={c} icone="bi-files" valeur={documents.length} libelle="Documents" />
-                <Statistique c={c} icone="bi-check2-circle" ton={c.success}
-                    valeur={documents.filter((d) => d.statut === 'analyse').length} libelle="Prêts à exploiter" />
-                <Statistique c={c} icone="bi-hourglass-split" ton={c.warning}
-                    valeur={documents.filter((d) => d.statut !== 'analyse').length} libelle="En attente" />
-                <Statistique c={c} icone="bi-tags" ton={c.info}
-                    valeur={new Set(documents.map((d) => d.categorie)).size} libelle="Catégories" />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
-                    <Filtre c={c} actif={!filtre} onClick={() => setFiltre('')}>Toutes</Filtre>
-                    {CATEGORIES_DOCUMENT.filter((cat) => documents.some((d) => d.categorie === cat)).map((cat) => (
-                        <Filtre key={cat} c={c} actif={filtre === cat} onClick={() => setFiltre(cat)}>{cat}</Filtre>
-                    ))}
-                </div>
-                <Bouton c={c} icone="bi-plus-lg" onClick={ouvrirSelecteur}>Ajouter un fichier</Bouton>
-            </div>
-
-            <input ref={champFichier} type="file" hidden accept={EXTENSIONS_ACCEPTEES.join(',')} onChange={fichierChoisi} />
-
-            {visibles.length === 0 ? (
-                <EtatVide c={c} icone="bi-folder2-open" titre="Aucun document ajouté"
-                    texte="Ajoutez les documents de votre société : bilan stratégique, organigramme, effectif, fiches de poste…"
-                    action={<Bouton c={c} icone="bi-plus-lg" onClick={ouvrirSelecteur}>Ajouter un fichier</Bouton>} />
-            ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
-                    {visibles.map((d) => (
-                        <CarteFichier key={d.id} c={c} doc={d}
-                            onVoir={() => setDocumentOuvert(d)}
-                            onRemplacer={() => setRemplace(d)}
-                            onSupprimer={() => {
-                                maj((s) => {
-                                    s.documents = s.documents.filter((x) => x.id !== d.id);
-                                    tracer(s, profil ? profil.id : null, 'document_supprime', d.nom);
-                                });
-                                oublierFichier(d.id);
-                                notifier(`« ${d.nom} » supprimé.`);
-                            }} />
-                    ))}
-                </div>
-            )}
-
-            {documentOuvert && (
-                <ApercuFichier c={c} doc={documentOuvert} onFermer={() => setDocumentOuvert(null)} />
-            )}
-
-            {/* Fichier choisi : il ne reste qu'à préciser sa catégorie. */}
-            {fichierEnAttente && (
-                <ModaleDocument c={c} initial={fichierEnAttente} titre="Ajouter un fichier" nomFige
-                    onFermer={() => setFichierEnAttente(null)}
-                    onValider={(nom, categorie, taille) => {
-                        let nouvelId = null;
-                        maj((s) => {
-                            nouvelId = prochainId(s, 'document');
-                            s.documents.push({
-                                id: nouvelId, societe_id: societeId, nom, categorie,
-                                ajoute_par: profil ? profil.id : null,   // l'Admin doit savoir qui a déposé
-                                date: new Date().toISOString().slice(0, 10), taille: taille || '—',
-                                statut: 'en_cours'   // l'intégration réelle viendra avec le backend
-                            });
-                            tracer(s, profil ? profil.id : null, 'document_ajoute', nom);
-                        });
-                        if (nouvelId && fichierEnAttente.fichier) memoriserFichier(nouvelId, fichierEnAttente.fichier);
-                        setFichierEnAttente(null);
-                        notifier(`« ${nom} » ajouté. Son intégration est en cours.`);
-                    }} />
-            )}
-
-            {modale && (
-                <ModaleDocument c={c} onFermer={() => setModale(false)} onValider={(nom, categorie, taille) => {
-                    maj((s) => {
-                        s.documents.push({
-                            id: prochainId(s, 'document'), societe_id: societeId, nom, categorie,
-                            date: new Date().toISOString().slice(0, 10), taille: taille || '—', statut: 'en_attente'
-                        });
-                    });
-                    setModale(false);
-                    notifier('Document ajouté à la liste. Aucun fichier n’a été téléversé.');
-                }} />
-            )}
-        </motion.div>
-    );
-};
-
-// ============================================================================
-// MES FORMATIONS
-// ============================================================================
-const VueFormations = ({ c, data, societe, societeId }) => {
-    const [modale, setModale] = useState(false);
-    const [message, setMessage] = useState(null);
-
-    const formations = formationsDe(data, societeId);
-    const cycles = data.cycles.filter((cy) => cy.societe_id === societeId);
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <EnTete c={c} icone="bi-mortarboard" titre="Mes formations"
-                sousTitre={`Formations réalisées par ${societe ? societe.nom : 'votre société'}.`} />
-
-            <BandeauMock c={c}>
-                Ces formations servent de socle aux tests pré et post, et au cycle d’évaluation.
-                Les données sont fictives à ce stade.
-            </BandeauMock>
-
-            {message && <Alerte c={c} ton="succes">{message}</Alerte>}
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                <Statistique c={c} icone="bi-mortarboard" valeur={formations.length} libelle="Formations" />
-                <Statistique c={c} icone="bi-people" ton={c.info}
-                    valeur={formations.reduce((a, f) => a + (f.participants || 0), 0)} libelle="Participants" />
-                <Statistique c={c} icone="bi-clipboard-check" ton={c.success}
-                    valeur={cycles.length} libelle="Cycle(s) d’évaluation" />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-                <Bouton c={c} icone="bi-plus-lg" onClick={() => setModale(true)}>Ajouter une formation</Bouton>
-            </div>
-
-            {formations.length === 0 ? (
-                <EtatVide c={c} icone="bi-mortarboard" titre="Aucune formation"
-                    texte="Les formations réalisées par votre société apparaîtront ici." />
-            ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
-                    {formations.map((f) => {
-                        const st = STATUTS_FORMATION[f.statut] || STATUTS_FORMATION.a_venir;
-                        const cycle = cycles.find((cy) => cy.formation_id === f.id);
-                        return (
-                            <Carte c={c} key={f.id} style={{ padding: '1.25rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.6rem', marginBottom: '.9rem' }}>
-                                    <div style={{
-                                        width: 40, height: 40, borderRadius: '12px', flexShrink: 0,
-                                        background: `${c.primary}18`, display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                    }}>
-                                        <i className="bi bi-mortarboard" style={{ color: c.primary, fontSize: '1.1rem' }} />
-                                    </div>
-                                    <Pastille c={c} ton={st.ton}>{st.label}</Pastille>
-                                </div>
-
-                                <div style={{ fontWeight: 700, color: c.gray900, fontSize: '1.02rem', lineHeight: 1.35 }}>
-                                    {f.libelle}
-                                </div>
-
-                                <div style={{ marginTop: '.85rem', display: 'grid', gap: '.35rem' }}>
-                                    {[
-                                        { i: 'bi-tag', v: f.theme || '—' },
-                                        { i: 'bi-calendar3', v: f.date },
-                                        { i: 'bi-clock', v: f.duree },
-                                        { i: 'bi-people', v: `${f.participants} participants` }
-                                    ].map((x) => (
-                                        <div key={x.i} style={{ fontSize: '.81rem', color: c.gray600 }}>
-                                            <i className={`bi ${x.i}`} style={{ color: c.gray400, marginRight: 8, width: 14, display: 'inline-block' }} />
-                                            {x.v}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {cycle && (
-                                    <div style={{ marginTop: '.9rem', paddingTop: '.75rem', borderTop: `1px solid ${c.gray100}`, fontSize: '.78rem', color: c.gray500 }}>
-                                        <i className="bi bi-clipboard-check" style={{ marginRight: 6, color: cycle.statut === 'ouvert' ? c.success : c.gray400 }} />
-                                        Évaluation {cycle.libelle} — {cycle.statut === 'ouvert' ? 'ouverte' : 'fermée'}
-                                    </div>
-                                )}
-                            </Carte>
-                        );
-                    })}
-                </div>
-            )}
-
-            {modale && (
-                <ModaleFormation c={c} onFermer={() => setModale(false)} onValider={(libelle, duree, participants) => {
-                    maj((s) => {
-                        s.formations.push({
-                            id: prochainId(s, 'formation'), societe_id: societeId, libelle, duree,
-                            participants: parseInt(participants, 10) || 0,
-                            date: new Date().toISOString().slice(0, 10)
-                        });
-                    });
-                    setModale(false);
-                    setMessage('Formation ajoutée.');
-                    setTimeout(() => setMessage(null), 2500);
-                }} />
-            )}
-        </motion.div>
-    );
-};
-
-// ============================================================================
-// TESTS PRÉ / POST FORMATION
-// ============================================================================
-const VueTests = ({ c, data, profil, societe, societeId }) => {
-    const [type, setType] = useState('pre');
-    const [ouverte, setOuverte] = useState(null);
-
-    const formations = formationsDe(data, societeId);
-    // À défaut de profil rattaché, on rattache au premier compte de la société
-    // pour que le parcours reste testable.
-    const moi = profil || data.utilisateurs.find((u) => u.societe_id === societeId) || null;
-
-    if (!moi) {
-        return <EtatVide c={c} icone="bi-person" titre="Compte non rattaché"
-            texte="Votre compte n’est associé à aucune société de démonstration." />;
-    }
-
-    if (ouverte) {
-        return <Passation c={c} data={data} formation={ouverte} type={type} moi={moi} onRetour={() => setOuverte(null)} />;
-    }
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <EnTete c={c} icone="bi-clipboard-check" titre="Évaluation"
-                sousTitre={`${moi.nom} · ${societe ? societe.nom : ''}`} />
-
-            {/* La formation conditionne les deux tests : elle est rappelée en tête. */}
-            {formations.length > 0 && (
-                <Carte c={c} style={{ marginBottom: '1.25rem', background: c.gray50 }}>
-                    <div style={{ fontSize: '.75rem', color: c.gray500 }}>Formation concernée</div>
-                    <div style={{ fontWeight: 700, color: c.gray900, fontSize: '1.02rem' }}>
-                        {formations.map((f) => f.libelle).join(' · ')}
-                    </div>
-                </Carte>
-            )}
-
-            <BandeauMock c={c}>
-                Questions issues d’une banque fictive. Elles seront plus tard produites à partir du contenu
-                réel de la formation. Les scores sont calculés à partir de vos réponses.
-            </BandeauMock>
-
-            <OngletsInternes c={c} actif={type} onChange={setType} onglets={[
-                { id: 'pre', label: 'Pré-formation', icone: 'bi-play-circle' },
-                { id: 'post', label: 'Post-formation', icone: 'bi-check2-circle' }
-            ]} />
-
-            {formations.length === 0 && (
-                <EtatVide c={c} icone="bi-mortarboard" titre="Aucune formation"
-                    texte="Ajoutez une formation depuis « Mes formations » pour passer un test." />
-            )}
-
-            {formations.map((f) => {
-                const test = testDe(data, f.id, type);
-                const testPre = testDe(data, f.id, 'pre');
-                const resultat = test ? resultatDe(data, test.id, moi.id) : null;
-                const resultatPre = testPre ? resultatDe(data, testPre.id, moi.id) : null;
-                const bloquePost = type === 'post' && !resultatPre;
-
-                return (
-                    <Carte c={c} key={f.id} style={{ marginBottom: '.75rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.85rem', flexWrap: 'wrap' }}>
-                            <div style={{ minWidth: 0 }}>
-                                <div style={{ fontWeight: 700, color: c.gray900 }}>{f.libelle}</div>
-                                <div style={{ fontSize: '.79rem', color: c.gray500, marginTop: '.2rem' }}>
-                                    {test ? `${test.questions.length} questions` : 'Test non créé'}
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
-                                {resultat && <Pastille c={c} ton="termine">{resultat.score}/{resultat.total}</Pastille>}
-                                {!test ? (
-                                    <Bouton c={c} variante="secondaire" icone="bi-plus-lg" onClick={() => {
-                                        maj((s) => {
-                                            s.tests.push({
-                                                id: prochainId(s, 'test'), societe_id: societeId, formation_id: f.id,
-                                                type, source: 'mock', questions: banqueTest(f.libelle)
-                                            });
-                                        });
-                                    }}>Créer le test</Bouton>
-                                ) : (
-                                    <Bouton c={c} disabled={bloquePost} onClick={() => setOuverte(f)}>
-                                        {resultat ? 'Consulter' : 'Passer le test'}
-                                    </Bouton>
-                                )}
-                            </div>
-                        </div>
-                        {bloquePost && (
-                            <div style={{ fontSize: '.78rem', color: c.gray500, marginTop: '.6rem' }}>
-                                <i className="bi bi-info-circle" style={{ marginRight: 5 }} />
-                                Passez d’abord le test pré-formation : sans point de départ, aucune évolution
-                                ne peut être mesurée.
-                            </div>
-                        )}
-                    </Carte>
-                );
-            })}
-        </motion.div>
-    );
-};
-
-const Passation = ({ c, data, formation, type, moi, onRetour }) => {
-    const test = testDe(data, formation.id, type);
-    const deja = test ? resultatDe(data, test.id, moi.id) : null;
-    const [reponses, setReponses] = useState(deja ? deja.reponses : {});
-    const [envoye, setEnvoye] = useState(!!deja);
-
-    if (!test) return null;
-
-    const repondues = test.questions.filter((q) => reponses[q.id] !== undefined).length;
-    const complet = repondues === test.questions.length;
-    const score = test.questions.filter((q) => reponses[q.id] === q.bonne).length;
-
-    const testPre = testDe(data, formation.id, 'pre');
-    const testPost = testDe(data, formation.id, 'post');
-    const rPre = testPre ? resultatDe(data, testPre.id, moi.id) : null;
-    const rPost = testPost ? resultatDe(data, testPost.id, moi.id) : null;
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <FilAriane c={c} elements={[
-                { label: 'Tests', onClick: onRetour },
-                { label: `${formation.libelle} — ${type === 'pre' ? 'pré' : 'post'}-formation` }
-            ]} />
-
-            {envoye && (
-                <>
-                    <Carte c={c} style={{ marginBottom: '1.25rem', textAlign: 'center', padding: '1.75rem 1.25rem' }}>
-                        <div style={{
-                            width: 58, height: 58, borderRadius: '50%', background: '#ECFDF5', color: c.success,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto .8rem', fontSize: '1.6rem'
-                        }}><i className="bi bi-check2" /></div>
-                        <h3 style={{ color: c.gray900, margin: '0 0 .35rem', fontSize: '1.05rem' }}>Test enregistré</h3>
-                        <p style={{ color: c.gray600, fontSize: '.9rem', margin: 0 }}>
-                            {(deja ? deja.score : score)} bonne(s) réponse(s) sur {test.questions.length}.
-                        </p>
-                    </Carte>
-
-                    {rPre && rPost && (
-                        <Carte c={c} style={{ marginBottom: '1.25rem', background: c.gray50 }}>
-                            <div style={{ fontWeight: 700, color: c.gray900, marginBottom: '.85rem' }}>Évolution</div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '.85rem', textAlign: 'center' }}>
-                                <Chiffre c={c} libelle="Pré-formation" valeur={`${rPre.score}/${rPre.total}`} />
-                                <Chiffre c={c} libelle="Post-formation" valeur={`${rPost.score}/${rPost.total}`} />
-                                <Chiffre c={c} libelle="Évolution"
-                                    valeur={`${rPost.score - rPre.score > 0 ? '+' : ''}${rPost.score - rPre.score}`}
-                                    ton={rPost.score >= rPre.score ? c.success : c.danger} />
-                            </div>
-                            <div style={{ fontSize: '.77rem', color: c.gray500, marginTop: '.85rem' }}>
-                                <i className="bi bi-info-circle" style={{ marginRight: 5 }} />
-                                Écart brut entre deux passations. Sur un effectif de test, il n’a aucune valeur
-                                statistique et ne mesure pas l’effet de la formation.
-                            </div>
-                        </Carte>
-                    )}
-                </>
-            )}
-
-            {!envoye && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '.87rem', color: c.gray600 }}>
-                        Progression : <strong style={{ color: c.gray900 }}>{repondues} / {test.questions.length}</strong>
-                    </div>
-                    <div style={{ flex: '1 1 160px', maxWidth: 260, height: 7, background: c.gray200, borderRadius: 20, overflow: 'hidden' }}>
-                        <div style={{ width: `${(repondues / test.questions.length) * 100}%`, height: '100%', background: c.primaryGradient, transition: 'width .3s' }} />
-                    </div>
-                </div>
-            )}
-
-            {test.questions.map((q, i) => {
-                const rep = reponses[q.id];
-                return (
-                    <Carte c={c} key={q.id} style={{ marginBottom: '.75rem' }}>
-                        <div style={{ fontSize: '.89rem', color: c.gray800, marginBottom: '.75rem', lineHeight: 1.45 }}>
-                            <span style={{ color: c.primary, fontWeight: 700, marginRight: '.4rem' }}>{i + 1}.</span>{q.texte}
-                        </div>
-                        <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                            {[{ v: true, l: 'Vrai' }, { v: false, l: 'Faux' }].map((o) => {
-                                const actif = rep === o.v;
-                                return (
-                                    <button key={String(o.v)} disabled={envoye}
-                                        onClick={() => setReponses((r) => ({ ...r, [q.id]: o.v }))}
-                                        style={{
-                                            padding: '.6rem 1.4rem', borderRadius: '14px',
-                                            cursor: envoye ? 'default' : 'pointer',
-                                            opacity: envoye && !actif ? .45 : 1,
-                                            border: `1px solid ${actif ? c.primary : c.gray300}`,
-                                            background: actif ? '#EEF2FF' : 'transparent',
-                                            color: actif ? c.primary : c.gray600,
-                                            fontWeight: 600, fontSize: '.86rem'
-                                        }}>{o.l}</button>
-                                );
-                            })}
-                            {envoye && rep === q.bonne && <Badge c={c} ton="succes">Correct</Badge>}
-                            {envoye && rep !== undefined && rep !== q.bonne && (
-                                <Badge c={c} ton="danger">Réponse attendue : {q.bonne ? 'Vrai' : 'Faux'}</Badge>
-                            )}
-                        </div>
-                    </Carte>
-                );
-            })}
-
-            {!envoye && (
-                <div style={{ marginTop: '1.5rem' }}>
-                    <Bouton c={c} icone="bi-send" disabled={!complet} onClick={() => {
-                        // Score calculé à partir des réponses, jamais tiré au hasard.
-                        maj((s) => {
-                            s.resultats_test.push({
-                                id: prochainId(s, 'resultat_test'), test_id: test.id, utilisateur_id: moi.id,
-                                reponses, score, total: test.questions.length, date: new Date().toISOString()
-                            });
-                            tracer(s, moi.id, 'test_soumis',
-                                `${formation.libelle} — ${type === 'pre' ? 'pré' : 'post'}-formation : ${score}/${test.questions.length}`);
-                        });
-                        setEnvoye(true);
-                    }}>Soumettre</Bouton>
-                    <div style={{ fontSize: '.78rem', color: c.gray500, marginTop: '.6rem' }}>
-                        {complet ? 'Après soumission, vos réponses ne seront plus modifiables.' : 'Répondez à toutes les questions.'}
-                    </div>
-                </div>
-            )}
-        </motion.div>
-    );
-};
-
-// ============================================================================
-// CARTE D'UN FICHIER — le client doit reconnaître son document d'un coup d'œil
-// ============================================================================
-const CarteFichier = ({ c, doc, onVoir, onRemplacer, onSupprimer }) => {
-    const st = STATUTS_DOCUMENT[doc.statut] || STATUTS_DOCUMENT.en_cours;
-    const couleurs = { termine: c.success, soumis: c.warning, attente: c.warning, danger: c.danger, neutre: c.gray500 };
-    const col = couleurs[st.ton] || c.gray500;
-    const ext = extensionDe(doc.nom);
-    const consultable = !!urlFichier(doc.id);
-
-    // Teinte propre au format, pour distinguer PDF / Word / Excel sans lire.
-    const teinte = { PDF: '#DC2626', Word: '#2563EB', Excel: '#059669' }[typeDocument(doc.nom)] || c.gray500;
-
-    return (
-        <motion.div whileHover={{ y: -2 }} style={{
-            background: c.white, border: `1px solid ${c.gray200}`, borderRadius: '16px',
-            padding: '1.15rem', display: 'flex', flexDirection: 'column'
-        }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '.8rem', marginBottom: '.9rem' }}>
-                <div style={{
-                    width: 44, height: 44, borderRadius: '12px', flexShrink: 0,
-                    background: `${teinte}14`, display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                    <i className={`bi ${iconeDocument(doc.nom)}`} style={{ color: teinte, fontSize: '1.3rem' }} />
-                </div>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                    {/* Nom exact du fichier, tel qu'il a été choisi. */}
-                    <div style={{
-                        fontWeight: 700, color: c.gray900, fontSize: '.92rem', lineHeight: 1.35,
-                        wordBreak: 'break-word'
-                    }}>{doc.nom}</div>
-                    <div style={{ fontSize: '.77rem', color: c.gray500, marginTop: '.2rem' }}>
-                        {typeDocument(doc.nom)}{ext && ` · .${ext}`} · {doc.taille}
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ fontSize: '.77rem', color: c.gray500, marginBottom: '.7rem' }}>
-                <i className="bi bi-calendar3" style={{ marginRight: 6, color: c.gray400 }} />
-                Ajouté le {new Date(doc.date).toLocaleDateString('fr-FR')}
-            </div>
-
-            <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '.45rem', alignSelf: 'flex-start',
-                background: `${col}12`, color: col, padding: '.35rem .7rem', borderRadius: '8px',
-                fontSize: '.78rem', fontWeight: 600, marginBottom: '1rem'
-            }}>
-                <i className={`bi ${st.icone}`} />{st.label}
-            </div>
-
-            {doc.categorie && (
-                <div style={{ fontSize: '.75rem', color: c.gray400, marginBottom: '.9rem' }}>
-                    Catégorie : {doc.categorie}
-                </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '.45rem', marginTop: 'auto', flexWrap: 'wrap' }}>
-                <Bouton c={c} variante="secondaire" icone="bi-eye" onClick={onVoir}>Voir</Bouton>
-                <Bouton c={c} variante="secondaire" icone="bi-arrow-repeat" onClick={onRemplacer}>Remplacer</Bouton>
-                <Bouton c={c} variante="danger" icone="bi-trash" onClick={onSupprimer}>Supprimer</Bouton>
-            </div>
-
-            {!consultable && (
-                <div style={{ fontSize: '.72rem', color: c.gray400, marginTop: '.6rem' }}>
-                    Aperçu indisponible après rafraîchissement de la page.
-                </div>
-            )}
-        </motion.div>
-    );
-};
-
-// ============================================================================
-// CONSULTATION — aperçu PDF natif du navigateur, fiche pour Word et Excel
-// ============================================================================
-const ApercuFichier = ({ c, doc, onFermer }) => {
-    const url = urlFichier(doc.id);
-    const type = typeDocument(doc.nom);
-    const st = STATUTS_DOCUMENT[doc.statut] || STATUTS_DOCUMENT.en_cours;
-
-    return (
-        <Modale c={c} titre={doc.nom} sousTitre={`${type} · ${doc.taille}`} onFermer={onFermer} largeur="820px">
-            {/* Le PDF s'affiche via le lecteur intégré du navigateur : aucune
-                bibliothèque ajoutée, aucun contenu lu par l'application. */}
-            {url && type === 'PDF' ? (
-                <iframe title={doc.nom} src={url} style={{
-                    width: '100%', height: '62vh', border: `1px solid ${c.gray200}`, borderRadius: '12px'
-                }} />
-            ) : (
-                <div style={{
-                    background: c.gray50, borderRadius: '14px', padding: '2rem 1.25rem', textAlign: 'center'
-                }}>
-                    <i className={`bi ${iconeDocument(doc.nom)}`} style={{ fontSize: '2.6rem', color: c.gray400 }} />
-                    <div style={{ fontWeight: 700, color: c.gray900, marginTop: '.85rem', wordBreak: 'break-word' }}>
-                        {doc.nom}
-                    </div>
-                    <div style={{ fontSize: '.83rem', color: c.gray500, marginTop: '.4rem' }}>
-                        {url
-                            ? 'L’aperçu intégré n’est pas disponible pour ce format. Utilisez le téléchargement.'
-                            : 'Le fichier n’est plus en mémoire : rouvrez-le depuis votre poste après un rafraîchissement.'}
-                    </div>
-                </div>
-            )}
-
-            <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                gap: '.75rem', marginTop: '1.1rem'
-            }}>
-                {[
-                    { l: 'Type', v: type },
-                    { l: 'Extension', v: `.${extensionDe(doc.nom) || '—'}` },
-                    { l: 'Taille', v: doc.taille },
-                    { l: 'Ajouté le', v: new Date(doc.date).toLocaleDateString('fr-FR') },
-                    { l: 'Intégration', v: st.label }
-                ].map((x) => (
-                    <div key={x.l} style={{ background: c.gray50, borderRadius: '10px', padding: '.6rem .7rem' }}>
-                        <div style={{ fontSize: '.7rem', color: c.gray400, textTransform: 'uppercase', letterSpacing: '.04em' }}>{x.l}</div>
-                        <div style={{ fontSize: '.84rem', color: c.gray800, fontWeight: 600, marginTop: '.15rem' }}>{x.v}</div>
-                    </div>
-                ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', marginTop: '1.2rem' }}>
-                {url && (
-                    <Bouton c={c} variante="secondaire" icone="bi-download"
-                        onClick={() => {
-                            const a = document.createElement('a');
-                            a.href = url; a.download = doc.nom; a.click();
-                        }}>Télécharger</Bouton>
-                )}
-                <Bouton c={c} onClick={onFermer}>Fermer</Bouton>
-            </div>
-        </Modale>
-    );
-};
-
-// ============================================================================
-// VUE D'ENSEMBLE — point d'entrée de l'espace client
-// ============================================================================
-const VueApercu = ({ c, data, profil, societe, societeId }) => {
-    const documents = documentsDe(data, societeId);
-    const formations = formationsDe(data, societeId);
-    const programmes = programmesDe(data, societeId);
-    const cycle = cycleDeSociete(data, societeId);
-    const integres = documents.filter((d) => d.statut === 'integre').length;
-
-    const cartes = [
-        { l: 'Documents', v: documents.length, sub: `${integres} intégré(s)`, i: 'bi-folder2-open', t: c.primary },
-        { l: 'Formations', v: formations.length, sub: `${formations.filter((f) => f.statut === 'terminee').length} terminée(s)`, i: 'bi-mortarboard', t: c.info },
-        { l: 'Programmes', v: programmes.length, sub: 'générés', i: 'bi-stars', t: c.warning },
-        {
-            l: 'Évaluation',
-            v: cycle && cycle.statut === 'ouvert' ? 'Ouverte' : 'Fermée',
-            sub: cycle ? cycle.libelle : '—', i: 'bi-clipboard-check',
-            t: cycle && cycle.statut === 'ouvert' ? c.success : c.gray400
-        }
-    ];
-
-    return (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <EnTete c={c} icone="bi-grid-1x2" titre={`Bonjour${profil ? `, ${profil.nom.split(' ')[0]}` : ''}`}
-                sousTitre={societe ? societe.nom : 'Votre espace'} />
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '.9rem', marginBottom: '1.75rem' }}>
-                {cartes.map((k) => (
-                    <motion.div key={k.l} whileHover={{ y: -3 }} style={{
-                        background: c.white, border: `1px solid ${c.gray200}`, borderRadius: '16px', padding: '1.1rem'
-                    }}>
-                        <div style={{
-                            width: 38, height: 38, borderRadius: '11px', background: `${k.t}18`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '.7rem'
-                        }}>
-                            <i className={`bi ${k.i}`} style={{ color: k.t, fontSize: '1.05rem' }} />
-                        </div>
-                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: c.gray900, lineHeight: 1.1 }}>{k.v}</div>
-                        <div style={{ fontSize: '.79rem', color: c.gray500, marginTop: '.3rem' }}>{k.l}</div>
-                        <div style={{ fontSize: '.73rem', color: c.gray400, marginTop: '.1rem' }}>{k.sub}</div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Chaque domaine renvoie vers sa propre section, jamais mélangé ici. */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '.85rem' }}>
-                {[
-                    { i: 'bi-folder2-open', t: 'Mes fichiers', d: 'Ajoutez les documents de votre société : bilan, organigramme, effectif…' },
-                    { i: 'bi-mortarboard', t: 'Mes formations', d: 'Suivez les formations de votre société et leur statut.' },
-                    { i: 'bi-clipboard-check', t: 'Évaluation', d: 'Accédez à votre évaluation selon le rôle qui vous est attribué.' },
-                    { i: 'bi-stars', t: 'Mes programmes', d: 'Retrouvez les programmes générés depuis la navigation principale.' }
-                ].map((x) => (
-                    <Carte c={c} key={x.t}>
-                        <i className={`bi ${x.i}`} style={{ color: c.primary, fontSize: '1.2rem' }} />
-                        <div style={{ fontWeight: 700, color: c.gray900, marginTop: '.55rem' }}>{x.t}</div>
-                        <div style={{ fontSize: '.81rem', color: c.gray500, marginTop: '.25rem', lineHeight: 1.5 }}>{x.d}</div>
-                    </Carte>
-                ))}
-            </div>
-        </motion.div>
-    );
-};
-
-// ============================================================================
-// MES PROGRAMMES — renvoi vers la génération, jamais un doublon de celle-ci
-// ============================================================================
-const VueProgrammes = ({ c, data, societe, societeId }) => {
-    const programmes = programmesDe(data, societeId);
-    const ouvrirGeneration = () => { window.location.href = '/generation-programme'; };
-    return (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <EnTete c={c} icone="bi-stars" titre="Mes programmes"
-                sousTitre={`${programmes.length} programme(s) généré(s) pour ${societe ? societe.nom : 'votre société'}.`} />
-
-            {programmes.length === 0 ? (
-                <EtatVide c={c} icone="bi-stars" titre="Aucun programme généré"
-                    texte="Créez votre premier programme depuis « Génération Programme », dans la navigation principale."
-                    action={<Bouton c={c} icone="bi-box-arrow-up-right" onClick={ouvrirGeneration}>
-                        Ouvrir Génération Programme
-                    </Bouton>} />
-            ) : (
-                <>
-                    {programmes.map((p) => (
-                        <Carte c={c} key={p.id} style={{ marginBottom: '.6rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap' }}>
-                                <div style={{ minWidth: 0 }}>
-                                    <div style={{ fontWeight: 700, color: c.gray900 }}>{p.titre}</div>
-                                    <div style={{ fontSize: '.77rem', color: c.gray500, marginTop: '.2rem' }}>
-                                        {new Date(p.genere_le).toLocaleDateString('fr-FR')}
-                                        {p.documents_ids && p.documents_ids.length > 0 && ` · ${p.documents_ids.length} document(s) de contexte`}
-                                    </div>
-                                </div>
-                                <Badge c={c} ton="primaire">{p.categorie}</Badge>
-                            </div>
-                        </Carte>
-                    ))}
-                    <div style={{ marginTop: '1.25rem' }}>
-                        <Bouton c={c} icone="bi-box-arrow-up-right" onClick={ouvrirGeneration}>
-                            Ouvrir Génération Programme
-                        </Bouton>
-                    </div>
-                </>
-            )}
-        </motion.div>
-    );
-};
-
-// Statut d'intégration d'un fichier, lisible d'un coup d'œil.
-const StatutIntegration = ({ c, statut }) => {
-    const st = STATUTS_DOCUMENT[statut] || STATUTS_DOCUMENT.en_cours;
-    const couleurs = { termine: c.success, soumis: c.warning, attente: c.warning, danger: c.danger, neutre: c.gray500 };
-    const col = couleurs[st.ton] || c.gray500;
-    return (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontSize: '.79rem', fontWeight: 600, color: col }}>
-            <i className={`bi ${st.icone}`} />
-            {st.label}
-        </span>
-    );
-};
-
-// ============================================================================
-// PETITS COMPOSANTS LOCAUX
-// ============================================================================
-const EnTete = ({ c, icone, titre, sousTitre }) => (
-    <div style={{ marginBottom: '1rem' }}>
-        <h2 style={{ margin: 0, color: c.gray900, fontSize: '1.35rem' }}>
-            <i className={`bi ${icone}`} style={{ color: c.primary, marginRight: '.6rem' }} />{titre}
-        </h2>
-        <p style={{ margin: '.35rem 0 0', color: c.gray500, fontSize: '.86rem' }}>{sousTitre}</p>
-    </div>
-);
-
-const Filtre = ({ c, actif, onClick, children }) => (
-    <button onClick={onClick} style={{
-        padding: '.4rem .85rem', borderRadius: '30px', cursor: 'pointer', fontSize: '.8rem', fontWeight: 600,
-        border: `1px solid ${actif ? c.primary : c.gray300}`,
-        background: actif ? '#EEF2FF' : 'transparent', color: actif ? c.primary : c.gray600
-    }}>{children}</button>
-);
-
-const Chiffre = ({ c, libelle, valeur, ton }) => (
-    <div>
-        <div style={{ fontSize: '.73rem', color: c.gray500 }}>{libelle}</div>
-        <div style={{ fontWeight: 700, fontSize: '1.35rem', color: ton || c.gray900 }}>{valeur}</div>
-    </div>
-);
-
-const ModaleDocument = ({ c, onFermer, onValider, initial, titre, nomFige }) => {
-    const [nom, setNom] = useState(initial ? initial.nom : '');
-    const [categorie, setCategorie] = useState(initial ? initial.categorie : '');
-    const [taille, setTaille] = useState(initial ? initial.taille : '');
-    return (
-        <Modale c={c} titre={titre || 'Ajouter un document'}
-            sousTitre="Aucun téléversement réel : l’entrée est ajoutée à la liste."
-            onFermer={onFermer} largeur="520px">
-            {nomFige ? (
-                <div style={{
-                    display: 'flex', alignItems: 'center', gap: '.6rem', background: c.gray50,
-                    borderRadius: '12px', padding: '.75rem .9rem', marginBottom: '1rem'
-                }}>
-                    <i className={`bi ${iconeDocument(nom)}`} style={{ color: c.primary, fontSize: '1.2rem' }} />
-                    <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, color: c.gray900, fontSize: '.88rem' }}>{nom}</div>
-                        <div style={{ fontSize: '.75rem', color: c.gray500 }}>{typeDocument(nom)} · {taille}</div>
-                    </div>
-                </div>
-            ) : (
-                <ChampTexte c={c} label="Nom du fichier" obligatoire valeur={nom} onChange={setNom}
-                    placeholder="Plan de développement 2027.pdf" />
-            )}
-            <ChampListe c={c} label="Catégorie" valeur={categorie} onChange={setCategorie} options={CATEGORIES_DOCUMENT} />
-            {!nomFige && <ChampTexte c={c} label="Taille" valeur={taille} onChange={setTaille} placeholder="1.2 Mo" />}
-            <div style={{ fontSize: '.78rem', color: c.gray500, marginTop: '-.4rem', marginBottom: '.9rem' }}>
-                Formats prévus : {FORMATS_DOCUMENT.map((f) => f.label).join(' · ')}. Terminez le nom par
-                l’extension correspondante.
-            </div>
-            <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', marginTop: '1.1rem' }}>
-                <Bouton c={c} variante="secondaire" onClick={onFermer}>Annuler</Bouton>
-                <Bouton c={c} disabled={!nom.trim()}
-                    onClick={() => onValider(nom.trim(), categorie || 'Autre', taille.trim())}>Ajouter</Bouton>
-            </div>
-        </Modale>
-    );
-};
-
-const ModaleFormation = ({ c, onFermer, onValider }) => {
-    const [libelle, setLibelle] = useState('');
-    const [duree, setDuree] = useState('');
-    const [participants, setParticipants] = useState('');
-    return (
-        <Modale c={c} titre="Ajouter une formation" onFermer={onFermer} largeur="500px">
-            <ChampTexte c={c} label="Intitulé" obligatoire valeur={libelle} onChange={setLibelle} placeholder="Négociation" />
-            <ChampTexte c={c} label="Durée" valeur={duree} onChange={setDuree} placeholder="2 jours" />
-            <ChampTexte c={c} label="Participants" valeur={participants} onChange={setParticipants} placeholder="12" />
-            <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'flex-end', marginTop: '1.1rem' }}>
-                <Bouton c={c} variante="secondaire" onClick={onFermer}>Annuler</Bouton>
-                <Bouton c={c} disabled={!libelle.trim()}
-                    onClick={() => onValider(libelle.trim(), duree.trim() || '—', participants)}>Ajouter</Bouton>
-            </div>
-        </Modale>
-    );
-};
-
-// Extensions acceptées par le sélecteur de fichier.
-const EXTENSIONS_ACCEPTEES = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
-
-const formaterTaille = (octets) => {
-    if (!octets && octets !== 0) return '—';
-    if (octets < 1024) return `${octets} o`;
-    if (octets < 1024 * 1024) return `${Math.round(octets / 1024)} Ko`;
-    return `${(octets / (1024 * 1024)).toFixed(1)} Mo`;
+const API = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+const EXT_ACCEPTEES = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.txt', '.md', '.csv'];
+const MAX_SIZE_MB = 10;
+const CATEGORIES = ['Bilan stratégique', 'Organigramme', 'Effectif', 'Fiches de poste', 'Plan de formation', 'Compte-rendu', 'Support', 'Autre'];
+
+// =============================================================================
+// COMPOSANT PRINCIPAL
+// =============================================================================
+const EspaceClient = ({ vue = 'apercu', workflow, onDocumentsCount, onNavigate }) => {
+  const { user } = useAuth();
+  const { etat } = workflow;
+
+  const monEntreprise = useMemo(
+    () => getEntrepriseDuClient(etat, user?.id),
+    [etat, user]
+  );
+
+  const mesFormations = useMemo(
+    () => monEntreprise ? getFormationsEntreprise(etat, monEntreprise.id) : [],
+    [etat, monEntreprise]
+  );
+
+  const mesReponses = useMemo(() => {
+    if (!user?.id) return [];
+    return etat.reponses.filter(r => r.participantId === user.id);
+  }, [etat.reponses, user]);
+
+  const shared = { user, etat, monEntreprise, mesFormations, mesReponses, workflow, onNavigate };
+
+  if (vue === 'fichiers')   return <VueDocuments key="fichiers" {...shared} onDocumentsCount={onDocumentsCount} />;
+  if (vue === 'formations') return <VueFormations key="formations" {...shared} />;
+  if (vue === 'tests')      return <VueTests key="tests" {...shared} />;
+  if (vue === 'resultats')  return <VueResultats key="resultats" {...shared} />;
+  if (vue === 'feedback')   return <VueFeedback key="feedback" {...shared} />;
+  if (vue === 'programmes') return <VueProgrammes key="programmes" {...shared} />;
+  if (vue === 'generation') return <VueGeneration key="generation" {...shared} />;
+  return <VueApercu key="apercu" {...shared} />;
 };
 
 export default EspaceClient;
+
+// =============================================================================
+// VUE : DOCUMENTS (upload réel vers /api/documents)
+// =============================================================================
+function VueDocuments({ user, onDocumentsCount }) {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [recherche, setRecherche] = useState('');
+  const [filtre, setFiltre] = useState('');
+  const champFichier = useRef(null);
+
+  const charger = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/api/documents`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) throw new Error(`Erreur ${res.status}`);
+      const data = await res.json();
+      const docs = data.documents || [];
+      setDocuments(docs);
+      if (typeof onDocumentsCount === 'function') onDocumentsCount(docs.length);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { charger(); }, []); // eslint-disable-line
+
+  const notifier = (type, texte) => {
+    setNotification({ type, texte });
+    setTimeout(() => setNotification(null), 3500);
+  };
+
+  const choisirFichier = (e) => {
+    const f = e.target.files?.[0];
+    e.target.value = '';
+    if (!f) return;
+    const name = f.name.toLowerCase();
+    if (!EXT_ACCEPTEES.some(ext => name.endsWith(ext))) {
+      notifier('error', `Format de « ${f.name} » non pris en charge.`);
+      return;
+    }
+    if (f.size > MAX_SIZE_MB * 1024 * 1024) {
+      notifier('error', `Fichier trop volumineux (max ${MAX_SIZE_MB} Mo).`);
+      return;
+    }
+    setPendingFile({ nom: f.name, taille: formaterTaille(f.size), fichier: f });
+  };
+
+  const uploader = async (nom, categorie) => {
+    if (!pendingFile) return;
+    setUploading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const form = new FormData();
+      form.append('file', pendingFile.fichier);
+      form.append('categorie', categorie || 'Autre');
+      form.append('sourceContext', 'client');
+
+      const res = await fetch(`${API}/api/documents/upload`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Erreur ${res.status}`);
+      }
+      setPendingFile(null);
+      notifier('success', `« ${nom} » a été ajouté.`);
+      await charger();
+    } catch (e) {
+      notifier('error', e.message || 'Échec de l’import.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const supprimer = async (doc) => {
+    const nom = doc.originalName || doc.nom;
+    if (!window.confirm(`Supprimer « ${nom} » ?`)) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/api/documents/${doc.id}`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) throw new Error('Suppression impossible');
+      notifier('success', 'Document supprimé.');
+      await charger();
+    } catch (e) {
+      notifier('error', e.message);
+    }
+  };
+
+  const telecharger = async (doc) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/api/documents/${doc.id}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) throw new Error('Téléchargement impossible');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.originalName || doc.nom || 'document';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      notifier('error', e.message);
+    }
+  };
+
+  const visibles = useMemo(() => {
+    const q = recherche.trim().toLowerCase();
+    return documents.filter(d => {
+      const nom = (d.originalName || d.nom || '').toLowerCase();
+      const okCat = !filtre || d.categorie === filtre;
+      const okQ = !q || nom.includes(q);
+      return okCat && okQ;
+    });
+  }, [documents, filtre, recherche]);
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle
+        icon="bi-files"
+        title="Mes documents"
+        subtitle={`${documents.length} document(s) importé(s)`}
+        action={<Button icon="bi-plus-lg" onClick={() => champFichier.current?.click()}>
+          Importer un document
+        </Button>}
+      />
+
+      <ContextBanner tone="guide">
+        Vos documents sont conservés sur le serveur, liés à votre compte.
+        Vous pouvez les télécharger à tout moment.
+      </ContextBanner>
+
+      {notification && (
+        <div style={{
+          marginBottom: 16, padding: '10px 14px',
+          background: notification.type === 'success' ? T.successSoft : T.dangerSoft,
+          color: notification.type === 'success' ? T.success : T.danger,
+          borderRadius: 12, fontSize: 13.5, fontWeight: 500
+        }}>{notification.texte}</div>
+      )}
+
+      <input
+        ref={champFichier}
+        type="file"
+        hidden
+        accept={EXT_ACCEPTEES.join(',')}
+        onChange={choisirFichier}
+      />
+
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+          <FilterPill active={!filtre} onClick={() => setFiltre('')}>Toutes</FilterPill>
+          {CATEGORIES
+            .filter(cat => documents.some(d => d.categorie === cat))
+            .map(cat => (
+              <FilterPill key={cat} active={filtre === cat} onClick={() => setFiltre(cat)}>
+                {cat}
+              </FilterPill>
+            ))}
+        </div>
+        <div style={{ position: 'relative', marginLeft: 'auto', minWidth: 220 }}>
+          <i className="bi bi-search" style={{
+            position: 'absolute', left: 12, top: '50%',
+            transform: 'translateY(-50%)', color: T.inkFaint, pointerEvents: 'none'
+          }} />
+          <input type="search" placeholder="Rechercher…"
+            value={recherche} onChange={(e) => setRecherche(e.target.value)}
+            style={{
+              width: '100%', padding: '10px 14px 10px 36px',
+              border: `1px solid ${T.line}`, borderRadius: 10,
+              fontSize: 13, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit'
+            }} />
+        </div>
+      </div>
+
+      {loading ? (
+        <div style={{ padding: 60, textAlign: 'center', color: T.inkMuted }}>
+          <div style={{
+            width: 36, height: 36, margin: '0 auto 16px',
+            border: `3px solid ${T.primarySoft}`, borderTopColor: T.primary,
+            borderRadius: '50%', animation: 'apa-spin 0.9s linear infinite'
+          }} />
+          Chargement de vos documents…
+        </div>
+      ) : error ? (
+        <ContextBanner tone="warning">
+          {error}
+          <div style={{ marginTop: 10 }}>
+            <Button variant="secondary" icon="bi-arrow-clockwise" onClick={charger}>
+              Réessayer
+            </Button>
+          </div>
+        </ContextBanner>
+      ) : visibles.length === 0 ? (
+        <Empty icon="bi-files"
+          title={documents.length === 0 ? 'Aucun document' : 'Aucun résultat'}
+          texte={documents.length === 0
+            ? 'Cliquez sur « Importer un document » pour ajouter votre premier fichier.'
+            : 'Aucun document ne correspond à votre recherche.'}
+          action={documents.length === 0
+            ? <Button icon="bi-plus-lg" onClick={() => champFichier.current?.click()}>
+                Importer un document
+              </Button>
+            : null}
+        />
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
+          {visibles.map(d => {
+            const nom = d.originalName || d.nom;
+            return (
+              <Card key={d.id}>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                  <div style={{
+                    width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                    background: T.primarySoft, color: T.primary,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <i className={`bi ${iconeDocument(nom)}`} style={{ fontSize: 20 }} />
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{
+                      fontWeight: 700, color: T.ink, fontSize: 13.5,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                    }} title={nom}>{nom}</div>
+                    <div style={{ fontSize: 11.5, color: T.inkMuted, marginTop: 2 }}>
+                      {typeDocument(nom)} · {d.taille || formaterTaille(d.size)}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ fontSize: 11.5, color: T.inkFaint, marginBottom: 12 }}>
+                  <i className="bi bi-calendar3" style={{ marginRight: 4 }} />
+                  {d.createdAt ? new Date(d.createdAt).toLocaleDateString('fr-FR') : '—'}
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <Button variant="secondary" icon="bi-download" onClick={() => telecharger(d)}>
+                    Télécharger
+                  </Button>
+                  <Button variant="danger" icon="bi-trash" onClick={() => supprimer(d)}>
+                    Supprimer
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {pendingFile && (
+        <ModalFileUpload
+          initial={pendingFile}
+          uploading={uploading}
+          onClose={() => !uploading && setPendingFile(null)}
+          onValidate={uploader}
+        />
+      )}
+    </motion.div>
+  );
+}
+
+const ModalFileUpload = ({ initial, uploading, onClose, onValidate }) => {
+  const [categorie, setCategorie] = useState('Autre');
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)',
+      backdropFilter: 'blur(4px)', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16
+    }} onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: T.white, borderRadius: 20, maxWidth: 480,
+          width: '100%', padding: 24, boxShadow: T.shadowLg
+        }}
+      >
+        <h3 style={{ margin: '0 0 16px', fontSize: 17, fontWeight: 700, color: T.ink }}>
+          Ajouter un document
+        </h3>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 12,
+          background: T.bgSunken, borderRadius: 12, padding: 14, marginBottom: 16
+        }}>
+          <i className={`bi ${iconeDocument(initial.nom)}`} style={{ color: T.primary, fontSize: 22 }} />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 600, color: T.ink, fontSize: 13.5 }}>{initial.nom}</div>
+            <div style={{ fontSize: 11.5, color: T.inkMuted }}>
+              {typeDocument(initial.nom)} · {initial.taille}
+            </div>
+          </div>
+        </div>
+        <Field label="Catégorie">
+          <select value={categorie} onChange={(e) => setCategorie(e.target.value)}
+            style={{
+              width: '100%', padding: '10px 14px',
+              border: `1.5px solid ${T.line}`, borderRadius: 10,
+              fontSize: 13.5, fontFamily: 'inherit'
+            }}>
+            {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+        </Field>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 16 }}>
+          <Button variant="secondary" onClick={onClose} disabled={uploading}>Annuler</Button>
+          <Button onClick={() => onValidate(initial.nom, categorie)} disabled={uploading}>
+            {uploading ? 'Envoi…' : 'Enregistrer'}
+          </Button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// =============================================================================
+// VUE : APERÇU
+// =============================================================================
+function VueApercu({ user, monEntreprise, mesFormations, mesReponses, onNavigate }) {
+  const prenom = (user?.name || '').split(' ')[0] || '';
+
+  if (!monEntreprise) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <SectionTitle icon="bi-grid-1x2"
+          title={`Bonjour${prenom ? `, ${prenom}` : ''}`}
+          subtitle="Votre espace de formation" />
+        <Empty icon="bi-building" title="Aucune entreprise rattachée"
+          texte="Votre compte n'est rattaché à aucune entreprise pour le moment. Contactez votre administrateur." />
+      </motion.div>
+    );
+  }
+
+  const stats = {
+    formations: mesFormations.length,
+    testsFaits: mesReponses.length,
+    testsAttendus: mesFormations.length * 2
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-grid-1x2"
+        title={`Bonjour${prenom ? `, ${prenom}` : ''}`}
+        subtitle={monEntreprise.nom} />
+
+      <ContextBanner tone="guide">
+        Retrouvez ici vos formations, vos tests, vos résultats et votre feedback.
+      </ContextBanner>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
+        <KpiCard icon="bi-calendar3" label="Formations" value={stats.formations} sub="assignées" />
+        <KpiCard icon="bi-clipboard-check" label="Tests faits"
+          value={`${stats.testsFaits}/${stats.testsAttendus}`}
+          sub="complétés" />
+      </div>
+
+      {mesFormations.length === 0 && (
+        <Empty icon="bi-calendar3" title="Aucune formation assignée"
+          texte="Votre administrateur ne vous a pas encore assigné de formation." />
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : FORMATIONS
+// =============================================================================
+function VueFormations({ user, etat, monEntreprise, mesFormations, onNavigate }) {
+  if (!monEntreprise) {
+    return (
+      <div>
+        <SectionTitle icon="bi-calendar3" title="Mes formations" />
+        <Empty icon="bi-building" title="Entreprise non rattachée"
+          texte="Contactez votre administrateur." />
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-calendar3" title="Mes formations"
+        subtitle={`${mesFormations.length} formation(s) · ${monEntreprise.nom}`} />
+
+      {mesFormations.length === 0 ? (
+        <Empty icon="bi-calendar3" title="Aucune formation"
+          texte="Aucune formation ne vous a encore été assignée." />
+      ) : (
+        <div style={{ display: 'grid', gap: 14 }}>
+          {mesFormations.map(f => {
+            const reponses = getReponsesFormation(etat, f.id);
+            const mesRep = reponses.filter(r => r.participantId === user?.id);
+            const preOk = mesRep.some(r => r.type === 'pre');
+            const postOk = mesRep.some(r => r.type === 'post');
+            const resultats = getResultatsFormation(etat, f.id);
+            return (
+              <Card key={f.id}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.ink }}>{f.titre}</div>
+                    <div style={{ fontSize: 12.5, color: T.inkMuted, marginTop: 3 }}>{f.theme}</div>
+                  </div>
+                  <Badge tone={statutTone(f.statut)}>{statutLabel(f.statut)}</Badge>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12, paddingTop: 12, borderTop: `1px solid ${T.lineSoft}`, marginBottom: 14 }}>
+                  <Mini label="Prétest" value={preOk ? '✓ Terminé' : 'À faire'} color={preOk ? T.success : T.warning} />
+                  <Mini label="Post-test" value={postOk ? '✓ Terminé' : 'À faire'} color={postOk ? T.success : T.warning} />
+                  <Mini label="Résultats" value={resultats.length > 0 ? 'Publiés' : 'Non publiés'} color={resultats.length > 0 ? T.success : T.inkMuted} />
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <Button variant="secondary" icon="bi-clipboard-check" onClick={() => onNavigate('tests')}>
+                    Voir mes tests
+                  </Button>
+                  {resultats.length > 0 && (
+                    <Button variant="secondary" icon="bi-file-bar-graph" onClick={() => onNavigate('resultats')}>
+                      Voir mes résultats
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : TESTS
+// =============================================================================
+function VueTests({ user, etat, monEntreprise, mesFormations }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-clipboard-check" title="Mes tests" subtitle="Tests pré et post-formation" />
+
+      {!monEntreprise ? (
+        <Empty icon="bi-building" title="Aucune entreprise" texte="Contactez votre administrateur." />
+      ) : mesFormations.length === 0 ? (
+        <Empty icon="bi-clipboard-check" title="Aucun test" texte="Aucune formation assignée." />
+      ) : (
+        <div style={{ display: 'grid', gap: 14 }}>
+          {mesFormations.map(f => {
+            const contenus = getContenusFormation(etat, f.id);
+            const reponses = getReponsesFormation(etat, f.id);
+            const mesRep = reponses.filter(r => r.participantId === user?.id);
+            const testPre = contenus.find(c => c.type === 'test_pre');
+            const testPost = contenus.find(c => c.type === 'test_post');
+            const repPre = mesRep.find(r => r.type === 'pre');
+            const repPost = mesRep.find(r => r.type === 'post');
+
+            return (
+              <Card key={f.id}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 12 }}>{f.titre}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 12, background: repPre ? T.successSoft : T.bgSunken, marginBottom: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: repPre ? T.success : T.primarySoft, color: repPre ? T.white : T.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <i className={`bi ${repPre ? 'bi-check2' : 'bi-clipboard-check'}`} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, color: T.ink, fontSize: 13.5 }}>Prétest</div>
+                    <div style={{ fontSize: 11.5, color: T.inkMuted, marginTop: 2 }}>
+                      {repPre ? `Terminé — ${repPre.score}/100` : testPre ? 'Disponible' : 'Non fourni'}
+                    </div>
+                  </div>
+                  {repPre && <div style={{ fontSize: 18, fontWeight: 800, color: T.success }}>{repPre.score}/100</div>}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 12, background: repPost ? T.successSoft : T.bgSunken, opacity: repPre ? 1 : 0.6 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: repPost ? T.success : T.lineSoft, color: repPost ? T.white : T.inkFaint, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <i className={`bi ${repPost ? 'bi-check2' : 'bi-clipboard-check'}`} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, color: T.ink, fontSize: 13.5 }}>Post-test</div>
+                    <div style={{ fontSize: 11.5, color: T.inkMuted, marginTop: 2 }}>
+                      {repPost ? `Terminé — ${repPost.score}/100` : repPre ? (testPost ? 'Disponible' : 'Non fourni') : 'Après le prétest'}
+                    </div>
+                  </div>
+                  {repPost && <div style={{ fontSize: 18, fontWeight: 800, color: T.success }}>{repPost.score}/100</div>}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : RÉSULTATS
+// =============================================================================
+function VueResultats({ etat, mesFormations }) {
+  const resultatsDispo = mesFormations.flatMap(f => {
+    const res = getResultatsFormation(etat, f.id);
+    return res.map(r => ({ formation: f, resultat: r }));
+  });
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-file-bar-graph" title="Mes résultats" subtitle={`${resultatsDispo.length} rapport(s)`} />
+
+      {resultatsDispo.length === 0 ? (
+        <Empty icon="bi-file-bar-graph" title="Aucun résultat" texte="Vos résultats apparaîtront ici une fois publiés." />
+      ) : (
+        <div style={{ display: 'grid', gap: 14 }}>
+          {resultatsDispo.map(({ formation, resultat }) => (
+            <Card key={resultat.id}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.ink, marginBottom: 8 }}>{formation.titre}</div>
+              <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 14 }}>
+                Publié le {new Date(resultat.publieLe).toLocaleDateString('fr-FR')}
+              </div>
+              {resultat.rapport?.synthese && (
+                <ul style={{ margin: '0 0 14px 18px', padding: 0, fontSize: 13, color: T.inkSoft, lineHeight: 1.6 }}>
+                  {resultat.rapport.synthese.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              )}
+              {resultat.kpis && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12, paddingTop: 12, borderTop: `1px solid ${T.lineSoft}` }}>
+                  <Mini label="Score pré" value={resultat.kpis.scoreMoyenPre != null ? `${resultat.kpis.scoreMoyenPre}/100` : '—'} />
+                  <Mini label="Score post" value={resultat.kpis.scoreMoyenPost != null ? `${resultat.kpis.scoreMoyenPost}/100` : '—'} />
+                  <Mini label="Progression" value={resultat.kpis.progression != null ? `${resultat.kpis.progression > 0 ? '+' : ''}${resultat.kpis.progression}` : '—'} color={resultat.kpis.progression > 0 ? T.success : T.danger} />
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : FEEDBACK
+// =============================================================================
+function VueFeedback({ etat, mesFormations, workflow }) {
+  const [formationId, setFormationId] = useState(mesFormations[0]?.id || '');
+  const [form, setForm] = useState({ note: 4, qualite: 4, organisation: 4, pertinence: 4, commentaire: '', ameliorations: '' });
+  const [busy, setBusy] = useState(false);
+
+  const mesFeedbacks = etat.feedbacks.filter(f =>
+    mesFormations.some(mf => mf.id === f.formationId)
+  );
+
+  const envoyer = async () => {
+    if (!formationId) return;
+    setBusy(true);
+    workflow.envoyerFeedback({ formationId, ...form });
+    setBusy(false);
+    setForm({ note: 4, qualite: 4, organisation: 4, pertinence: 4, commentaire: '', ameliorations: '' });
+  };
+
+  if (mesFormations.length === 0) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <SectionTitle icon="bi-chat-square-text" title="Feedback & Satisfaction" />
+        <Empty icon="bi-chat-square-text" title="Aucune formation"
+          texte="Vous devez avoir suivi une formation pour donner un feedback." />
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-chat-square-text" title="Feedback & Satisfaction"
+        subtitle="Partagez votre retour" />
+
+      <Card style={{ marginBottom: 20 }}>
+        <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: T.ink }}>Donner un feedback</h3>
+        <Field label="Formation">
+          <select value={formationId} onChange={(e) => setFormationId(e.target.value)}
+            style={{ width: '100%', padding: '10px 14px', border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13.5, fontFamily: 'inherit' }}>
+            {mesFormations.map(f => <option key={f.id} value={f.id}>{f.titre}</option>)}
+          </select>
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16, marginBottom: 16 }}>
+          {['note', 'qualite', 'organisation', 'pertinence'].map(k => (
+            <Field key={k} label={labelFeedback(k)}>
+              <select value={form[k]} onChange={(e) => setForm(f => ({ ...f, [k]: parseInt(e.target.value) }))}
+                style={{ width: '100%', padding: '10px 14px', border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13.5, fontFamily: 'inherit' }}>
+                {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} / 5</option>)}
+              </select>
+            </Field>
+          ))}
+        </div>
+        <Field label="Commentaire">
+          <textarea rows={3} value={form.commentaire} onChange={(e) => setForm(f => ({ ...f, commentaire: e.target.value }))}
+            placeholder="Votre avis général…"
+            style={{ width: '100%', padding: '10px 14px', border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' }} />
+        </Field>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button icon="bi-send" onClick={envoyer} disabled={busy}>
+            {busy ? 'Envoi…' : 'Envoyer le feedback'}
+          </Button>
+        </div>
+      </Card>
+
+      {mesFeedbacks.length > 0 && (
+        <Card>
+          <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: T.ink }}>
+            Historique ({mesFeedbacks.length})
+          </h3>
+          <div style={{ display: 'grid', gap: 8 }}>
+            {mesFeedbacks.map(f => {
+              const formation = mesFormations.find(x => x.id === f.formationId);
+              return (
+                <div key={f.id} style={{ background: T.bgSunken, borderRadius: 12, padding: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+                    <div style={{ fontWeight: 600, color: T.ink, fontSize: 13.5 }}>{formation?.titre}</div>
+                    <Badge tone={f.statut === 'traite' ? 'success' : f.statut === 'en_cours' ? 'warning' : 'info'}>
+                      {f.statut === 'nouveau' ? 'En attente' : f.statut === 'en_cours' ? 'En cours' : 'Traité'}
+                    </Badge>
+                  </div>
+                  <div style={{ fontSize: 12, color: T.inkMuted }}>
+                    Note : {f.note}/5 · {new Date(f.envoyeLe).toLocaleDateString('fr-FR')}
+                  </div>
+                  {f.reponseAdmin && (
+                    <div style={{ marginTop: 10, padding: 10, background: T.successSoft, borderRadius: 8, fontSize: 12.5, color: '#065F46' }}>
+                      <strong>Réponse admin :</strong> {f.reponseAdmin}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : PROGRAMMES (programmes générés localement)
+// =============================================================================
+function VueProgrammes({ user }) {
+  const PROGS_KEY = 'apa_programmes_locaux_v2';
+  const programmes = (() => {
+    try {
+      const all = JSON.parse(localStorage.getItem(PROGS_KEY) || '{}');
+      return all[user?.id] || [];
+    } catch { return []; }
+  })();
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-signpost-2" title="Compétences et parcours" subtitle={`${programmes.length} programme(s)`} />
+      {programmes.length === 0 ? (
+        <Empty icon="bi-signpost-2" title="Aucun programme" texte="Générez un programme depuis l'onglet Génération IA." />
+      ) : (
+        <div style={{ display: 'grid', gap: 12 }}>
+          {programmes.map(p => (
+            <Card key={p.id}>
+              <div style={{ fontWeight: 700, color: T.ink, fontSize: 15 }}>{p.titre}</div>
+              <div style={{ fontSize: 12.5, color: T.inkMuted, marginTop: 4 }}>
+                {new Date(p.genere_le).toLocaleDateString('fr-FR')} · {p.duree}
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// =============================================================================
+// VUE : GÉNÉRATION (utilise /api/documents + règles locales)
+// =============================================================================
+function VueGeneration({ user }) {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selection, setSelection] = useState([]);
+  const [params, setParams] = useState({ objectif: '', public: '', duree: '', niveau: 'Intermédiaire', categorie: 'Parcours' });
+  const [running, setRunning] = useState(false);
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API}/api/documents`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setDocuments(data.documents || []);
+        }
+      } catch {}
+      setLoading(false);
+    })();
+  }, []);
+
+  const toggle = (id) => setSelection(prev =>
+    prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+  );
+
+  const lancer = async () => {
+    if (!selection.length) return;
+    setRunning(true);
+    await new Promise(r => setTimeout(r, 800));
+
+    const docsSources = documents.filter(d => selection.includes(d.id));
+    const objectifFinal = params.objectif?.trim() || 'Développer les compétences clés identifiées';
+
+    const programme = {
+      id: `prog_${Date.now()}`,
+      titre: `Programme — ${objectifFinal.slice(0, 60)}`,
+      categorie: params.categorie || 'Parcours',
+      objectif: objectifFinal,
+      public: params.public || 'Managers',
+      duree: params.duree || '3 jours',
+      niveau: params.niveau,
+      structure: [
+        { titre: 'Cadrage et objectifs', duree: '0.5 j', objectifs: ['Comprendre le contexte'] },
+        { titre: 'Apports fondamentaux', duree: '1 j', objectifs: ['Maîtriser les bases'] },
+        { titre: 'Mise en pratique', duree: '1 j', objectifs: ['Appliquer sur cas réels'] },
+        { titre: 'Ancrage et évaluation', duree: '0.5 j', objectifs: ['Consolider les acquis'] }
+      ],
+      sources: docsSources.map(d => ({ id: d.id, nom: d.originalName || d.nom })),
+      genere_le: new Date().toISOString()
+    };
+
+    try {
+      const PROGS_KEY = 'apa_programmes_locaux_v2';
+      const all = JSON.parse(localStorage.getItem(PROGS_KEY) || '{}');
+      if (!all[user?.id]) all[user.id] = [];
+      all[user.id].unshift(programme);
+      localStorage.setItem(PROGS_KEY, JSON.stringify(all));
+    } catch {}
+
+    setResult({ programme, sourcesUsed: selection });
+    setRunning(false);
+  };
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: T.inkMuted }}>Chargement…</div>;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+      <SectionTitle icon="bi-stars" title="Génération IA" subtitle="Composez un programme à partir de vos documents" />
+
+      {documents.length === 0 ? (
+        <Empty icon="bi-files" title="Aucun document" texte="Importez d'abord des documents dans « Mes documents »." />
+      ) : (
+        <>
+          <Card style={{ marginBottom: 16 }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: T.ink }}>
+              1. Sélectionnez les documents sources
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
+              {documents.map(d => {
+                const active = selection.includes(d.id);
+                const nom = d.originalName || d.nom;
+                return (
+                  <label key={d.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: 12, borderRadius: 12, cursor: 'pointer',
+                    border: `2px solid ${active ? T.primary : T.line}`,
+                    background: active ? T.primarySoft : T.white
+                  }}>
+                    <input type="checkbox" checked={active} onChange={() => toggle(d.id)}
+                      style={{ accentColor: T.primary }} />
+                    <i className={`bi ${iconeDocument(nom)}`} style={{ color: T.primary, fontSize: 16 }} />
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nom}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </Card>
+
+          <Card style={{ marginBottom: 16 }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: T.ink }}>
+              2. Contexte
+            </h3>
+            <Field label="Objectif">
+              <textarea rows={2} value={params.objectif}
+                onChange={(e) => setParams({ ...params, objectif: e.target.value })}
+                placeholder="Ex. Renforcer les compétences managériales."
+                style={{ width: '100%', padding: 12, border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' }} />
+            </Field>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+              <Field label="Public">
+                <input value={params.public} onChange={(e) => setParams({ ...params, public: e.target.value })}
+                  placeholder="Managers…" style={{ width: '100%', padding: '10px 14px', border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }} />
+              </Field>
+              <Field label="Durée">
+                <input value={params.duree} onChange={(e) => setParams({ ...params, duree: e.target.value })}
+                  placeholder="3 jours" style={{ width: '100%', padding: '10px 14px', border: `1.5px solid ${T.line}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }} />
+              </Field>
+            </div>
+          </Card>
+
+          <Card>
+            <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 700, color: T.ink }}>
+              3. Lancer
+            </h3>
+            <Button icon="bi-stars" disabled={!selection.length || running} onClick={lancer}>
+              {running ? 'Génération…' : `Générer${selection.length ? ` (${selection.length})` : ''}`}
+            </Button>
+          </Card>
+
+          {result && (
+            <Card style={{ marginTop: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: T.ink }}>
+                <i className="bi bi-check2-circle" style={{ color: T.success, marginRight: 8 }} />
+                {result.programme.titre}
+              </h3>
+              <p style={{ marginTop: 12, color: T.inkSoft, fontSize: 13.5 }}>
+                <strong>Objectif :</strong> {result.programme.objectif}
+              </p>
+            </Card>
+          )}
+        </>
+      )}
+    </motion.div>
+  );
+}
+
+function labelFeedback(k) {
+  return { note: 'Note globale', qualite: 'Qualité', organisation: 'Organisation', pertinence: 'Pertinence' }[k];
+}
+function statutTone(s) {
+  if (s === 'terminee') return 'success';
+  if (s === 'envoyee') return 'info';
+  if (s === 'prete') return 'warning';
+  if (s === 'en_cours') return 'primary';
+  return 'neutral';
+}
+function statutLabel(s) {
+  return { brouillon: 'Brouillon', prete: 'Prête', envoyee: 'Envoyée', en_cours: 'En cours', terminee: 'Terminée' }[s] || 'Brouillon';
+}
+function formaterTaille(bytes) {
+  if (bytes == null) return '—';
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+}
+function iconeDocument(nom) {
+  const ext = (nom || '').toLowerCase().split('.').pop();
+  if (ext === 'pdf') return 'bi-file-earmark-pdf';
+  if (ext === 'doc' || ext === 'docx') return 'bi-file-earmark-word';
+  if (ext === 'xls' || ext === 'xlsx') return 'bi-file-earmark-excel';
+  if (ext === 'txt' || ext === 'md' || ext === 'csv') return 'bi-file-earmark-text';
+  return 'bi-file-earmark';
+}
+function typeDocument(nom) {
+  const ext = (nom || '').toLowerCase().split('.').pop();
+  if (ext === 'pdf') return 'PDF';
+  if (ext === 'doc' || ext === 'docx') return 'Word';
+  if (ext === 'xls' || ext === 'xlsx') return 'Excel';
+  if (ext === 'txt' || ext === 'md' || ext === 'csv') return 'Texte';
+  return 'Autre';
+}
+
+// =============================================================================
+// PRIMITIVES UI
+// =============================================================================
+const SectionTitle = ({ icon, title, subtitle, action }) => (
+  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
+    <div style={{ minWidth: 0 }}>
+      <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: '-0.01em', color: T.ink, display: 'flex', alignItems: 'center', gap: 10 }}>
+        {icon && <i className={`bi ${icon}`} style={{ color: T.primary }} />}
+        {title}
+      </h2>
+      {subtitle && <p style={{ margin: '5px 0 0', color: T.inkMuted, fontSize: 13.5 }}>{subtitle}</p>}
+    </div>
+    {action}
+  </div>
+);
+
+const Card = ({ children, style = {} }) => (
+  <div style={{ background: T.white, border: `1px solid ${T.line}`, borderRadius: 16, padding: 20, boxShadow: T.shadowSm, ...style }}>{children}</div>
+);
+
+const Button = ({ children, variant = 'primary', icon, disabled, onClick }) => {
+  const variants = {
+    primary:   { bg: T.primaryGradient, fg: T.white, border: 'none' },
+    secondary: { bg: T.white, fg: T.inkSoft, border: `1.5px solid ${T.line}` },
+    danger:    { bg: T.dangerSoft, fg: T.danger, border: `1px solid ${T.danger}33` }
+  };
+  const v = variants[variant] || variants.primary;
+  return (
+    <button onClick={disabled ? undefined : onClick} disabled={disabled}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        gap: 8, padding: '10px 18px', borderRadius: 12,
+        background: v.bg, color: v.fg, border: v.border,
+        fontSize: 13.5, fontWeight: 600, fontFamily: 'inherit',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.55 : 1
+      }}>
+      {icon && <i className={`bi ${icon}`} style={{ fontSize: 15 }} />}
+      <span>{children}</span>
+    </button>
+  );
+};
+
+const KpiCard = ({ icon, label, value, sub, tone }) => (
+  <div style={{ background: T.white, border: `1px solid ${T.line}`, borderRadius: 14, padding: 16, boxShadow: T.shadowSm }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+      <div style={{ width: 28, height: 28, borderRadius: 8, background: `${tone || T.primary}18`, color: tone || T.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
+        <i className={`bi ${icon}`} />
+      </div>
+      <div style={{ fontSize: 11.5, color: T.inkMuted, fontWeight: 600 }}>{label}</div>
+    </div>
+    <div style={{ fontSize: 24, fontWeight: 800, color: tone || T.ink, lineHeight: 1.1 }}>{value}</div>
+    {sub && <div style={{ fontSize: 11.5, color: T.inkFaint, marginTop: 4 }}>{sub}</div>}
+  </div>
+);
+
+const Mini = ({ label, value, color }) => (
+  <div>
+    <div style={{ fontSize: 11, color: T.inkMuted, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 700 }}>{label}</div>
+    <div style={{ fontSize: 16, fontWeight: 700, color: color || T.ink, marginTop: 3 }}>{value}</div>
+  </div>
+);
+
+const Badge = ({ tone = 'neutral', children }) => {
+  const tones = {
+    neutral: { bg: T.lineSoft, fg: T.inkSoft }, primary: { bg: T.primarySoft, fg: T.primary },
+    success: { bg: T.successSoft, fg: T.success }, warning: { bg: T.warningSoft, fg: T.warning },
+    danger:  { bg: T.dangerSoft, fg: T.danger }, info: { bg: T.infoSoft, fg: T.info }
+  };
+  const t = tones[tone] || tones.neutral;
+  return <span style={{ display: 'inline-flex', alignItems: 'center', background: t.bg, color: t.fg, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700 }}>{children}</span>;
+};
+
+const ContextBanner = ({ tone = 'guide', children }) => {
+  const tones = {
+    guide:   { bg: T.bgSunken, border: T.line, icon: 'bi-info-circle', fg: T.inkSoft },
+    warning: { bg: T.warningSoft, border: '#FDE68A', icon: 'bi-exclamation-triangle-fill', fg: '#92400E' }
+  };
+  const t = tones[tone] || tones.guide;
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: t.bg, border: `1px solid ${t.border}`, borderRadius: 12, padding: '12px 14px', marginBottom: 16, fontSize: 13, color: t.fg, lineHeight: 1.55 }}>
+      <i className={`bi ${t.icon}`} style={{ fontSize: 15, marginTop: 1, flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+    </div>
+  );
+};
+
+const Empty = ({ icon = 'bi-inbox', title, texte, action }) => (
+  <div style={{ padding: 40, background: T.bgSunken, borderRadius: 16, border: `1px dashed ${T.line}`, textAlign: 'center' }}>
+    <i className={`bi ${icon}`} style={{ fontSize: 32, color: T.inkFaint }} />
+    {title && <h3 style={{ margin: '12px 0 6px', color: T.inkSoft, fontSize: 16 }}>{title}</h3>}
+    {texte && <p style={{ color: T.inkMuted, fontSize: 13, maxWidth: 480, margin: '0 auto', lineHeight: 1.55 }}>{texte}</p>}
+    {action && <div style={{ marginTop: 20 }}>{action}</div>}
+  </div>
+);
+
+const FilterPill = ({ active, onClick, children }) => (
+  <button onClick={onClick} style={{
+    padding: '7px 12px', borderRadius: 999,
+    background: active ? T.primary : T.white,
+    color: active ? T.white : T.inkSoft,
+    border: `1px solid ${active ? T.primary : T.line}`,
+    fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit'
+  }}>{children}</button>
+);
+
+const Field = ({ label, hint, children }) => (
+  <div style={{ marginBottom: 16 }}>
+    {label && <label style={{ display: 'block', marginBottom: 5, fontWeight: 600, color: T.inkSoft, fontSize: 13 }}>{label}</label>}
+    {children}
+    {hint && <div style={{ fontSize: 11.5, color: T.inkMuted, marginTop: 4 }}>{hint}</div>}
+  </div>
+);

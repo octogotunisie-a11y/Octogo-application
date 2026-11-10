@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "userId": 3,
+    "userName": "Chkiwa AMAL",
+    "company": "adinot",
+    "originalName": "OCTOGO NSG2 Cahier Participant NA (1).pdf",
+    "storedName": "doc_1792504659753-105339435.pdf",
+    "mimeType": "application/pdf",
+    "size": 457465,
+    "taille": "447 Ko",
+    "type": "PDF",
+    "categorie": "Effectif",
+    "statut": "analyse",
+    "sourceContext": "client",
+    "extractedText": "",
+    "createdAt": "2026-10-20T13:57:39.761Z"
+  },
+  {
+    "id": 2,
+    "userId": 3,
+    "userName": "Chkiwa AMAL",
+    "company": "adinot",
+    "originalName": "Programme-final-OCTOGO-biat (4).pdf",
+    "storedName": "doc_1794305533647-682682651.pdf",
+    "mimeType": "application/pdf",
+    "size": 26142,
+    "taille": "26 Ko",
+    "type": "PDF",
+    "categorie": "Support",
+    "statut": "analyse",
+    "sourceContext": "client",
+    "extractedText": "",
+    "createdAt": "2026-11-10T10:12:13.652Z"
+  }
+]
