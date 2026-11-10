@@ -572,9 +572,35 @@ const MaFiabilite = ({ c }) => {
 
     const drapeaux = { completude_faible: 'Complétude faible', severite: 'Tendance à la sévérité', indulgence: 'Tendance à l’indulgence', tendance_centrale: 'Tendance centrale' };
 
+    // Complétude par cycle : valeur serveur (taux_completude) ramenée en
+    // pourcentage pour l'affichage uniquement. Aucun indice n'est recalculé ici.
+    const courbeCompletude = donnees.indices
+        .filter((i) => i.taux_completude != null)
+        .map((i) => ({ cycle: i.cycle_libelle, completude: Math.round(i.taux_completude * 100) }));
+
     return (
         <>
             <Alerte c={c} ton="info">{donnees.mention}</Alerte>
+
+            {courbeCompletude.length > 0 && (
+                <Carte c={c} style={{ marginBottom: '.75rem' }}>
+                    <div style={{ fontWeight: 700, color: c.gray900, marginBottom: '.25rem' }}>Complétude de vos cotations</div>
+                    <div style={{ fontSize: '.78rem', color: c.gray500, marginBottom: '.75rem' }}>
+                        Part des cotations renseignées, cycle par cycle.
+                    </div>
+                    <div style={{ width: '100%', height: 220 }}>
+                        <ResponsiveContainer>
+                            <BarChart data={courbeCompletude} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke={c.gray200} vertical={false} />
+                                <XAxis dataKey="cycle" tick={{ fontSize: 12, fill: c.gray500 }} />
+                                <YAxis domain={[0, 100]} unit=" %" tick={{ fontSize: 12, fill: c.gray500 }} />
+                                <Tooltip formatter={(v) => `${v} %`} />
+                                <Bar dataKey="completude" name="Complétude" fill={c.teal || '#1A6B6B'} radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Carte>
+            )}
             {donnees.indices.map((i) => (
                 <Carte c={c} key={i.id} style={{ marginBottom: '.75rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.5rem', marginBottom: '.85rem' }}>
