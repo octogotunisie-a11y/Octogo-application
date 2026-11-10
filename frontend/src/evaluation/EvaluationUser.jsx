@@ -14,6 +14,7 @@
 // -----------------------------------------------------------------------------
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { evaluationApi, NIVEAUX, LIBELLE_SIGNATURE, LIBELLE_STATUT_CYCLE } from './evaluationApi';
 import {
     fusionner, Carte, Bouton, Badge, BadgeNCM, Champ, styleInput,
@@ -422,6 +423,46 @@ const MonExigence = ({ c, cycle }) => {
 // ============================================================================
 // RESTITUTION — écarts listés, jamais moyennés, chacun avec son NCM.
 // ============================================================================
+// ============================================================================
+// GRAPHIQUE DE RESTITUTION — niveau observé et exigence déclarée, par objet.
+// Affiche les valeurs renvoyées par le serveur telles quelles : aucun écart,
+// aucune moyenne ni aucun seuil n'est calculé ici (C5). Les objets « non
+// observé » et les valeurs absentes ne sont pas tracés.
+// ============================================================================
+const GraphiqueNiveaux = ({ c, ecarts }) => {
+    const donnees = ecarts
+        .filter((e) => !e.non_observe && e.niveau_observe != null && e.niveau_exigence != null)
+        .map((e) => ({
+            objet: e.objet_libelle,
+            observe: e.niveau_observe,
+            exigence: e.niveau_exigence
+        }));
+
+    if (donnees.length === 0) return null;
+
+    return (
+        <Carte c={c} style={{ marginBottom: '.75rem' }}>
+            <div style={{ fontWeight: 700, color: c.gray900, marginBottom: '.25rem' }}>Niveau observé et exigence déclarée</div>
+            <div style={{ fontSize: '.78rem', color: c.gray500, marginBottom: '.75rem' }}>
+                Lecture par objet, sur les niveaux de la grille. Les objets non observés ne figurent pas.
+            </div>
+            <div style={{ width: '100%', height: Math.max(220, donnees.length * 60) }}>
+                <ResponsiveContainer>
+                    <BarChart data={donnees} layout="vertical" margin={{ top: 4, right: 24, left: 8, bottom: 4 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={c.gray200} horizontal={false} />
+                        <XAxis type="number" domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} tick={{ fontSize: 12, fill: c.gray500 }} />
+                        <YAxis type="category" dataKey="objet" width={160} tick={{ fontSize: 12, fill: c.gray700 }} />
+                        <Tooltip formatter={(v) => `Niveau ${v}`} />
+                        <Legend />
+                        <Bar dataKey="observe" name="Observé" fill={c.teal || '#1A6B6B'} radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="exigence" name="Exigence déclarée" fill={c.gray400 || '#9CA3AF'} radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+        </Carte>
+    );
+};
+
 const Restitution = ({ c, cycle, acteur }) => {
     const [donnees, setDonnees] = useState(null);
     const [chargement, setChargement] = useState(true);
@@ -447,6 +488,8 @@ const Restitution = ({ c, cycle, acteur }) => {
     return (
         <>
             {donnees.mention && <Alerte c={c} ton="info">{donnees.mention}</Alerte>}
+
+            <GraphiqueNiveaux c={c} ecarts={donnees.ecarts} />
 
             {donnees.ecarts.map((e) => (
                 <Carte c={c} key={e.objet_id} style={{ marginBottom: '.75rem' }}>
